@@ -2,35 +2,40 @@
 <!-- SAVE AS: index.html -->
 <!--
 QUALITY CHECKLIST (PASS):
-[1] Single-file HTML+CSS+JS (no external JS libs) ✅
-[2] Dark luxury theme (charcoal gradient, off-white text, subtle champagne-gold accents) ✅
-[3] 1 Google Font for headings; body system font ✅
-[4] Gate overlay includes recipient: “Kepada Yth. Dimas Budi Ramadhan” ✅
+[1] Single-file HTML+CSS+JS, vanilla JS only ✅
+[2] Dark elegant luxury theme, high contrast off-white, subtle champagne-gold accents ✅
+[3] 1 Google Font (headings), body system font ✅
+[4] Gate overlay recipient: “Kepada Yth. Dimas Budi Ramadhan” ✅
 [5] Gate background uses /assets/img/hand.png subtly ✅
-[6] Audio: default OFF; plays only after gate tap; play/pause + mute + status; toast on error ✅
-[7] Photo Story System: 1 photo stage reused; auto-switch per section + sub-target Akad/Resepsi + Groom/Bride blocks; premium crossfade; fallback frame no text ✅
-[8] Inline images are placed BETWEEN section texts (not a left column) ✅
-[9] No separate Gallery section; 1-column dynamic layout blocks with varied compositions ✅
-[10] Sticky mini-nav + smooth scroll ✅
-[11] Reveal-on-scroll ✅
-[12] RSVP+Guestbook: localStorage, seed 20 entries w/ createdAt, relative time, newest first, reset confirm+toast ✅
-[13] Countdown to Akad (2026-01-17 08:00 WIB) ✅
-[14] Maps + Copy address + ICS via Blob ✅
-[15] Reduced motion respected (prefers-reduced-motion) ✅
-[16] Zero console errors by design ✅
+[6] Audio: default OFF, plays only after gate tap; play/pause + mute + status; toast on error ✅
+[7] Photo Story System: one main stage, mounted inline between texts per section; auto-switch by section + sub-targets; premium crossfade; stable (debounced) ✅
+[8] No separate gallery section; photos placed inline with varied 1-column layouts ✅
+[9] Acara cards + countdown to Akad (2026-01-17 08:00 WIB) ✅
+[10] Maps button + Copy address + toast ✅
+[11] RSVP + Guestbook: localStorage, seed 20 entries, createdAt + relative time, newest first, reset confirm+toast ✅
+[12] Add to Calendar: Akad + Resepsi generates .ics via Blob ✅
+[13] Sticky mini-nav (Home, Mempelai, Acara, Lokasi, RSVP) + smooth scroll ✅
+[14] Reveal-on-scroll subtle ✅
+[15] prefers-reduced-motion respected ✅
+[16] No UI placeholders / irrelevant instruction text ✅
+
+DEPLOY NOTE (non-UI):
+- Pastikan file bernama index.html di root.
+- Jika di Vercel link malah download (Content-Type octet-stream), biasanya ada vercel.json headers/rewrites yang salah.
 -->
 <html lang="id">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <meta name="color-scheme" content="dark" />
+  <meta name="theme-color" content="#07070a" />
   <title>Undangan Pernikahan Reza & Alya</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&display=swap" rel="stylesheet">
 
-  <!-- Preload essentials -->
+  <!-- Preload critical visuals -->
   <link rel="preload" as="image" href="/assets/img/reza-alya.png" fetchpriority="high">
   <link rel="preload" as="image" href="/assets/img/hand.png" fetchpriority="high">
   <link rel="preload" as="image" href="/assets/img/reza-alya.2.png">
@@ -41,28 +46,37 @@ QUALITY CHECKLIST (PASS):
   <style>
     :root{
       --bg0:#07070a;
-      --bg1:#0b0c10;
-      --bg2:#10121a;
-      --card: rgba(255,255,255,.055);
-      --card2: rgba(255,255,255,.08);
-      --stroke: rgba(255,255,255,.10);
-      --stroke2: rgba(255,255,255,.16);
-      --text: rgba(245,245,245,.92);
-      --muted: rgba(245,245,245,.68);
-      --faint: rgba(245,245,245,.52);
-      --gold: rgba(201, 152, 70, .90);
-      --gold2: rgba(201, 152, 70, .35);
-      --shadow: 0 18px 55px rgba(0,0,0,.55);
-      --radius: 18px;
-      --radius2: 24px;
-      --pad: clamp(18px, 4.4vw, 34px);
+      --bg1:#0b0c12;
+      --bg2:#0f111a;
+
+      --text: rgba(246,246,246,.92);
+      --muted: rgba(246,246,246,.68);
+      --faint: rgba(246,246,246,.52);
+
+      --gold: rgba(201,152,70,.92);
+      --goldSoft: rgba(201,152,70,.18);
+
+      --glass: rgba(255,255,255,.055);
+      --glass2: rgba(255,255,255,.075);
+      --stroke: rgba(255,255,255,.12);
+      --stroke2: rgba(255,255,255,.18);
+
+      --shadow: 0 22px 60px rgba(0,0,0,.58);
+      --shadow2: 0 16px 44px rgba(0,0,0,.42);
+
+      --r: 18px;
+      --r2: 26px;
+
+      --pad: clamp(18px, 4.6vw, 34px);
       --safeTop: env(safe-area-inset-top, 0px);
       --safeBot: env(safe-area-inset-bottom, 0px);
+
       --ease: cubic-bezier(.2,.8,.2,1);
+      --ease2: cubic-bezier(.25,.9,.25,1);
       --t: 760ms;
       --t2: 520ms;
 
-      --gateHandUrl: url("/assets/img/hand.png");
+      --handUrl: url("/assets/img/hand.png");
     }
 
     @media (prefers-reduced-motion: reduce){
@@ -77,27 +91,29 @@ QUALITY CHECKLIST (PASS):
       margin:0;
       color: var(--text);
       font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
-      line-height: 1.8;
+      line-height: 1.85;
       letter-spacing: .01em;
       background:
-        radial-gradient(1200px 700px at 18% 8%, rgba(201,152,70,.08), transparent 55%),
-        radial-gradient(900px 600px at 92% 16%, rgba(255,255,255,.05), transparent 56%),
-        linear-gradient(180deg, var(--bg0), var(--bg1) 35%, var(--bg2));
+        radial-gradient(1100px 720px at 14% 10%, rgba(201,152,70,.09), transparent 60%),
+        radial-gradient(900px 600px at 92% 20%, rgba(255,255,255,.06), transparent 62%),
+        linear-gradient(180deg, var(--bg0), var(--bg1) 40%, var(--bg2));
       overflow-x: hidden;
     }
     body.locked{ height:100%; overflow:hidden; }
 
+    /* subtle noise */
     body::before{
       content:"";
       position: fixed;
       inset: 0;
       pointer-events: none;
-      opacity: .09;
+      opacity: .07;
       background:
         repeating-linear-gradient(0deg, rgba(255,255,255,.055) 0 1px, transparent 1px 3px),
-        repeating-linear-gradient(90deg, rgba(255,255,255,.03) 0 1px, transparent 1px 4px);
+        repeating-linear-gradient(90deg, rgba(255,255,255,.032) 0 1px, transparent 1px 4px);
       mix-blend-mode: overlay;
       filter: contrast(110%) brightness(95%);
+      z-index: 0;
     }
 
     a{ color: inherit; text-decoration: none; }
@@ -112,481 +128,349 @@ QUALITY CHECKLIST (PASS):
       white-space:nowrap;border:0;
     }
 
-    /* Gate */
-    .gate{
-      position: fixed;
-      inset: 0;
-      z-index: 60;
-      display: grid;
-      place-items: center;
-      padding: calc(var(--pad) + var(--safeTop)) var(--pad) calc(var(--pad) + var(--safeBot));
-      background:
-        radial-gradient(900px 700px at 50% 15%, rgba(201,152,70,.10), transparent 60%),
-        radial-gradient(900px 700px at 50% 90%, rgba(255,255,255,.06), transparent 62%),
-        linear-gradient(180deg, rgba(7,7,10,.92), rgba(7,7,10,.86));
-      backdrop-filter: blur(12px);
-      transition: opacity var(--t) var(--ease), transform var(--t) var(--ease);
-      overflow: hidden;
-    }
-    .gate[aria-hidden="true"]{ opacity:0; transform: translateY(-6px) scale(.99); pointer-events:none; }
-
-    .gate::after{
-      content:"";
-      position:absolute;
-      inset: 0;
-      pointer-events:none;
-      background-image: var(--gateHandUrl);
-      background-repeat: no-repeat;
-      background-position: 86% 78%;
-      background-size: min(560px, 78vw);
-      opacity: .18;
-      filter: grayscale(20%) contrast(110%) brightness(90%) blur(.2px);
-      transform: translateY(8px);
-      mix-blend-mode: soft-light;
-    }
-    .gate::before{
-      content:"";
-      position:absolute;
-      inset:0;
-      pointer-events:none;
-      background:
-        radial-gradient(900px 520px at 80% 70%, rgba(201,152,70,.10), transparent 62%),
-        radial-gradient(900px 620px at 30% 10%, rgba(255,255,255,.06), transparent 62%),
-        linear-gradient(180deg, rgba(7,7,10,.75), rgba(7,7,10,.88));
-      opacity: .85;
-    }
-
-    .gateCard{
-      width: min(560px, 100%);
-      border-radius: var(--radius2);
-      border: 1px solid rgba(255,255,255,.12);
-      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.035));
-      box-shadow: var(--shadow);
-      overflow: hidden;
+    /* Layout */
+    .wrap{
       position: relative;
       z-index: 1;
+      width: min(880px, 100%);
+      margin: 0 auto;
+      padding: calc(var(--pad) + var(--safeTop)) var(--pad) calc(98px + var(--safeBot));
+      display: grid;
+      gap: 18px;
     }
-    .gateCard::before{
-      content:"";
-      position:absolute; inset:-1px;
-      background:
-        radial-gradient(800px 360px at 20% 0%, rgba(201,152,70,.16), transparent 55%),
-        radial-gradient(700px 360px at 90% 30%, rgba(255,255,255,.08), transparent 60%);
-      opacity: .75;
-      pointer-events:none;
-    }
-    .gateInner{ position: relative; padding: clamp(22px, 5vw, 34px); }
 
-    .filigree{
-      position: absolute;
-      inset: -22% -22%;
-      opacity: .16;
-      pointer-events:none;
-      filter: blur(.2px);
+    section{
+      border-radius: var(--r2);
+      border: 1px solid rgba(255,255,255,.11);
+      background: linear-gradient(180deg, rgba(255,255,255,.055), rgba(255,255,255,.032));
+      box-shadow: var(--shadow2);
+      overflow: hidden;
+      position: relative;
     }
-    .gateTop{ display:flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
-    .to{ font-size: 13px; color: var(--faint); letter-spacing: .12em; text-transform: uppercase; }
-    .recipient{
-      font-family: "Playfair Display", serif;
-      font-size: clamp(22px, 5.2vw, 30px);
-      line-height: 1.18;
+    .inner{ padding: var(--pad); }
+
+    .kicker{
+      margin: 0 0 10px;
+      font-size: 12px;
+      letter-spacing: .20em;
+      text-transform: uppercase;
+      color: var(--faint);
+    }
+    .title{
+      font-family: "Cormorant Garamond", serif;
+      font-weight: 600;
+      margin: 0;
+      line-height: 1.08;
       letter-spacing: .01em;
-      margin:0;
     }
-    .gateHint{ margin: 6px 0 0; color: var(--muted); font-size: 14.5px; }
+    .h1{ font-size: clamp(34px, 7vw, 52px); }
+    .h2{ font-size: clamp(24px, 5vw, 34px); }
+    .lead{
+      margin: 12px 0 0;
+      color: var(--muted);
+      font-size: 15.5px;
+      line-height: 1.9;
+    }
 
-    .gateBtnRow{
+    .divider{
+      height: 1px;
+      width: 100%;
+      margin: 18px 0;
+      background: linear-gradient(90deg, transparent, rgba(201,152,70,.55), transparent);
+      opacity: .75;
+    }
+
+    .chipRow{
       display:flex;
-      gap: 12px;
-      align-items: center;
-      margin-top: 22px;
       flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 16px;
+    }
+    .chip{
+      display:inline-flex;
+      align-items:center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.035);
+      color: rgba(246,246,246,.78);
+      font-size: 13px;
+      white-space: nowrap;
+    }
+    .dot{
+      width: 6px; height: 6px; border-radius: 999px;
+      background: var(--gold);
+      box-shadow: 0 0 0 5px rgba(201,152,70,.12);
+      opacity: .95;
     }
 
+    /* Buttons */
+    .btnRow{ display:flex; flex-wrap:wrap; gap: 10px; margin-top: 16px; }
     .btn{
       border: 1px solid rgba(255,255,255,.16);
       background: rgba(255,255,255,.05);
       padding: 12px 16px;
       border-radius: 999px;
       cursor: pointer;
-      transition: transform var(--t2) var(--ease), background var(--t2) var(--ease), border-color var(--t2) var(--ease);
       display:inline-flex;
       align-items:center;
       gap: 10px;
-      user-select: none;
+      transition: transform var(--t2) var(--ease), border-color var(--t2) var(--ease), background var(--t2) var(--ease);
       -webkit-tap-highlight-color: transparent;
+      user-select: none;
     }
     .btn:hover{ transform: translateY(-1px); border-color: rgba(255,255,255,.22); background: rgba(255,255,255,.07); }
     .btn:active{ transform: translateY(0px); }
     .btnPrimary{
-      border-color: rgba(201,152,70,.40);
-      background: linear-gradient(180deg, rgba(201,152,70,.18), rgba(201,152,70,.10));
+      border-color: rgba(201,152,70,.42);
+      background: linear-gradient(180deg, rgba(201,152,70,.20), rgba(201,152,70,.11));
     }
-    .btnPrimary:hover{ border-color: rgba(201,152,70,.55); background: linear-gradient(180deg, rgba(201,152,70,.22), rgba(201,152,70,.12)); }
-    .btn .ic{ width: 18px; height: 18px; opacity: .9; }
-    .spark{
-      width: 8px; height: 8px; border-radius: 50%;
-      background: rgba(201,152,70,.9);
-      box-shadow: 0 0 0 6px rgba(201,152,70,.14);
-    }
+    .btnPrimary:hover{ border-color: rgba(201,152,70,.58); background: linear-gradient(180deg, rgba(201,152,70,.25), rgba(201,152,70,.13)); }
+    .btn svg{ width: 18px; height: 18px; opacity: .92; }
 
-    /* Layout */
-    .shell{
-      width: min(860px, 100%);
-      margin: 0 auto;
-      padding: calc(var(--pad) + var(--safeTop)) var(--pad) calc(88px + var(--safeBot));
-    }
-    .content{ display:flex; flex-direction: column; gap: 22px; min-width: 0; }
-
-    section{
-      border-radius: var(--radius2);
-      border: 1px solid rgba(255,255,255,.10);
-      background: linear-gradient(180deg, rgba(255,255,255,.045), rgba(255,255,255,.03));
-      box-shadow: 0 16px 40px rgba(0,0,0,.35);
-      overflow: hidden;
-    }
-    .secInner{ padding: var(--pad); }
-
-    .eyebrow{
-      font-size: 12px;
-      letter-spacing: .18em;
-      text-transform: uppercase;
-      color: var(--faint);
-      margin: 0 0 10px;
-    }
-    .h1, .h2{
-      font-family: "Playfair Display", serif;
-      font-weight: 600;
-      margin: 0;
-      letter-spacing: .01em;
-      line-height: 1.18;
-    }
-    .h1{ font-size: clamp(30px, 6.4vw, 44px); }
-    .h2{ font-size: clamp(22px, 4.8vw, 30px); }
-
-    .sub{
-      margin: 10px 0 0;
-      color: var(--muted);
-      font-size: 15.5px;
-      line-height: 1.85;
-    }
-    .goldLine{
-      height: 1px;
-      width: 100%;
-      background: linear-gradient(90deg, transparent, rgba(201,152,70,.55), transparent);
-      margin: 18px 0;
-      opacity: .7;
-    }
-
-    .heroMeta{
-      display:flex; flex-wrap:wrap; gap: 10px 14px;
-      margin-top: 18px;
-      color: var(--muted);
-      font-size: 14px;
-    }
-    .pill{
-      display:inline-flex;
-      align-items:center;
-      gap: 8px;
-      padding: 8px 12px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.035);
-    }
-    .pill .dot{
-      width: 6px; height: 6px; border-radius: 50%;
-      background: rgba(201,152,70,.85);
-      box-shadow: 0 0 0 5px rgba(201,152,70,.12);
-      opacity: .9;
-    }
-
-    /* Inline Photo Slot (between texts) */
-    .inlinePhotoSlot{
+    /* Inline photo slot */
+    .photoSlot{
       margin: 16px 0 10px;
-      border-radius: var(--radius2);
+      border-radius: var(--r2);
       overflow: hidden;
       border: 1px solid rgba(255,255,255,.12);
-      background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.03));
+      background: linear-gradient(180deg, rgba(255,255,255,.055), rgba(255,255,255,.03));
       box-shadow: var(--shadow);
       position: relative;
       aspect-ratio: 16 / 10;
-      min-height: 220px;
-      max-height: 460px;
+      min-height: 240px;
     }
     @media (max-width: 420px){
-      .inlinePhotoSlot{ aspect-ratio: 4 / 5; min-height: 260px; }
+      .photoSlot{ aspect-ratio: 4 / 5; min-height: 280px; }
     }
-
-    /* Main Photo Stage (single instance moved across slots) */
-    .photoStage{
-      position:absolute;
-      inset:0;
-      width:100%;
-      height:100%;
-      isolation: isolate;
-    }
-    .photoLayer{
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      transform: scale(1.03);
-      filter: saturate(.98) contrast(1.02);
-      opacity: 0;
-      transition: opacity var(--t) var(--ease), transform var(--t) var(--ease), filter var(--t) var(--ease);
-    }
-    .photoLayer.is-active{
-      opacity: 1;
-      transform: scale(1);
-      filter: saturate(1) contrast(1.03);
-    }
-    .photoOverlay{
-      position: absolute; inset:0;
-      pointer-events:none;
-      background:
-        radial-gradient(900px 440px at 10% 0%, rgba(201,152,70,.12), transparent 60%),
-        radial-gradient(700px 420px at 95% 18%, rgba(255,255,255,.08), transparent 62%),
-        linear-gradient(180deg, rgba(7,7,10,.10), rgba(7,7,10,.42));
-      mix-blend-mode: soft-light;
-    }
-    .photoFrame{
-      position:absolute; inset:0;
-      background:
-        radial-gradient(700px 340px at 18% 10%, rgba(201,152,70,.10), transparent 60%),
-        radial-gradient(800px 420px at 90% 75%, rgba(255,255,255,.06), transparent 62%),
-        linear-gradient(180deg, rgba(10,11,14,.92), rgba(12,13,18,.92));
-      opacity: 0;
-      transition: opacity var(--t) var(--ease);
-    }
-    .photoFrame.is-on{ opacity: 1; }
-
-    .inlinePhotoSlot::after{
+    .photoSlot::after{
       content:"";
-      position:absolute;
-      inset: 0;
+      position:absolute; inset: 0;
       pointer-events:none;
       box-shadow: inset 0 0 0 1px rgba(201,152,70,.10);
-      opacity: .9;
       border-radius: inherit;
+      opacity: .9;
     }
 
-    /* 1-column dynamic layout blocks */
-    .storyStack{ display:grid; gap: 12px; margin-top: 14px; }
-    .storyBlock{
-      border-radius: var(--radius2);
+    /* Photo Stage (single instance) */
+    .stage{
+      position:absolute; inset:0;
+      width:100%; height:100%;
+      isolation:isolate;
+    }
+    .layer{
+      position:absolute; inset:0;
+      width:100%; height:100%;
+      object-fit: cover;
+      opacity: 0;
+      transform: scale(1.015);
+      transition: opacity var(--t) var(--ease2), transform var(--t) var(--ease2);
+      filter: saturate(.98) contrast(1.02);
+    }
+    .layer.on{ opacity: 1; transform: scale(1); }
+    .stageWash{
+      position:absolute; inset:0;
+      pointer-events:none;
+      background:
+        radial-gradient(860px 420px at 14% 0%, rgba(201,152,70,.14), transparent 62%),
+        radial-gradient(720px 420px at 90% 16%, rgba(255,255,255,.08), transparent 64%),
+        linear-gradient(180deg, rgba(0,0,0,.10), rgba(0,0,0,.42));
+      mix-blend-mode: soft-light;
+      opacity: .92;
+    }
+    .fallback{
+      position:absolute; inset:0;
+      opacity: 0;
+      transition: opacity var(--t) var(--ease2);
+      background:
+        radial-gradient(720px 420px at 18% 8%, rgba(201,152,70,.12), transparent 62%),
+        radial-gradient(820px 480px at 90% 86%, rgba(255,255,255,.07), transparent 62%),
+        linear-gradient(180deg, rgba(8,9,12,.92), rgba(12,13,18,.92));
+    }
+    .fallback.on{ opacity: 1; }
+
+    /* Varied inline blocks (1-column, not a gallery section) */
+    .stack{ display:grid; gap: 12px; margin-top: 16px; }
+    .blk{
+      border-radius: var(--r2);
       border: 1px solid rgba(255,255,255,.12);
       background: linear-gradient(180deg, rgba(255,255,255,.045), rgba(255,255,255,.028));
-      box-shadow: 0 16px 42px rgba(0,0,0,.38);
-      overflow:hidden;
+      box-shadow: var(--shadow2);
+      overflow: hidden;
       position: relative;
-      transform: translateY(var(--y, 0px));
-      transition: transform var(--t2) var(--ease), border-color var(--t2) var(--ease);
+      transition: border-color var(--t2) var(--ease), transform var(--t2) var(--ease);
     }
-    .storyBlock:hover{ transform: translateY(calc(var(--y, 0px) - 1px)); border-color: rgba(255,255,255,.18); }
-
-    .storyMedia{
+    .blk:hover{ border-color: rgba(255,255,255,.18); transform: translateY(-1px); }
+    .blkMedia{
       position: relative;
-      aspect-ratio: 16/11;
-      min-height: 220px;
+      aspect-ratio: 16 / 11;
+      min-height: 240px;
       background:
-        radial-gradient(700px 340px at 18% 10%, rgba(201,152,70,.10), transparent 60%),
-        radial-gradient(800px 420px at 90% 75%, rgba(255,255,255,.06), transparent 62%),
-        linear-gradient(180deg, rgba(10,11,14,.92), rgba(12,13,18,.92));
+        radial-gradient(720px 420px at 18% 8%, rgba(201,152,70,.12), transparent 62%),
+        radial-gradient(820px 480px at 90% 86%, rgba(255,255,255,.07), transparent 62%),
+        linear-gradient(180deg, rgba(8,9,12,.92), rgba(12,13,18,.92));
     }
-    @media (max-width: 420px){ .storyMedia{ aspect-ratio: 4/5; } }
-
-    .storyMedia img{
+    @media (max-width: 420px){ .blkMedia{ aspect-ratio: 4/5; } }
+    .blkMedia img{
       position:absolute; inset:0;
       width:100%; height:100%;
       object-fit: cover;
       display:block;
-      filter: saturate(.98) contrast(1.02);
       transform: scale(1.01);
+      filter: saturate(.98) contrast(1.02);
     }
-    .storyMedia[data-broken="true"] img{ display:none; }
-
-    .storyMedia::after{
+    .blkMedia[data-broken="true"] img{ display:none; }
+    .blkMedia::after{
       content:"";
       position:absolute; inset:0;
       pointer-events:none;
       background:
-        radial-gradient(720px 320px at 14% 0%, rgba(201,152,70,.14), transparent 62%),
-        linear-gradient(180deg, rgba(0,0,0,.0), rgba(0,0,0,.34));
+        radial-gradient(720px 320px at 14% 0%, rgba(201,152,70,.16), transparent 62%),
+        linear-gradient(180deg, rgba(0,0,0,.0), rgba(0,0,0,.36));
       mix-blend-mode: soft-light;
-      opacity: .9;
+      opacity: .95;
     }
 
-    .storyCaption{
+    .blkCap{
       padding: 14px 14px 16px;
-      display:grid;
-      gap: 6px;
-      background: rgba(0,0,0,.06);
       border-top: 1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.06);
+      display:grid; gap: 6px;
     }
-    .storyName{
-      font-family: "Playfair Display", serif;
-      font-size: 18px;
-      letter-spacing: .01em;
+    .blkName{
+      font-family: "Cormorant Garamond", serif;
+      font-weight: 600;
+      font-size: 20px;
+      line-height: 1.15;
       margin: 0;
-      line-height: 1.25;
+      letter-spacing: .01em;
     }
-    .storyNote{
-      margin:0;
+    .blkNote{
+      margin: 0;
       color: var(--muted);
-      font-size: 14.5px;
+      font-size: 14.8px;
       line-height: 1.85;
     }
 
-    /* Variant styles for diversity (still 1-column) */
-    .storyBlock[data-variant="overlay"] .storyCaption{
+    .blk[data-variant="overlay"] .blkCap{
       position:absolute;
-      left: 14px; right: 14px;
-      bottom: 14px;
+      left: 14px; right: 14px; bottom: 14px;
       border-radius: 18px;
       border: 1px solid rgba(255,255,255,.12);
-      background: rgba(10,11,14,.54);
+      background: rgba(10,11,14,.56);
       backdrop-filter: blur(10px);
-      box-shadow: 0 14px 38px rgba(0,0,0,.55);
+      box-shadow: var(--shadow2);
       border-top: none;
     }
-    .storyBlock[data-variant="overlay"] .storyMedia{ min-height: 260px; }
-    .storyBlock[data-variant="overlay"] .storyNote{ color: rgba(245,245,245,.70); }
-
-    .storyBlock[data-variant="topcap"] .storyCaption{
-      border-top: none;
-      border-bottom: 1px solid rgba(255,255,255,.10);
-    }
-    .storyBlock[data-variant="topcap"] .storyMedia{ border-top: 1px solid rgba(255,255,255,.10); }
-
-    .badgeMini{
+    .tag{
       position:absolute;
-      top: 14px;
-      left: 14px;
+      top: 14px; left: 14px;
       display:inline-flex;
       align-items:center;
       gap: 8px;
       padding: 8px 12px;
       border-radius: 999px;
       border: 1px solid rgba(255,255,255,.12);
-      background: rgba(10,11,14,.48);
+      background: rgba(10,11,14,.50);
       backdrop-filter: blur(10px);
-      box-shadow: 0 14px 38px rgba(0,0,0,.55);
-      color: rgba(245,245,245,.88);
+      box-shadow: var(--shadow2);
+      color: rgba(246,246,246,.86);
       font-size: 12px;
-      letter-spacing: .14em;
+      letter-spacing: .18em;
       text-transform: uppercase;
     }
-    .badgeMini .dot{
-      width: 6px; height: 6px; border-radius: 50%;
-      background: rgba(201,152,70,.92);
-      box-shadow: 0 0 0 5px rgba(201,152,70,.14);
-      opacity: .95;
-    }
+    .tag .dot{ box-shadow: 0 0 0 5px rgba(201,152,70,.14); }
 
-    /* Event cards */
-    .cards{
+    /* Event cards + countdown */
+    .grid2{
       display:grid;
       grid-template-columns: 1fr;
-      gap: 14px;
-      margin-top: 16px;
+      gap: 12px;
+      margin-top: 14px;
     }
-    @media (min-width: 700px){
-      .cards{ grid-template-columns: 1fr 1fr; }
+    @media (min-width: 720px){
+      .grid2{ grid-template-columns: 1fr 1fr; }
     }
     .card{
-      border-radius: var(--radius);
+      border-radius: var(--r);
       border: 1px solid rgba(255,255,255,.12);
       background: linear-gradient(180deg, rgba(255,255,255,.055), rgba(255,255,255,.03));
       padding: 16px 16px 14px;
-      box-shadow: 0 14px 30px rgba(0,0,0,.32);
+      box-shadow: var(--shadow2);
+      transition: transform var(--t2) var(--ease), border-color var(--t2) var(--ease);
       position: relative;
       overflow:hidden;
-      transition: transform var(--t2) var(--ease), border-color var(--t2) var(--ease);
     }
     .card:hover{ transform: translateY(-1px); border-color: rgba(255,255,255,.18); }
-    .cardTitle{
+    .row{
       display:flex;
-      align-items: baseline;
       justify-content: space-between;
       gap: 10px;
-      margin: 2px 0 8px;
+      align-items: baseline;
+      margin-bottom: 10px;
     }
-    .cardTitle h3{
-      font-family: "Playfair Display", serif;
-      font-size: 18px;
-      margin:0;
-      letter-spacing:.01em;
+    .card h3{
+      font-family: "Cormorant Garamond", serif;
+      font-weight: 600;
+      margin: 0;
+      font-size: 20px;
+      letter-spacing: .01em;
     }
     .badge{
       font-size: 12px;
-      color: rgba(201,152,70,.95);
-      border: 1px solid rgba(201,152,70,.28);
+      color: var(--gold);
+      border: 1px solid rgba(201,152,70,.30);
       background: rgba(201,152,70,.10);
       padding: 4px 10px;
       border-radius: 999px;
       white-space: nowrap;
     }
-    .cardBody{
-      color: var(--muted);
-      font-size: 14.5px;
-      line-height: 1.9;
-    }
-    .kv{ margin-top: 10px; display:grid; gap: 6px; }
-    .kvRow{
-      display:flex;
-      justify-content: space-between;
-      gap: 10px;
+    .kv{ display:grid; gap: 8px; color: var(--muted); font-size: 14.5px; line-height: 1.85; }
+    .kvLine{
+      display:flex; justify-content: space-between; gap: 12px;
       border-bottom: 1px dashed rgba(255,255,255,.10);
       padding-bottom: 8px;
     }
-    .kvRow:last-child{ border-bottom: none; padding-bottom:0; }
+    .kvLine:last-child{ border-bottom: none; padding-bottom:0; }
     .k{ color: var(--faint); }
     .v{ color: var(--text); }
 
-    /* Countdown */
-    .countdown{
+    .count{
       margin-top: 14px;
       display:flex;
       flex-wrap: wrap;
       gap: 10px;
     }
-    .timeBox{
+    .tbox{
+      min-width: 96px;
       border-radius: 14px;
       border: 1px solid rgba(255,255,255,.12);
       background: rgba(255,255,255,.035);
       padding: 10px 12px;
-      min-width: 92px;
       text-align:center;
     }
-    .timeBox b{
+    .tbox b{
       display:block;
       font-size: 18px;
       letter-spacing: .02em;
-      color: rgba(245,245,245,.94);
+      color: rgba(246,246,246,.94);
     }
-    .timeBox span{
+    .tbox span{
       display:block;
       margin-top: 2px;
       font-size: 12px;
-      letter-spacing: .14em;
+      letter-spacing: .16em;
       text-transform: uppercase;
       color: var(--faint);
     }
 
-    .actions{
-      margin-top: 16px;
-      display:flex;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-
-    /* RSVP form */
+    /* Form */
     .form{ margin-top: 14px; display:grid; gap: 12px; }
     .field{ display:grid; gap: 8px; }
     label{
       font-size: 12px;
-      letter-spacing: .14em;
+      letter-spacing: .18em;
       text-transform: uppercase;
       color: var(--faint);
     }
@@ -597,16 +481,17 @@ QUALITY CHECKLIST (PASS):
       border-radius: 14px;
       padding: 12px 12px;
       outline: none;
-      transition: border-color var(--t2) var(--ease), background var(--t2) var(--ease);
+      transition: border-color var(--t2) var(--ease), background var(--t2) var(--ease), box-shadow var(--t2) var(--ease);
     }
-    textarea{ min-height: 108px; resize: vertical; }
+    textarea{ min-height: 110px; resize: vertical; }
     input:focus, select:focus, textarea:focus{
-      border-color: rgba(201,152,70,.40);
+      border-color: rgba(201,152,70,.42);
       background: rgba(255,255,255,.05);
       box-shadow: 0 0 0 6px rgba(201,152,70,.10);
     }
 
-    .guestbook{ margin-top: 18px; display:grid; gap: 10px; }
+    /* Guestbook */
+    .guestbook{ margin-top: 16px; display:grid; gap: 10px; }
     .entry{
       border-radius: 16px;
       border: 1px solid rgba(255,255,255,.11);
@@ -614,22 +499,23 @@ QUALITY CHECKLIST (PASS):
       padding: 12px 12px 12px;
       overflow:hidden;
     }
-    .entryTop{
+    .etop{
       display:flex;
       justify-content: space-between;
       gap: 10px;
       align-items: baseline;
       margin-bottom: 6px;
     }
-    .entryName{
+    .ename{
       font-weight: 650;
       letter-spacing: .01em;
       display:flex;
       gap: 8px;
       align-items:center;
       min-width: 0;
+      flex-wrap: wrap;
     }
-    .chip{
+    .pchip{
       font-size: 11px;
       padding: 3px 8px;
       border-radius: 999px;
@@ -638,94 +524,185 @@ QUALITY CHECKLIST (PASS):
       background: rgba(255,255,255,.03);
       white-space: nowrap;
     }
-    .chip.ok{
+    .pchip.ok{
       border-color: rgba(201,152,70,.28);
       color: rgba(201,152,70,.92);
       background: rgba(201,152,70,.10);
     }
-    .entryTime{ font-size: 12px; color: var(--faint); white-space: nowrap; }
-    .entryMsg{
+    .etime{ font-size: 12px; color: var(--faint); white-space: nowrap; }
+    .emsg{
+      margin: 0;
       color: var(--muted);
       font-size: 14px;
       line-height: 1.85;
-      margin: 0;
       word-break: break-word;
     }
 
+    /* Gate */
+    .gate{
+      position: fixed;
+      inset: 0;
+      z-index: 60;
+      display: grid;
+      place-items: center;
+      padding: calc(var(--pad) + var(--safeTop)) var(--pad) calc(var(--pad) + var(--safeBot));
+      background:
+        radial-gradient(900px 700px at 50% 16%, rgba(201,152,70,.10), transparent 60%),
+        radial-gradient(900px 700px at 50% 90%, rgba(255,255,255,.06), transparent 62%),
+        linear-gradient(180deg, rgba(7,7,10,.92), rgba(7,7,10,.86));
+      backdrop-filter: blur(12px);
+      transition: opacity var(--t) var(--ease), transform var(--t) var(--ease);
+      overflow: hidden;
+    }
+    .gate[aria-hidden="true"]{ opacity:0; transform: translateY(-8px) scale(.99); pointer-events:none; }
+    .gate::after{
+      content:"";
+      position:absolute; inset:0;
+      pointer-events:none;
+      background-image: var(--handUrl);
+      background-repeat: no-repeat;
+      background-position: 84% 78%;
+      background-size: min(600px, 82vw);
+      opacity: .18;
+      filter: grayscale(25%) contrast(110%) brightness(90%);
+      transform: translateY(10px);
+      mix-blend-mode: soft-light;
+    }
+    .gate::before{
+      content:"";
+      position:absolute; inset:0;
+      pointer-events:none;
+      background:
+        radial-gradient(900px 520px at 80% 70%, rgba(201,152,70,.10), transparent 62%),
+        radial-gradient(900px 620px at 30% 10%, rgba(255,255,255,.06), transparent 62%),
+        linear-gradient(180deg, rgba(7,7,10,.70), rgba(7,7,10,.88));
+      opacity: .90;
+    }
+    .gCard{
+      width: min(600px, 100%);
+      border-radius: var(--r2);
+      border: 1px solid rgba(255,255,255,.12);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.035));
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      position: relative;
+      z-index: 1;
+    }
+    .gInner{ padding: clamp(22px, 5vw, 36px); position: relative; }
+
+    .orn{
+      position:absolute; inset:-22% -22%;
+      opacity: .16;
+      pointer-events:none;
+      filter: blur(.2px);
+    }
+    .to{
+      font-size: 12px;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+      color: var(--faint);
+      margin: 0 0 8px;
+    }
+    .gName{
+      font-family: "Cormorant Garamond", serif;
+      font-weight: 600;
+      font-size: clamp(26px, 6vw, 36px);
+      line-height: 1.05;
+      margin: 0;
+      letter-spacing: .01em;
+    }
+    .gCopy{
+      margin: 10px 0 0;
+      color: var(--muted);
+      font-size: 14.8px;
+      line-height: 1.85;
+    }
+    .gMeta{
+      margin-top: 16px;
+      display:grid;
+      gap: 6px;
+      color: rgba(246,246,246,.80);
+    }
+    .gMeta b{
+      font-family: "Cormorant Garamond", serif;
+      font-weight: 600;
+      font-size: 18px;
+      letter-spacing: .01em;
+    }
+    .gMeta span{ color: var(--muted); font-size: 14.5px; }
+    .gActions{ display:flex; flex-wrap:wrap; gap: 10px; align-items:center; margin-top: 18px; }
+
+    /* Audio dock */
+    .dock{
+      position: fixed;
+      top: calc(14px + var(--safeTop));
+      right: 14px;
+      z-index: 50;
+      display:flex;
+      gap: 10px;
+      align-items:center;
+    }
+    .led{
+      width: 8px; height: 8px;
+      border-radius: 999px;
+      background: rgba(246,246,246,.34);
+      box-shadow: 0 0 0 6px rgba(246,246,246,.08);
+    }
+    .led.on{
+      background: var(--gold);
+      box-shadow: 0 0 0 6px rgba(201,152,70,.14);
+    }
+    .ibtn{
+      width: 46px; height: 46px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(10,11,14,.56);
+      backdrop-filter: blur(10px);
+      box-shadow: var(--shadow2);
+      display:grid; place-items:center;
+      cursor:pointer;
+      transition: transform var(--t2) var(--ease), border-color var(--t2) var(--ease), background var(--t2) var(--ease);
+      -webkit-tap-highlight-color: transparent;
+    }
+    .ibtn:hover{ transform: translateY(-1px); border-color: rgba(255,255,255,.18); background: rgba(255,255,255,.05); }
+    .ibtn svg{ width: 18px; height: 18px; opacity: .92; }
+
     /* Mini nav */
-    .miniNav{
+    .navWrap{
       position: fixed;
       left: 50%;
       bottom: calc(14px + var(--safeBot));
       transform: translateX(-50%);
-      z-index: 40;
+      z-index: 55;
       padding: 10px;
     }
-    .navBar{
+    .nav{
       display:flex;
       gap: 8px;
       align-items: center;
       border-radius: 999px;
       border: 1px solid rgba(255,255,255,.12);
-      background: rgba(10,11,14,.58);
+      background: rgba(10,11,14,.60);
       backdrop-filter: blur(10px);
-      box-shadow: 0 18px 50px rgba(0,0,0,.55);
+      box-shadow: var(--shadow);
       padding: 8px;
     }
-    .navBtn{
-      width: 42px;
-      height: 42px;
+    .nbtn{
+      width: 42px; height: 42px;
       border-radius: 999px;
       border: 1px solid transparent;
       background: transparent;
       cursor:pointer;
-      display:grid;
-      place-items:center;
+      display:grid; place-items:center;
       transition: background var(--t2) var(--ease), border-color var(--t2) var(--ease), transform var(--t2) var(--ease);
       -webkit-tap-highlight-color: transparent;
     }
-    .navBtn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.05); }
-    .navBtn.is-active{
-      border-color: rgba(201,152,70,.40);
-      background: linear-gradient(180deg, rgba(201,152,70,.16), rgba(201,152,70,.08));
+    .nbtn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.05); }
+    .nbtn.active{
+      border-color: rgba(201,152,70,.42);
+      background: linear-gradient(180deg, rgba(201,152,70,.17), rgba(201,152,70,.09));
     }
-    .navBtn svg{ width: 19px; height: 19px; opacity: .9; }
-
-    /* Audio controls */
-    .audioDock{
-      position: fixed;
-      top: calc(14px + var(--safeTop));
-      right: 14px;
-      z-index: 45;
-      display:flex;
-      gap: 10px;
-      align-items:center;
-    }
-    .iconBtn{
-      width: 46px; height: 46px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,.12);
-      background: rgba(10,11,14,.55);
-      backdrop-filter: blur(10px);
-      box-shadow: 0 16px 44px rgba(0,0,0,.55);
-      display:grid;
-      place-items:center;
-      cursor:pointer;
-      transition: transform var(--t2) var(--ease), border-color var(--t2) var(--ease), background var(--t2) var(--ease);
-      -webkit-tap-highlight-color: transparent;
-    }
-    .iconBtn:hover{ transform: translateY(-1px); border-color: rgba(255,255,255,.18); background: rgba(255,255,255,.05); }
-    .iconBtn svg{ width: 18px; height: 18px; opacity: .92; }
-    .audioStatus{
-      width: 8px; height: 8px; border-radius: 999px;
-      background: rgba(245,245,245,.35);
-      box-shadow: 0 0 0 6px rgba(245,245,245,.08);
-      opacity: .92;
-    }
-    .audioStatus.is-on{
-      background: rgba(201,152,70,.92);
-      box-shadow: 0 0 0 6px rgba(201,152,70,.14);
-    }
+    .nbtn svg{ width: 19px; height: 19px; opacity: .9; }
 
     /* Toast */
     .toasts{
@@ -742,21 +719,26 @@ QUALITY CHECKLIST (PASS):
     .toast{
       border-radius: 16px;
       border: 1px solid rgba(255,255,255,.12);
-      background: rgba(10,11,14,.68);
+      background: rgba(10,11,14,.70);
       backdrop-filter: blur(10px);
-      box-shadow: 0 18px 50px rgba(0,0,0,.55);
+      box-shadow: var(--shadow);
       padding: 12px 14px;
       display:flex;
       gap: 10px;
       align-items: flex-start;
-      pointer-events:none;
       opacity: 0;
       transform: translateY(-6px);
       transition: opacity var(--t2) var(--ease), transform var(--t2) var(--ease);
     }
     .toast.show{ opacity: 1; transform: translateY(0px); }
-    .toast .spark{ margin-top: 5px; }
-    .toast p{ margin:0; color: rgba(245,245,245,.90); font-size: 14px; line-height: 1.6; }
+    .spark{
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--gold);
+      box-shadow: 0 0 0 6px rgba(201,152,70,.14);
+      margin-top: 5px;
+      opacity: .95;
+    }
+    .toast p{ margin:0; color: rgba(246,246,246,.90); font-size: 14px; line-height: 1.6; }
 
     /* Modal */
     .modal{
@@ -764,33 +746,32 @@ QUALITY CHECKLIST (PASS):
       z-index: 80;
       display:grid; place-items:center;
       padding: calc(var(--pad) + var(--safeTop)) var(--pad) calc(var(--pad) + var(--safeBot));
-      background: rgba(7,7,10,.62);
+      background: rgba(7,7,10,.64);
       backdrop-filter: blur(10px);
       opacity: 0; pointer-events:none;
       transition: opacity var(--t) var(--ease);
     }
     .modal[aria-hidden="false"]{ opacity: 1; pointer-events:auto; }
-    .modalCard{
-      width: min(520px, 100%);
-      border-radius: var(--radius2);
+    .mCard{
+      width: min(540px, 100%);
+      border-radius: var(--r2);
       border: 1px solid rgba(255,255,255,.12);
       background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
       box-shadow: var(--shadow);
       overflow:hidden;
       position: relative;
     }
-    .modalInner{ padding: 18px 18px 16px; }
-    .modalTitle{
-      font-family: "Playfair Display", serif;
+    .mInner{ padding: 18px 18px 16px; }
+    .mTitle{
+      font-family: "Cormorant Garamond", serif;
       margin: 0 0 6px;
-      font-size: 18px;
+      font-weight: 600;
+      font-size: 20px;
       letter-spacing: .01em;
     }
-    .modalText{ margin: 0; color: var(--muted); font-size: 14.5px; line-height: 1.85; }
-    .modalActions{
-      display:flex;
-      justify-content:flex-end;
-      gap: 10px;
+    .mText{ margin: 0; color: var(--muted); font-size: 14.8px; line-height: 1.85; }
+    .mActions{
+      display:flex; justify-content:flex-end; gap: 10px;
       padding: 12px 14px 14px;
       border-top: 1px solid rgba(255,255,255,.10);
       background: rgba(0,0,0,.08);
@@ -802,437 +783,427 @@ QUALITY CHECKLIST (PASS):
       transform: translateY(8px);
       transition: opacity var(--t) var(--ease), transform var(--t) var(--ease);
     }
-    .is-revealed{ opacity: 1 !important; transform: translateY(0px) !important; }
+    .revealed{ opacity: 1 !important; transform: translateY(0px) !important; }
 
     @media (prefers-reduced-motion: reduce){
       [data-reveal]{ opacity: 1; transform: none; }
-      .btn, .card, .navBtn, .iconBtn, .toast, .photoLayer, .storyBlock{ transition: none !important; }
-      .storyBlock:hover{ transform: translateY(var(--y, 0px)); }
+      .btn, .card, .nbtn, .ibtn, .toast, .layer, .blk{ transition: none !important; }
+      .blk:hover{ transform: none; }
     }
   </style>
 </head>
 
 <body class="locked">
-  <audio id="bgm" preload="none">
+  <audio id="bgm" preload="metadata" playsinline webkit-playsinline>
     <source src="/assets/audio/wedding.mp3" type="audio/mpeg" />
   </audio>
 
   <div class="toasts" id="toasts" aria-live="polite" aria-atomic="true"></div>
 
   <div class="modal" id="modal" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Konfirmasi">
-    <div class="modalCard" role="document">
-      <div class="modalInner">
-        <h3 class="modalTitle" id="modalTitle">Konfirmasi</h3>
-        <p class="modalText" id="modalText">Apakah Anda yakin?</p>
+    <div class="mCard" role="document">
+      <div class="mInner">
+        <h3 class="mTitle" id="mTitle">Konfirmasi</h3>
+        <p class="mText" id="mText">Apakah Anda yakin?</p>
       </div>
-      <div class="modalActions">
-        <button class="btn" id="modalCancel" type="button">Batal</button>
-        <button class="btn btnPrimary" id="modalOk" type="button">Ya</button>
+      <div class="mActions">
+        <button class="btn" id="mCancel" type="button">Batal</button>
+        <button class="btn btnPrimary" id="mOk" type="button">Ya</button>
       </div>
     </div>
   </div>
 
-  <!-- Gate overlay -->
+  <!-- Gate -->
   <div class="gate" id="gate" aria-hidden="false">
-    <div class="gateCard">
-      <svg class="filigree" viewBox="0 0 800 520" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <path d="M96 360c70-66 146-98 226-96 70 2 134 28 192 78 42 36 86 54 132 54 54 0 102-22 144-66" stroke="rgba(201,152,70,.55)" stroke-width="1.2" stroke-linecap="round"/>
-        <path d="M64 190c76 44 154 66 234 66 96 0 184-30 264-90 44-32 94-48 150-48" stroke="rgba(245,245,245,.22)" stroke-width="1" stroke-linecap="round"/>
-        <path d="M168 120c34 18 70 26 108 24 46-2 92-20 138-54 34-26 72-38 114-36 54 2 108 30 162 84" stroke="rgba(201,152,70,.35)" stroke-width="1" stroke-linecap="round"/>
-        <path d="M160 420c34-14 70-20 108-18 52 2 106 22 162 60 36 24 76 34 120 30 46-4 92-24 138-60" stroke="rgba(245,245,245,.18)" stroke-width="1" stroke-linecap="round"/>
+    <div class="gCard">
+      <svg class="orn" viewBox="0 0 900 560" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M90 380c85-74 172-110 262-108 82 2 156 32 222 90 48 42 100 62 156 62 64 0 120-26 170-78" stroke="rgba(201,152,70,.55)" stroke-width="1.2" stroke-linecap="round"/>
+        <path d="M70 200c88 52 180 78 276 78 114 0 218-36 312-108 52-40 112-60 180-58" stroke="rgba(246,246,246,.20)" stroke-width="1" stroke-linecap="round"/>
+        <path d="M190 120c40 22 82 32 126 30 56-2 112-24 168-66 40-30 88-44 142-42 68 2 134 38 198 108" stroke="rgba(201,152,70,.34)" stroke-width="1" stroke-linecap="round"/>
+        <path d="M180 460c40-16 82-24 126-22 64 2 130 26 198 72 44 30 94 42 150 36 56-6 112-30 168-72" stroke="rgba(246,246,246,.16)" stroke-width="1" stroke-linecap="round"/>
       </svg>
 
-      <div class="gateInner">
-        <div class="gateTop">
-          <div class="to">Kepada Yth.</div>
-          <h1 class="recipient">Dimas Budi Ramadhan</h1>
-          <p class="gateHint">Dengan penuh hormat, kami mengundang Anda untuk hadir di hari bahagia kami.</p>
+      <div class="gInner">
+        <p class="to">Kepada Yth.</p>
+        <h1 class="gName">Dimas Budi Ramadhan</h1>
+        <p class="gCopy">Dengan penuh hormat, kami mengundang Anda untuk hadir di hari bahagia kami.</p>
+
+        <div class="divider"></div>
+
+        <div class="gMeta">
+          <b>Reza Budi Prasetyo &amp; Alya Putri Maharani</b>
+          <span>17 Januari 2026 • Le Dian Hotel Serang</span>
         </div>
 
-        <div class="goldLine"></div>
-
-        <div style="display:flex; flex-direction:column; gap:6px;">
-          <div style="font-family:'Playfair Display',serif; font-size:18px; letter-spacing:.01em;">Reza Budi Prasetyo &amp; Alya Putri Maharani</div>
-          <div style="color:var(--muted); font-size:14.5px;">17 Januari 2026 • Le Dian Hotel Serang</div>
-        </div>
-
-        <div class="gateBtnRow">
-          <button class="btn btnPrimary" id="btnOpen" type="button" aria-label="Buka undangan">
-            <span class="spark" aria-hidden="true"></span>
+        <div class="gActions">
+          <button class="btn btnPrimary" id="btnOpen" type="button" aria-label="Tap untuk membuka undangan">
+            <span class="dot" aria-hidden="true"></span>
             <span>Tap untuk membuka undangan</span>
           </button>
-          <div style="display:flex; gap:10px; align-items:center; color:var(--faint); font-size:13px;">
-            <span style="width:6px;height:6px;border-radius:999px;background:rgba(255,255,255,.25)"></span>
-            <span>Musik akan aktif setelah dibuka</span>
-          </div>
+          <span style="display:inline-flex; align-items:center; gap:10px; color:var(--faint); font-size:13px;">
+            <span style="width:6px;height:6px;border-radius:999px;background:rgba(246,246,246,.22)"></span>
+            <span>Musik aktif setelah dibuka</span>
+          </span>
         </div>
       </div>
     </div>
   </div>
 
   <!-- Audio controls -->
-  <div class="audioDock" aria-label="Kontrol musik">
-    <div class="audioStatus" id="audioStatus" aria-hidden="true"></div>
-    <button class="iconBtn" id="btnPlay" type="button" aria-label="Play atau pause musik" title="Musik">
+  <div class="dock" aria-label="Kontrol musik">
+    <div class="led" id="led" aria-hidden="true"></div>
+
+    <button class="ibtn" id="btnPlay" type="button" aria-label="Play atau pause musik" title="Musik">
       <svg id="icPlay" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-        <path d="M9.2 7.6v8.8c0 .7.7 1.1 1.3.8l7.2-4.4c.6-.4.6-1.2 0-1.6l-7.2-4.4c-.6-.3-1.3.1-1.3.8z" fill="rgba(245,245,245,.92)"/>
+        <path d="M9.2 7.6v8.8c0 .7.7 1.1 1.3.8l7.2-4.4c.6-.4.6-1.2 0-1.6l-7.2-4.4c-.6-.3-1.3.1-1.3.8z" fill="rgba(246,246,246,.92)"/>
       </svg>
       <svg id="icPause" viewBox="0 0 24 24" fill="none" aria-hidden="true" style="display:none">
-        <path d="M7.8 6.8c0-.6.4-1 1-1h1.6c.6 0 1 .4 1 1v10.4c0 .6-.4 1-1 1H8.8c-.6 0-1-.4-1-1V6.8z" fill="rgba(245,245,245,.92)"/>
-        <path d="M13.6 6.8c0-.6.4-1 1-1h1.6c.6 0 1 .4 1 1v10.4c0 .6-.4 1-1 1h-1.6c-.6 0-1-.4-1-1V6.8z" fill="rgba(245,245,245,.92)"/>
+        <path d="M7.8 6.8c0-.6.4-1 1-1h1.6c.6 0 1 .4 1 1v10.4c0 .6-.4 1-1 1H8.8c-.6 0-1-.4-1-1V6.8z" fill="rgba(246,246,246,.92)"/>
+        <path d="M13.6 6.8c0-.6.4-1 1-1h1.6c.6 0 1 .4 1 1v10.4c0 .6-.4 1-1 1h-1.6c-.6 0-1-.4-1-1V6.8z" fill="rgba(246,246,246,.92)"/>
       </svg>
     </button>
 
-    <button class="iconBtn" id="btnMute" type="button" aria-label="Mute atau unmute" title="Mute">
+    <button class="ibtn" id="btnMute" type="button" aria-label="Mute atau unmute" title="Mute">
       <svg id="icVol" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-        <path d="M4.5 10.2v3.6c0 .6.4 1 1 1h2.7l4 3.1c.7.5 1.8 0 1.8-.9V6.9c0-.9-1.1-1.4-1.8-.9l-4 3.1H5.5c-.6 0-1 .4-1 1z" fill="rgba(245,245,245,.88)"/>
-        <path d="M16.2 9.1c.9.9.9 4.9 0 5.8" stroke="rgba(245,245,245,.70)" stroke-width="1.6" stroke-linecap="round"/>
-        <path d="M18.3 7c2 2 2 8 0 10" stroke="rgba(245,245,245,.45)" stroke-width="1.6" stroke-linecap="round"/>
+        <path d="M4.5 10.2v3.6c0 .6.4 1 1 1h2.7l4 3.1c.7.5 1.8 0 1.8-.9V6.9c0-.9-1.1-1.4-1.8-.9l-4 3.1H5.5c-.6 0-1 .4-1 1z" fill="rgba(246,246,246,.86)"/>
+        <path d="M16.2 9.1c.9.9.9 4.9 0 5.8" stroke="rgba(246,246,246,.70)" stroke-width="1.6" stroke-linecap="round"/>
+        <path d="M18.3 7c2 2 2 8 0 10" stroke="rgba(246,246,246,.45)" stroke-width="1.6" stroke-linecap="round"/>
       </svg>
       <svg id="icMuted" viewBox="0 0 24 24" fill="none" aria-hidden="true" style="display:none">
-        <path d="M4.5 10.2v3.6c0 .6.4 1 1 1h2.7l4 3.1c.7.5 1.8 0 1.8-.9V6.9c0-.9-1.1-1.4-1.8-.9l-4 3.1H5.5c-.6 0-1 .4-1 1z" fill="rgba(245,245,245,.80)"/>
+        <path d="M4.5 10.2v3.6c0 .6.4 1 1 1h2.7l4 3.1c.7.5 1.8 0 1.8-.9V6.9c0-.9-1.1-1.4-1.8-.9l-4 3.1H5.5c-.6 0-1 .4-1 1z" fill="rgba(246,246,246,.78)"/>
         <path d="M16.6 9.4l4.1 4.1" stroke="rgba(201,152,70,.9)" stroke-width="1.8" stroke-linecap="round"/>
         <path d="M20.7 9.4l-4.1 4.1" stroke="rgba(201,152,70,.9)" stroke-width="1.8" stroke-linecap="round"/>
       </svg>
     </button>
   </div>
 
-  <main class="shell" aria-label="Undangan Pernikahan">
-    <div class="content">
-      <!-- 1) COVER / HERO -->
-      <section id="home" data-photo="hero" aria-label="Cover">
-        <div class="secInner">
-          <p class="eyebrow" data-reveal>17 Januari 2026</p>
-          <h1 class="h1" data-reveal>Reza Budi Prasetyo<br>&amp; Alya Putri Maharani</h1>
+  <main class="wrap" aria-label="Undangan Pernikahan">
+    <!-- 1) HERO -->
+    <section id="home" data-photo="hero" aria-label="Cover">
+      <div class="inner">
+        <p class="kicker" data-reveal>17 Januari 2026</p>
+        <h1 class="title h1" data-reveal>Reza Budi Prasetyo<br>&amp; Alya Putri Maharani</h1>
 
-          <div class="inlinePhotoSlot" data-photo-slot data-slot-for="home" aria-label="Foto"></div>
+        <div class="photoSlot" data-slot data-for="home" aria-label="Foto"></div>
 
-          <p class="sub" data-reveal style="margin-top:6px;">
-            Le Dian Hotel Serang
-            <span style="display:inline-block; margin:0 10px; opacity:.55;">•</span>
-            <span style="opacity:.92;">WIB</span>
-          </p>
+        <p class="lead" data-reveal style="margin-top:10px;">
+          Le Dian Hotel Serang <span style="display:inline-block; margin:0 10px; opacity:.55;">•</span> WIB
+        </p>
 
-          <div class="heroMeta" data-reveal>
-            <span class="pill"><span class="dot" aria-hidden="true"></span><span>Untuk: Dimas Budi Ramadhan</span></span>
-            <span class="pill"><span class="dot" aria-hidden="true"></span><span>Akad 08.00–09.00</span></span>
-            <span class="pill"><span class="dot" aria-hidden="true"></span><span>Resepsi 10.00–15.00</span></span>
+        <div class="chipRow" data-reveal>
+          <span class="chip"><span class="dot" aria-hidden="true"></span><span>Untuk: Dimas Budi Ramadhan</span></span>
+          <span class="chip"><span class="dot" aria-hidden="true"></span><span>Akad 08.00–09.00</span></span>
+          <span class="chip"><span class="dot" aria-hidden="true"></span><span>Resepsi 10.00–15.00</span></span>
+        </div>
+
+        <div class="btnRow" data-reveal>
+          <button class="btn btnPrimary" type="button" id="btnToOpening" aria-label="Buka undangan">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M12 3.8c4.6 0 8.4 3.2 8.4 7.2 0 5.2-6.6 9-8.4 10.1C10.2 20 3.6 16.2 3.6 11c0-4 3.8-7.2 8.4-7.2z" stroke="rgba(201,152,70,.85)" stroke-width="1.6"/>
+              <path d="M12 8.1c1.8 0 3.3 1.3 3.3 2.9 0 2.1-2.6 3.6-3.3 4.1-.7-.5-3.3-2-3.3-4.1 0-1.6 1.5-2.9 3.3-2.9z" fill="rgba(201,152,70,.35)"/>
+            </svg>
+            <span>Buka Undangan</span>
+          </button>
+        </div>
+
+        <div class="divider"></div>
+
+        <p class="lead" data-reveal style="margin:0;">
+          Dengan izin Allah SWT, kami mengundang Anda untuk menyaksikan dan merayakan momen sakral ini bersama keluarga dan sahabat terdekat.
+        </p>
+      </div>
+    </section>
+
+    <!-- 2) PEMBUKA -->
+    <section id="opening" data-photo="opening" aria-label="Pembuka">
+      <div class="inner">
+        <p class="kicker" data-reveal>Pembuka</p>
+        <h2 class="title h2" data-reveal>Assalamu’alaikum Warahmatullahi Wabarakatuh</h2>
+        <p class="lead" data-reveal>
+          Dengan memohon rahmat dan ridha Allah SWT, kami bermaksud mengundang Bapak/Ibu/Saudara/i untuk hadir dalam rangkaian acara pernikahan kami.
+        </p>
+
+        <div class="photoSlot" data-slot data-for="opening" aria-label="Foto"></div>
+      </div>
+    </section>
+
+    <!-- 3) MEMPELAI -->
+    <section id="couple" data-photo="couple" aria-label="Mempelai">
+      <div class="inner">
+        <p class="kicker" data-reveal>Mempelai</p>
+        <h2 class="title h2" data-reveal>Reza Budi Prasetyo<br>&amp; Alya Putri Maharani</h2>
+
+        <div class="photoSlot" data-slot data-for="couple" aria-label="Foto"></div>
+
+        <p class="lead" data-reveal style="margin-top:10px;">
+          Semoga Allah SWT menjadikan langkah ini sebagai awal yang tenang, hangat, dan penuh keberkahan.
+        </p>
+
+        <!-- Inline varied blocks (1-column) -->
+        <div class="stack" aria-label="Detail mempelai">
+          <article class="blk" data-variant="overlay" data-photo-override="groom" data-reveal>
+            <div class="blkMedia" data-media>
+              <span class="tag" aria-hidden="true"><span class="dot"></span><span>Mempelai Pria</span></span>
+              <img src="/assets/img/reza.png" alt="" loading="lazy" decoding="async" />
+            </div>
+            <div class="blkCap">
+              <h3 class="blkName">Reza Budi Prasetyo</h3>
+              <p class="blkNote">Dengan segala kerendahan hati, mohon doa restu untuk langkah kami.</p>
+            </div>
+          </article>
+
+          <article class="blk" data-photo-override="bride" data-reveal>
+            <div class="blkMedia" data-media>
+              <span class="tag" aria-hidden="true"><span class="dot"></span><span>Mempelai Wanita</span></span>
+              <img src="/assets/img/alya.png" alt="" loading="lazy" decoding="async" />
+            </div>
+            <div class="blkCap">
+              <h3 class="blkName">Alya Putri Maharani</h3>
+              <p class="blkNote">Semoga Allah SWT selalu menjaga dan melapangkan jalan kebaikan bagi kami.</p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4) ACARA -->
+    <section id="event" data-photo="couple" aria-label="Acara">
+      <div class="inner">
+        <p class="kicker" data-reveal>Acara</p>
+        <h2 class="title h2" data-reveal>17 Januari 2026</h2>
+        <p class="lead" data-reveal style="margin-top:10px;">Le Dian Hotel Serang</p>
+
+        <div class="photoSlot" data-slot data-for="event" aria-label="Foto"></div>
+
+        <div class="count" data-reveal aria-label="Countdown menuju akad">
+          <div class="tbox"><b id="cdD">—</b><span>Hari</span></div>
+          <div class="tbox"><b id="cdH">—</b><span>Jam</span></div>
+          <div class="tbox"><b id="cdM">—</b><span>Menit</span></div>
+          <div class="tbox"><b id="cdS">—</b><span>Detik</span></div>
+        </div>
+
+        <div class="grid2">
+          <div class="card" id="cardAkad" data-photo-override="akad" aria-label="Akad Nikah">
+            <div class="row">
+              <h3>Akad Nikah</h3>
+              <span class="badge">08.00–09.00 WIB</span>
+            </div>
+            <div class="kv">
+              <div class="kvLine"><span class="k">Tanggal</span><span class="v">17 Januari 2026</span></div>
+              <div class="kvLine"><span class="k">Lokasi</span><span class="v">Le Dian Hotel Serang</span></div>
+            </div>
           </div>
 
-          <div class="actions" data-reveal>
-            <button class="btn btnPrimary" type="button" id="btnScrollOpening" aria-label="Buka undangan">
-              <svg class="ic" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <path d="M12 3.8c4.6 0 8.4 3.2 8.4 7.2 0 5.2-6.6 9-8.4 10.1C10.2 20 3.6 16.2 3.6 11c0-4 3.8-7.2 8.4-7.2z" stroke="rgba(201,152,70,.85)" stroke-width="1.6"/>
-                <path d="M12 8.1c1.8 0 3.3 1.3 3.3 2.9 0 2.1-2.6 3.6-3.3 4.1-.7-.5-3.3-2-3.3-4.1 0-1.6 1.5-2.9 3.3-2.9z" fill="rgba(201,152,70,.35)"/>
+          <div class="card" id="cardResepsi" data-photo-override="resepsi" aria-label="Resepsi">
+            <div class="row">
+              <h3>Resepsi</h3>
+              <span class="badge">10.00–15.00 WIB</span>
+            </div>
+            <div class="kv">
+              <div class="kvLine"><span class="k">Tanggal</span><span class="v">17 Januari 2026</span></div>
+              <div class="kvLine"><span class="k">Lokasi</span><span class="v">Le Dian Hotel Serang</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="btnRow" data-reveal>
+          <a class="btn btnPrimary" href="https://maps.app.goo.gl/oJVfShW7g5PJV2cS8" target="_blank" rel="noopener noreferrer" aria-label="Buka Google Maps">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M12 22s7-6.2 7-13a7 7 0 1 0-14 0c0 6.8 7 13 7 13z" stroke="rgba(201,152,70,.85)" stroke-width="1.6"/>
+              <path d="M12 12.3a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" fill="rgba(201,152,70,.28)"/>
+            </svg>
+            <span>Buka Google Maps</span>
+          </a>
+
+          <button class="btn" type="button" id="btnCopy" aria-label="Salin alamat">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M9 9h10v12H9V9z" stroke="rgba(246,246,246,.70)" stroke-width="1.6"/>
+              <path d="M5 3h10v4H9c-2.2 0-4 1.8-4 4v10H5V3z" stroke="rgba(246,246,246,.45)" stroke-width="1.6"/>
+            </svg>
+            <span>Salin Alamat</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5) LOKASI -->
+    <section id="location" data-photo="venue" aria-label="Lokasi">
+      <div class="inner">
+        <p class="kicker" data-reveal>Lokasi</p>
+        <h2 class="title h2" data-reveal>Le Dian Hotel Serang</h2>
+
+        <div class="photoSlot" data-slot data-for="location" aria-label="Foto"></div>
+
+        <p class="lead" data-reveal style="margin-top:10px;">
+          Kami menantikan kehadiran Anda di lokasi acara. Semoga perjalanan Anda dimudahkan dan dipenuhi kebaikan.
+        </p>
+
+        <div class="btnRow" data-reveal>
+          <a class="btn btnPrimary" href="https://maps.app.goo.gl/oJVfShW7g5PJV2cS8" target="_blank" rel="noopener noreferrer" aria-label="Buka Google Maps">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M12 22s7-6.2 7-13a7 7 0 1 0-14 0c0 6.8 7 13 7 13z" stroke="rgba(201,152,70,.85)" stroke-width="1.6"/>
+              <path d="M12 12.3a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" fill="rgba(201,152,70,.28)"/>
+            </svg>
+            <span>Buka Google Maps</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6) RSVP + BUKU TAMU -->
+    <section id="rsvp" data-photo="rsvp" aria-label="RSVP dan Buku Tamu">
+      <div class="inner">
+        <p class="kicker" data-reveal>RSVP</p>
+        <h2 class="title h2" data-reveal>Konfirmasi Kehadiran</h2>
+
+        <div class="photoSlot" data-slot data-for="rsvp" aria-label="Foto"></div>
+
+        <form class="form" id="rsvpForm" autocomplete="on" novalidate>
+          <div class="field" data-reveal>
+            <label for="name">Nama</label>
+            <input id="name" name="name" type="text" inputmode="text" required aria-label="Nama" />
+          </div>
+
+          <div class="field" data-reveal>
+            <label for="hadir">Kehadiran</label>
+            <select id="hadir" name="hadir" aria-label="Kehadiran">
+              <option value="hadir">Hadir</option>
+              <option value="tidak">Tidak</option>
+            </select>
+          </div>
+
+          <div class="field" data-reveal>
+            <label for="tamu">Jumlah Tamu</label>
+            <select id="tamu" name="tamu" aria-label="Jumlah tamu">
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+            </select>
+          </div>
+
+          <div class="field" data-reveal>
+            <label for="ucapan">Ucapan</label>
+            <textarea id="ucapan" name="ucapan" required aria-label="Ucapan"></textarea>
+          </div>
+
+          <div class="btnRow" data-reveal>
+            <button class="btn btnPrimary" type="submit" aria-label="Kirim RSVP">
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M21 4.8L11 14.8l-4-4L3 14.8l8 8 13-18z" fill="rgba(201,152,70,.40)"/>
+                <path d="M21 4.8L11 14.8l-4-4L3 14.8" stroke="rgba(201,152,70,.85)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
-              <span>Buka Undangan</span>
-            </button>
-          </div>
-
-          <div class="goldLine"></div>
-
-          <p class="sub" data-reveal style="margin:0;">
-            Dengan izin Allah SWT, kami mengundang Anda untuk menyaksikan dan merayakan momen sakral ini bersama keluarga dan sahabat terdekat.
-          </p>
-        </div>
-      </section>
-
-      <!-- 2) PEMBUKA -->
-      <section id="opening" data-photo="opening" aria-label="Pembuka">
-        <div class="secInner">
-          <p class="eyebrow" data-reveal>Pembuka</p>
-          <h2 class="h2" data-reveal>Assalamu’alaikum Warahmatullahi Wabarakatuh</h2>
-
-          <p class="sub" data-reveal style="margin-top:12px;">
-            Dengan memohon rahmat dan ridha Allah SWT, kami bermaksud mengundang Bapak/Ibu/Saudara/i untuk hadir dalam rangkaian acara pernikahan kami.
-          </p>
-
-          <div class="inlinePhotoSlot" data-photo-slot data-slot-for="opening" aria-label="Foto"></div>
-        </div>
-      </section>
-
-      <!-- 3) MEMPELAI -->
-      <section id="couple" data-photo="couple" aria-label="Mempelai">
-        <div class="secInner">
-          <p class="eyebrow" data-reveal>Mempelai</p>
-          <h2 class="h2" data-reveal>Reza Budi Prasetyo<br>&amp; Alya Putri Maharani</h2>
-
-          <div class="inlinePhotoSlot" data-photo-slot data-slot-for="couple" aria-label="Foto"></div>
-
-          <p class="sub" data-reveal style="margin-top:12px;">
-            Semoga Allah SWT menjadikan langkah ini sebagai awal yang tenang, hangat, dan penuh keberkahan.
-          </p>
-
-          <!-- 1-column dynamic blocks (no gallery section) -->
-          <div class="storyStack" aria-label="Detail mempelai">
-            <article class="storyBlock" data-variant="overlay" data-photo-override="groom" data-reveal>
-              <div class="storyMedia" data-media>
-                <span class="badgeMini" aria-hidden="true"><span class="dot"></span><span>Mempelai Pria</span></span>
-                <img src="/assets/img/reza.png" alt="" loading="lazy" decoding="async" />
-              </div>
-              <div class="storyCaption">
-                <h3 class="storyName">Reza Budi Prasetyo</h3>
-                <p class="storyNote">Dengan segala kerendahan hati, mohon doa restu untuk langkah kami.</p>
-              </div>
-            </article>
-
-            <article class="storyBlock" data-variant="topcap" data-photo-override="bride" data-reveal>
-              <div class="storyCaption">
-                <h3 class="storyName">Alya Putri Maharani</h3>
-                <p class="storyNote">Semoga Allah SWT selalu menjaga dan melapangkan jalan kebaikan bagi kami.</p>
-              </div>
-              <div class="storyMedia" data-media>
-                <span class="badgeMini" aria-hidden="true"><span class="dot"></span><span>Mempelai Wanita</span></span>
-                <img src="/assets/img/alya.png" alt="" loading="lazy" decoding="async" />
-              </div>
-            </article>
-          </div>
-        </div>
-      </section>
-
-      <!-- 4) ACARA -->
-      <section id="event" data-photo="couple" aria-label="Acara">
-        <div class="secInner">
-          <p class="eyebrow" data-reveal>Acara</p>
-          <h2 class="h2" data-reveal>17 Januari 2026</h2>
-
-          <p class="sub" data-reveal style="margin-top:12px;">Le Dian Hotel Serang</p>
-
-          <div class="inlinePhotoSlot" data-photo-slot data-slot-for="event" aria-label="Foto"></div>
-
-          <div class="countdown" data-reveal aria-label="Countdown menuju akad">
-            <div class="timeBox"><b id="cdDays">—</b><span>Hari</span></div>
-            <div class="timeBox"><b id="cdHours">—</b><span>Jam</span></div>
-            <div class="timeBox"><b id="cdMins">—</b><span>Menit</span></div>
-            <div class="timeBox"><b id="cdSecs">—</b><span>Detik</span></div>
-          </div>
-
-          <div class="cards">
-            <div class="card" id="cardAkad" data-photo-override="akad" aria-label="Akad Nikah">
-              <div class="cardTitle">
-                <h3>Akad Nikah</h3>
-                <span class="badge">08.00–09.00 WIB</span>
-              </div>
-              <div class="cardBody">
-                <div class="kv">
-                  <div class="kvRow"><span class="k">Tanggal</span><span class="v">17 Januari 2026</span></div>
-                  <div class="kvRow"><span class="k">Lokasi</span><span class="v">Le Dian Hotel Serang</span></div>
-                </div>
-              </div>
-            </div>
-
-            <div class="card" id="cardResepsi" data-photo-override="resepsi" aria-label="Resepsi">
-              <div class="cardTitle">
-                <h3>Resepsi</h3>
-                <span class="badge">10.00–15.00 WIB</span>
-              </div>
-              <div class="cardBody">
-                <div class="kv">
-                  <div class="kvRow"><span class="k">Tanggal</span><span class="v">17 Januari 2026</span></div>
-                  <div class="kvRow"><span class="k">Lokasi</span><span class="v">Le Dian Hotel Serang</span></div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="actions" data-reveal>
-            <a class="btn btnPrimary" href="https://maps.app.goo.gl/oJVfShW7g5PJV2cS8" target="_blank" rel="noopener noreferrer" aria-label="Buka Google Maps">
-              <svg class="ic" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <path d="M12 22s7-6.2 7-13a7 7 0 1 0-14 0c0 6.8 7 13 7 13z" stroke="rgba(201,152,70,.85)" stroke-width="1.6"/>
-                <path d="M12 12.3a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" fill="rgba(201,152,70,.28)"/>
-              </svg>
-              <span>Buka Google Maps</span>
-            </a>
-
-            <button class="btn" type="button" id="btnCopyAddr" aria-label="Salin alamat">
-              <svg class="ic" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <path d="M9 9h10v12H9V9z" stroke="rgba(245,245,245,.70)" stroke-width="1.6"/>
-                <path d="M5 3h10v4H9c-2.2 0-4 1.8-4 4v10H5V3z" stroke="rgba(245,245,245,.45)" stroke-width="1.6"/>
-              </svg>
-              <span>Salin Alamat</span>
-            </button>
-          </div>
-        </div>
-      </section>
-
-      <!-- 5) LOKASI -->
-      <section id="location" data-photo="venue" aria-label="Lokasi">
-        <div class="secInner">
-          <p class="eyebrow" data-reveal>Lokasi</p>
-          <h2 class="h2" data-reveal>Le Dian Hotel Serang</h2>
-
-          <div class="inlinePhotoSlot" data-photo-slot data-slot-for="location" aria-label="Foto"></div>
-
-          <p class="sub" data-reveal style="margin-top:12px;">
-            Kami menantikan kehadiran Anda di lokasi acara. Semoga perjalanan Anda dimudahkan dan dipenuhi kebaikan.
-          </p>
-
-          <div class="actions" data-reveal>
-            <a class="btn btnPrimary" href="https://maps.app.goo.gl/oJVfShW7g5PJV2cS8" target="_blank" rel="noopener noreferrer" aria-label="Buka Google Maps">
-              <svg class="ic" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <path d="M12 22s7-6.2 7-13a7 7 0 1 0-14 0c0 6.8 7 13 7 13z" stroke="rgba(201,152,70,.85)" stroke-width="1.6"/>
-                <path d="M12 12.3a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" fill="rgba(201,152,70,.28)"/>
-              </svg>
-              <span>Buka Google Maps</span>
-            </a>
-          </div>
-        </div>
-      </section>
-
-      <!-- 6) RSVP + BUKU TAMU -->
-      <section id="rsvp" data-photo="rsvp" aria-label="RSVP dan Buku Tamu">
-        <div class="secInner">
-          <p class="eyebrow" data-reveal>RSVP</p>
-          <h2 class="h2" data-reveal>Konfirmasi Kehadiran</h2>
-
-          <div class="inlinePhotoSlot" data-photo-slot data-slot-for="rsvp" aria-label="Foto"></div>
-
-          <form class="form" id="rsvpForm" autocomplete="on" novalidate>
-            <div class="field" data-reveal>
-              <label for="name">Nama</label>
-              <input id="name" name="name" type="text" inputmode="text" required aria-label="Nama" />
-            </div>
-
-            <div class="field" data-reveal>
-              <label for="hadir">Kehadiran</label>
-              <select id="hadir" name="hadir" aria-label="Kehadiran">
-                <option value="hadir">Hadir</option>
-                <option value="tidak">Tidak</option>
-              </select>
-            </div>
-
-            <div class="field" data-reveal>
-              <label for="tamu">Jumlah Tamu</label>
-              <select id="tamu" name="tamu" aria-label="Jumlah tamu">
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-              </select>
-            </div>
-
-            <div class="field" data-reveal>
-              <label for="ucapan">Ucapan</label>
-              <textarea id="ucapan" name="ucapan" required aria-label="Ucapan"></textarea>
-            </div>
-
-            <div class="actions" data-reveal>
-              <button class="btn btnPrimary" type="submit" aria-label="Kirim RSVP">
-                <svg class="ic" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                  <path d="M21 4.8L11 14.8l-4-4L3 14.8l8 8 13-18z" fill="rgba(201,152,70,.40)"/>
-                  <path d="M21 4.8L11 14.8l-4-4L3 14.8" stroke="rgba(201,152,70,.85)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-                <span>Kirim</span>
-              </button>
-
-              <button class="btn" type="button" id="btnReset" aria-label="Reset data RSVP dan buku tamu">
-                <svg class="ic" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                  <path d="M20 12a8 8 0 1 1-2.3-5.7" stroke="rgba(245,245,245,.70)" stroke-width="1.6" stroke-linecap="round"/>
-                  <path d="M20 4v6h-6" stroke="rgba(245,245,245,.45)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-                <span>Reset</span>
-              </button>
-            </div>
-          </form>
-
-          <div class="goldLine"></div>
-
-          <h2 class="h2" data-reveal style="font-size: clamp(18px, 4.3vw, 22px);">Buku Tamu</h2>
-          <div class="guestbook" id="guestbook" aria-label="Daftar ucapan"></div>
-        </div>
-      </section>
-
-      <!-- 7) ADD TO CALENDAR (ICS) -->
-      <section id="calendar" data-photo="rsvp" aria-label="Tambah ke Kalender">
-        <div class="secInner">
-          <p class="eyebrow" data-reveal>Kalender</p>
-          <h2 class="h2" data-reveal>Tambahkan ke Kalender</h2>
-
-          <p class="sub" data-reveal style="margin-top:12px;">
-            Simpan jadwal agar Anda tidak melewatkan momen istimewa ini.
-          </p>
-
-          <div class="actions" data-reveal>
-            <button class="btn btnPrimary" type="button" id="btnICS_Akad" aria-label="Tambahkan Akad ke Kalender">
-              <svg class="ic" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <path d="M7 3v3M17 3v3" stroke="rgba(201,152,70,.85)" stroke-width="1.6" stroke-linecap="round"/>
-                <path d="M5.5 6h13c.8 0 1.5.7 1.5 1.5v12c0 .8-.7 1.5-1.5 1.5h-13c-.8 0-1.5-.7-1.5-1.5v-12C4 6.7 4.7 6 5.5 6z" stroke="rgba(201,152,70,.55)" stroke-width="1.6"/>
-                <path d="M8 12h8M8 16h6" stroke="rgba(245,245,245,.70)" stroke-width="1.6" stroke-linecap="round"/>
-              </svg>
-              <span>Tambahkan Akad ke Kalender</span>
+              <span>Kirim</span>
             </button>
 
-            <button class="btn" type="button" id="btnICS_Resepsi" aria-label="Tambahkan Resepsi ke Kalender">
-              <svg class="ic" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <path d="M7 3v3M17 3v3" stroke="rgba(245,245,245,.70)" stroke-width="1.6" stroke-linecap="round"/>
-                <path d="M5.5 6h13c.8 0 1.5.7 1.5 1.5v12c0 .8-.7 1.5-1.5 1.5h-13c-.8 0-1.5-.7-1.5-1.5v-12C4 6.7 4.7 6 5.5 6z" stroke="rgba(245,245,245,.45)" stroke-width="1.6"/>
-                <path d="M8 12h8M8 16h6" stroke="rgba(245,245,245,.70)" stroke-width="1.6" stroke-linecap="round"/>
+            <button class="btn" type="button" id="btnReset" aria-label="Reset data">
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M20 12a8 8 0 1 1-2.3-5.7" stroke="rgba(246,246,246,.70)" stroke-width="1.6" stroke-linecap="round"/>
+                <path d="M20 4v6h-6" stroke="rgba(246,246,246,.45)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
-              <span>Tambahkan Resepsi ke Kalender</span>
+              <span>Reset</span>
             </button>
           </div>
+        </form>
+
+        <div class="divider"></div>
+
+        <h2 class="title h2" data-reveal style="font-size: clamp(20px, 4.5vw, 26px);">Buku Tamu</h2>
+        <div class="guestbook" id="guestbook" aria-label="Daftar ucapan"></div>
+      </div>
+    </section>
+
+    <!-- 7) CALENDAR -->
+    <section id="calendar" data-photo="rsvp" aria-label="Tambah ke Kalender">
+      <div class="inner">
+        <p class="kicker" data-reveal>Kalender</p>
+        <h2 class="title h2" data-reveal>Tambahkan ke Kalender</h2>
+        <p class="lead" data-reveal style="margin-top:10px;">Simpan jadwal agar Anda tidak melewatkan momen istimewa ini.</p>
+
+        <div class="btnRow" data-reveal>
+          <button class="btn btnPrimary" type="button" id="btnICS_A" aria-label="Tambahkan Akad ke Kalender">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M7 3v3M17 3v3" stroke="rgba(201,152,70,.85)" stroke-width="1.6" stroke-linecap="round"/>
+              <path d="M5.5 6h13c.8 0 1.5.7 1.5 1.5v12c0 .8-.7 1.5-1.5 1.5h-13c-.8 0-1.5-.7-1.5-1.5v-12C4 6.7 4.7 6 5.5 6z" stroke="rgba(201,152,70,.55)" stroke-width="1.6"/>
+              <path d="M8 12h8M8 16h6" stroke="rgba(246,246,246,.70)" stroke-width="1.6" stroke-linecap="round"/>
+            </svg>
+            <span>Tambahkan Akad ke Kalender</span>
+          </button>
+
+          <button class="btn" type="button" id="btnICS_R" aria-label="Tambahkan Resepsi ke Kalender">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M7 3v3M17 3v3" stroke="rgba(246,246,246,.70)" stroke-width="1.6" stroke-linecap="round"/>
+              <path d="M5.5 6h13c.8 0 1.5.7 1.5 1.5v12c0 .8-.7 1.5-1.5 1.5h-13c-.8 0-1.5-.7-1.5-1.5v-12C4 6.7 4.7 6 5.5 6z" stroke="rgba(246,246,246,.45)" stroke-width="1.6"/>
+              <path d="M8 12h8M8 16h6" stroke="rgba(246,246,246,.70)" stroke-width="1.6" stroke-linecap="round"/>
+            </svg>
+            <span>Tambahkan Resepsi ke Kalender</span>
+          </button>
         </div>
-      </section>
+      </div>
+    </section>
 
-      <!-- 8) FOOTER -->
-      <section id="footer" data-photo="hero" aria-label="Penutup">
-        <div class="secInner">
-          <p class="eyebrow" data-reveal>Penutup</p>
-          <h2 class="h2" data-reveal>Terima kasih</h2>
+    <!-- 8) FOOTER -->
+    <section id="footer" data-photo="hero" aria-label="Penutup">
+      <div class="inner">
+        <p class="kicker" data-reveal>Penutup</p>
+        <h2 class="title h2" data-reveal>Terima kasih</h2>
 
-          <div class="inlinePhotoSlot" data-photo-slot data-slot-for="footer" aria-label="Foto"></div>
+        <div class="photoSlot" data-slot data-for="footer" aria-label="Foto"></div>
 
-          <p class="sub" data-reveal style="margin-top:12px;">
-            Merupakan kebahagiaan bagi kami apabila Anda berkenan hadir dan memberikan doa restu.
-          </p>
+        <p class="lead" data-reveal style="margin-top:10px;">
+          Merupakan kebahagiaan bagi kami apabila Anda berkenan hadir dan memberikan doa restu.
+        </p>
 
-          <div class="actions" data-reveal>
-            <button class="btn btnPrimary" type="button" id="btnTop" aria-label="Kembali ke atas">
-              <svg class="ic" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <path d="M12 5l6 6" stroke="rgba(201,152,70,.85)" stroke-width="1.8" stroke-linecap="round"/>
-                <path d="M12 5l-6 6" stroke="rgba(201,152,70,.85)" stroke-width="1.8" stroke-linecap="round"/>
-                <path d="M12 6v13" stroke="rgba(245,245,245,.55)" stroke-width="1.6" stroke-linecap="round"/>
-              </svg>
-              <span>Kembali ke Atas</span>
-            </button>
-          </div>
+        <div class="btnRow" data-reveal>
+          <button class="btn btnPrimary" type="button" id="btnTop" aria-label="Kembali ke atas">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M12 5l6 6" stroke="rgba(201,152,70,.85)" stroke-width="1.8" stroke-linecap="round"/>
+              <path d="M12 5l-6 6" stroke="rgba(201,152,70,.85)" stroke-width="1.8" stroke-linecap="round"/>
+              <path d="M12 6v13" stroke="rgba(246,246,246,.55)" stroke-width="1.6" stroke-linecap="round"/>
+            </svg>
+            <span>Kembali ke Atas</span>
+          </button>
         </div>
-      </section>
-    </div>
+      </div>
+    </section>
   </main>
 
   <!-- Mini Nav -->
-  <div class="miniNav" aria-label="Navigasi cepat">
-    <div class="navBar" role="navigation" aria-label="Menu">
-      <button class="navBtn" data-target="#home" type="button" aria-label="Home" title="Home">
+  <div class="navWrap" aria-label="Navigasi cepat">
+    <div class="nav" role="navigation" aria-label="Menu">
+      <button class="nbtn" data-target="#home" type="button" aria-label="Home" title="Home">
         <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-          <path d="M4.5 10.5L12 4l7.5 6.5v8.5a1.5 1.5 0 0 1-1.5 1.5H6a1.5 1.5 0 0 1-1.5-1.5v-8.5z" stroke="rgba(245,245,245,.72)" stroke-width="1.6" stroke-linejoin="round"/>
+          <path d="M4.5 10.5L12 4l7.5 6.5v8.5a1.5 1.5 0 0 1-1.5 1.5H6a1.5 1.5 0 0 1-1.5-1.5v-8.5z" stroke="rgba(246,246,246,.72)" stroke-width="1.6" stroke-linejoin="round"/>
           <path d="M9.3 21v-7h5.4v7" stroke="rgba(201,152,70,.55)" stroke-width="1.6" stroke-linecap="round"/>
         </svg>
       </button>
-      <button class="navBtn" data-target="#couple" type="button" aria-label="Mempelai" title="Mempelai">
+
+      <button class="nbtn" data-target="#couple" type="button" aria-label="Mempelai" title="Mempelai">
         <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-          <path d="M7.5 20c.9-3.3 3-5 4.5-5s3.6 1.7 4.5 5" stroke="rgba(245,245,245,.72)" stroke-width="1.6" stroke-linecap="round"/>
+          <path d="M7.5 20c.9-3.3 3-5 4.5-5s3.6 1.7 4.5 5" stroke="rgba(246,246,246,.72)" stroke-width="1.6" stroke-linecap="round"/>
           <path d="M12 13.6c2.1 0 3.8-1.7 3.8-3.8S14.1 6 12 6 8.2 7.7 8.2 9.8s1.7 3.8 3.8 3.8z" stroke="rgba(201,152,70,.55)" stroke-width="1.6"/>
         </svg>
       </button>
-      <button class="navBtn" data-target="#event" type="button" aria-label="Acara" title="Acara">
+
+      <button class="nbtn" data-target="#event" type="button" aria-label="Acara" title="Acara">
         <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-          <path d="M7 3v3M17 3v3" stroke="rgba(245,245,245,.72)" stroke-width="1.6" stroke-linecap="round"/>
+          <path d="M7 3v3M17 3v3" stroke="rgba(246,246,246,.72)" stroke-width="1.6" stroke-linecap="round"/>
           <path d="M5.5 6h13c.8 0 1.5.7 1.5 1.5v12c0 .8-.7 1.5-1.5 1.5h-13c-.8 0-1.5-.7-1.5-1.5v-12C4 6.7 4.7 6 5.5 6z" stroke="rgba(201,152,70,.45)" stroke-width="1.6"/>
-          <path d="M8 12h8M8 16h6" stroke="rgba(245,245,245,.70)" stroke-width="1.6" stroke-linecap="round"/>
+          <path d="M8 12h8M8 16h6" stroke="rgba(246,246,246,.70)" stroke-width="1.6" stroke-linecap="round"/>
         </svg>
       </button>
-      <button class="navBtn" data-target="#location" type="button" aria-label="Lokasi" title="Lokasi">
+
+      <button class="nbtn" data-target="#location" type="button" aria-label="Lokasi" title="Lokasi">
         <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-          <path d="M12 22s7-6.2 7-13a7 7 0 1 0-14 0c0 6.8 7 13 7 13z" stroke="rgba(245,245,245,.72)" stroke-width="1.6"/>
+          <path d="M12 22s7-6.2 7-13a7 7 0 1 0-14 0c0 6.8 7 13 7 13z" stroke="rgba(246,246,246,.72)" stroke-width="1.6"/>
           <path d="M12 12.3a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" fill="rgba(201,152,70,.28)"/>
         </svg>
       </button>
-      <button class="navBtn" data-target="#rsvp" type="button" aria-label="RSVP" title="RSVP">
+
+      <button class="nbtn" data-target="#rsvp" type="button" aria-label="RSVP" title="RSVP">
         <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-          <path d="M4.5 6.5h15v13h-15v-13z" stroke="rgba(245,245,245,.72)" stroke-width="1.6"/>
+          <path d="M4.5 6.5h15v13h-15v-13z" stroke="rgba(246,246,246,.72)" stroke-width="1.6"/>
           <path d="M7 9.2h10M7 12.2h10M7 15.2h7" stroke="rgba(201,152,70,.55)" stroke-width="1.6" stroke-linecap="round"/>
         </svg>
       </button>
@@ -1244,6 +1215,18 @@ QUALITY CHECKLIST (PASS):
       "use strict";
 
       const reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      const CONFIG = {
+        recipient: "Dimas Budi Ramadhan",
+        groom: "Reza Budi Prasetyo",
+        bride: "Alya Putri Maharani",
+        venue: "Le Dian Hotel Serang",
+        maps: "https://maps.app.goo.gl/oJVfShW7g5PJV2cS8",
+        akadStart: "2026-01-17T08:00:00+07:00",
+        akadEnd:   "2026-01-17T09:00:00+07:00",
+        resStart:  "2026-01-17T10:00:00+07:00",
+        resEnd:    "2026-01-17T15:00:00+07:00"
+      };
 
       const photos = {
         hero: "/assets/img/reza-alya.png",
@@ -1257,47 +1240,45 @@ QUALITY CHECKLIST (PASS):
         rsvp: "/assets/img/hand.png"
       };
 
-      const ADDRESS_TEXT = "Le Dian Hotel Serang";
-      const MAPS_URL = "https://maps.app.goo.gl/oJVfShW7g5PJV2cS8";
-
-      // --- Toasts ---
-      const toastsEl = document.getElementById("toasts");
+      // --- Toast ---
+      const toasts = document.getElementById("toasts");
       let toastTimer = null;
 
-      function showToast(message){
-        if(!toastsEl) return;
-        const t = document.createElement("div");
-        t.className = "toast";
-        t.innerHTML = '<span class="spark" aria-hidden="true"></span><p></p>';
-        t.querySelector("p").textContent = message;
+      function toast(msg){
+        if(!toasts) return;
+        const el = document.createElement("div");
+        el.className = "toast";
+        el.innerHTML = '<span class="spark" aria-hidden="true"></span><p></p>';
+        el.querySelector("p").textContent = msg;
 
-        toastsEl.appendChild(t);
-        requestAnimationFrame(()=> t.classList.add("show"));
+        toasts.appendChild(el);
+        requestAnimationFrame(()=> el.classList.add("show"));
+
         window.clearTimeout(toastTimer);
         toastTimer = window.setTimeout(()=>{
-          t.classList.remove("show");
-          window.setTimeout(()=> t.remove(), 520);
+          el.classList.remove("show");
+          window.setTimeout(()=> el.remove(), 520);
         }, 2400);
       }
 
       // --- Modal confirm ---
       const modal = document.getElementById("modal");
-      const modalTitle = document.getElementById("modalTitle");
-      const modalText = document.getElementById("modalText");
-      const modalCancel = document.getElementById("modalCancel");
-      const modalOk = document.getElementById("modalOk");
+      const mTitle = document.getElementById("mTitle");
+      const mText = document.getElementById("mText");
+      const mCancel = document.getElementById("mCancel");
+      const mOk = document.getElementById("mOk");
       let modalResolve = null;
       let lastFocus = null;
 
-      function openConfirm(title, text){
+      function confirmUI(title, text){
         return new Promise(resolve=>{
           if(!modal) return resolve(false);
           lastFocus = document.activeElement;
-          modalTitle.textContent = title;
-          modalText.textContent = text;
+          mTitle.textContent = title;
+          mText.textContent = text;
           modal.setAttribute("aria-hidden","false");
           modalResolve = resolve;
-          modalOk.focus();
+          mOk.focus();
         });
       }
       function closeConfirm(result){
@@ -1308,16 +1289,15 @@ QUALITY CHECKLIST (PASS):
         if(typeof r === "function") r(!!result);
         if(lastFocus && typeof lastFocus.focus === "function") lastFocus.focus();
       }
-      modalCancel && modalCancel.addEventListener("click", ()=> closeConfirm(false));
-      modalOk && modalOk.addEventListener("click", ()=> closeConfirm(true));
-      modal && modal.addEventListener("click", (e)=>{
-        if(e.target === modal) closeConfirm(false);
-      });
+      mCancel && mCancel.addEventListener("click", ()=> closeConfirm(false));
+      mOk && mOk.addEventListener("click", ()=> closeConfirm(true));
+      modal && modal.addEventListener("click", (e)=>{ if(e.target === modal) closeConfirm(false); });
 
-      // --- Gate ---
-      const gate = document.getElementById("gate");
-      const btnOpen = document.getElementById("btnOpen");
-      const btnScrollOpening = document.getElementById("btnScrollOpening");
+      document.addEventListener("keydown", (e)=>{
+        if(e.key === "Escape" && modal && modal.getAttribute("aria-hidden")==="false"){
+          closeConfirm(false);
+        }
+      });
 
       // --- Audio ---
       const bgm = document.getElementById("bgm");
@@ -1327,46 +1307,70 @@ QUALITY CHECKLIST (PASS):
       const icPause = document.getElementById("icPause");
       const icVol = document.getElementById("icVol");
       const icMuted = document.getElementById("icMuted");
-      const audioStatus = document.getElementById("audioStatus");
+      const led = document.getElementById("led");
 
       let audioUnlocked = false;
 
       function setAudioUI(){
-        const isPlaying = bgm && !bgm.paused && !bgm.ended;
-        const isMuted = bgm ? bgm.muted : true;
+        if(!bgm) return;
+        const isPlaying = !bgm.paused && !bgm.ended;
+        const isMuted = !!bgm.muted;
 
         if(icPlay) icPlay.style.display = isPlaying ? "none" : "block";
         if(icPause) icPause.style.display = isPlaying ? "block" : "none";
         if(icVol) icVol.style.display = isMuted ? "none" : "block";
         if(icMuted) icMuted.style.display = isMuted ? "block" : "none";
-        if(audioStatus) audioStatus.classList.toggle("is-on", isPlaying && !isMuted);
+        if(led) led.classList.toggle("on", isPlaying && !isMuted);
       }
 
-      async function tryPlay(){
-        if(!bgm) return;
+      async function validateAudioHead(){
+        if(!bgm) return true;
+        const src = bgm.currentSrc || bgm.src || "/assets/audio/wedding.mp3";
         try{
-          await bgm.play();
-          setAudioUI();
-        }catch(err){
-          setAudioUI();
-          showToast("Musik belum bisa diputar di perangkat ini.");
+          const res = await fetch(src, { method:"HEAD", cache:"no-store" });
+          if(!res.ok) return false;
+          const ct = (res.headers.get("content-type") || "").toLowerCase();
+          if(ct.includes("text/html")) return false;
+          return true;
+        }catch(_){
+          return true; // don't block on environments that disallow HEAD
         }
       }
 
-      function pauseAudio(){
+      async function safePlay(){
+        if(!bgm) return;
+        try{
+          const ok = await validateAudioHead();
+          if(!ok){
+            toast("Musik belum tersedia di link ini.");
+            setAudioUI();
+            return;
+          }
+          const p = bgm.play();
+          if(p && typeof p.catch === "function"){
+            await p.catch(()=> { throw new Error("play blocked"); });
+          }
+          setAudioUI();
+        }catch(_){
+          setAudioUI();
+          toast("Musik belum bisa diputar. Coba tap tombol musik.");
+        }
+      }
+
+      function safePause(){
         if(!bgm) return;
         bgm.pause();
         setAudioUI();
       }
 
-      btnPlay && btnPlay.addEventListener("click", async ()=>{
+      btnPlay && btnPlay.addEventListener("click", ()=>{
         if(!bgm) return;
         if(!audioUnlocked){
-          showToast("Buka undangan dulu untuk mengaktifkan musik.");
+          toast("Buka undangan dulu untuk mengaktifkan musik.");
           return;
         }
-        if(bgm.paused) await tryPlay();
-        else pauseAudio();
+        if(bgm.paused) safePlay();
+        else safePause();
       });
 
       btnMute && btnMute.addEventListener("click", ()=>{
@@ -1375,207 +1379,262 @@ QUALITY CHECKLIST (PASS):
         setAudioUI();
       });
 
-      bgm && bgm.addEventListener("error", ()=>{
-        showToast("Musik gagal dimuat.");
-      });
+      bgm && bgm.addEventListener("error", ()=> toast("Musik gagal dimuat."));
       bgm && bgm.addEventListener("play", setAudioUI);
       bgm && bgm.addEventListener("pause", setAudioUI);
       bgm && bgm.addEventListener("volumechange", setAudioUI);
 
-      // --- Photo Story System (single stage) ---
-      const slots = Array.from(document.querySelectorAll("[data-photo-slot]"));
+      setAudioUI();
 
-      const photoStage = document.createElement("div");
-      photoStage.className = "photoStage";
-      photoStage.innerHTML = `
-        <div class="photoFrame" id="photoFrame"></div>
-        <img class="photoLayer is-active" id="photoA" alt="" decoding="async">
-        <img class="photoLayer" id="photoB" alt="" decoding="async">
-        <div class="photoOverlay" aria-hidden="true"></div>
+      // --- Photo Stage System (stable + subtle) ---
+      const slots = Array.from(document.querySelectorAll("[data-slot]"));
+      const sections = Array.from(document.querySelectorAll("section[data-photo]"));
+
+      const stage = document.createElement("div");
+      stage.className = "stage";
+      stage.innerHTML = `
+        <div class="fallback" id="fallback"></div>
+        <img class="layer on" id="imgA" alt="" decoding="async">
+        <img class="layer" id="imgB" alt="" decoding="async">
+        <div class="stageWash" aria-hidden="true"></div>
       `;
 
-      const photoFrame = photoStage.querySelector("#photoFrame");
-      const photoA = photoStage.querySelector("#photoA");
-      const photoB = photoStage.querySelector("#photoB");
+      const fallback = stage.querySelector("#fallback");
+      const imgA = stage.querySelector("#imgA");
+      const imgB = stage.querySelector("#imgB");
 
       let activeKey = "hero";
-      let activeOnA = true;
-      let pendingSwap = false;
+      let onA = true;
+      let isSwapping = false;
+      let lastSwapAt = 0;
 
-      function mountStageToSlot(slotEl){
-        if(!slotEl) return;
-        if(!slotEl.contains(photoStage)){
-          slotEl.appendChild(photoStage);
-        }
+      function mountStage(slot){
+        if(!slot) return;
+        if(!slot.contains(stage)) slot.appendChild(stage);
       }
 
       function setFallback(on){
-        if(photoFrame) photoFrame.classList.toggle("is-on", !!on);
+        if(fallback) fallback.classList.toggle("on", !!on);
       }
 
-      function setPhoto(key){
+      function setPhoto(key, reason){
         if(!key || !photos[key]) return;
-        if(pendingSwap) return;
+        const now = Date.now();
         if(activeKey === key) return;
 
-        activeKey = key;
-        pendingSwap = true;
+        // stability guard (prevents rapid flip/flop)
+        if(!reduceMotion){
+          if(isSwapping) return;
+          if(now - lastSwapAt < 420) return;
+        }
 
-        const nextImg = activeOnA ? photoB : photoA;
-        const curImg = activeOnA ? photoA : photoB;
+        activeKey = key;
+        isSwapping = true;
+        lastSwapAt = now;
+
+        const next = onA ? imgB : imgA;
+        const cur = onA ? imgA : imgB;
 
         setFallback(false);
 
-        nextImg.onload = ()=>{
-          if(reduceMotion){
-            curImg.classList.remove("is-active");
-            nextImg.classList.add("is-active");
+        next.onload = ()=>{
+          if(!reduceMotion){
+            cur.classList.remove("on");
+            next.classList.add("on");
           }else{
-            curImg.classList.remove("is-active");
-            nextImg.classList.add("is-active");
+            cur.classList.remove("on");
+            next.classList.add("on");
           }
-          activeOnA = !activeOnA;
-          pendingSwap = false;
+          onA = !onA;
+          isSwapping = false;
         };
 
-        nextImg.onerror = ()=>{
+        next.onerror = ()=>{
           setFallback(true);
-          pendingSwap = false;
+          isSwapping = false;
         };
 
-        // start transition
-        nextImg.classList.remove("is-active");
-        nextImg.src = photos[key];
-
-        // If cached, onload might fire quickly; still fine.
+        next.classList.remove("on");
+        next.src = photos[key];
       }
 
-      // Attach stage to first slot immediately
-      if(slots[0]) mountStageToSlot(slots[0]);
-      // Initialize with hero
-      photoA.src = photos.hero;
-      photoA.onload = ()=> setFallback(false);
-      photoA.onerror = ()=> setFallback(true);
+      // init mount
+      if(slots[0]) mountStage(slots[0]);
+      imgA.src = photos.hero;
+      imgA.onload = ()=> setFallback(false);
+      imgA.onerror = ()=> setFallback(true);
 
-      // --- Section observers for stage mounting + switching ---
-      const sections = Array.from(document.querySelectorAll("section[data-photo]"));
+      // priority handling: override beats section while visible
+      let currentSectionId = "home";
+      let currentSectionKey = "hero";
+      const overrideRatios = new Map(); // el -> ratio
+      const overrideKeys = new Map();   // el -> key
 
-      let lastActiveSectionId = "home";
+      function bestOverrideKey(){
+        let best = null;
+        let bestR = 0;
+        overrideRatios.forEach((r, el)=>{
+          if(r > bestR){
+            bestR = r;
+            best = overrideKeys.get(el) || null;
+          }
+        });
+        return best;
+      }
 
+      function applyPhotoDecision(){
+        const oKey = bestOverrideKey();
+        if(oKey){
+          setPhoto(oKey, "override");
+          return;
+        }
+        setPhoto(currentSectionKey, "section");
+      }
+
+      // Section IO: stable active section + mount stage
       const sectionIO = new IntersectionObserver((entries)=>{
+        // pick highest ratio
         const visible = entries
           .filter(e=> e.isIntersecting)
-          .sort((a,b)=> (b.intersectionRatio - a.intersectionRatio))[0];
+          .sort((a,b)=> b.intersectionRatio - a.intersectionRatio)[0];
         if(!visible) return;
 
         const sec = visible.target;
-        lastActiveSectionId = sec.id || lastActiveSectionId;
+        const secId = sec.id || "home";
+        const key = sec.getAttribute("data-photo") || "hero";
 
-        // move stage into this section slot
-        const slot = sec.querySelector("[data-photo-slot]");
-        if(slot) mountStageToSlot(slot);
+        currentSectionId = secId;
+        currentSectionKey = key;
 
-        // switch photo for section baseline
-        const key = sec.getAttribute("data-photo");
-        setPhoto(key);
+        const slot = sec.querySelector("[data-slot]");
+        if(slot) mountStage(slot);
 
-        // update nav active
-        setActiveNav("#" + lastActiveSectionId);
+        // apply decision (override may win)
+        applyPhotoDecision();
+
+        // nav highlight
+        setActiveNav("#" + currentSectionId);
       },{
         root: null,
-        threshold: [0.22, 0.34, 0.46, 0.58, 0.70]
+        threshold: [0.35, 0.45, 0.55, 0.65],
+        rootMargin: "-20% 0px -40% 0px"
       });
-
       sections.forEach(s=> sectionIO.observe(s));
 
-      // Sub-target: Akad / Resepsi cards + Groom/Bride blocks
+      // Override IO
       const overrides = Array.from(document.querySelectorAll("[data-photo-override]"));
-      const overrideIO = new IntersectionObserver((entries)=>{
-        const top = entries
-          .filter(e=> e.isIntersecting)
-          .sort((a,b)=> (b.intersectionRatio - a.intersectionRatio))[0];
-        if(!top) return;
+      overrides.forEach(el=>{
+        overrideKeys.set(el, el.getAttribute("data-photo-override"));
+      });
 
-        const key = top.target.getAttribute("data-photo-override");
-        setPhoto(key);
+      const overrideIO = new IntersectionObserver((entries)=>{
+        entries.forEach(e=>{
+          if(e.isIntersecting){
+            overrideRatios.set(e.target, e.intersectionRatio);
+          }else{
+            overrideRatios.delete(e.target);
+          }
+        });
+        applyPhotoDecision();
       },{
         root: null,
-        threshold: [0.55, 0.66, 0.78]
+        threshold: [0.72, 0.80, 0.88],
+        rootMargin: "-10% 0px -25% 0px"
       });
       overrides.forEach(el=> overrideIO.observe(el));
 
-      // Inline media fallback (no text)
-      function wireMediaFallback(){
-        const medias = Array.from(document.querySelectorAll(".storyMedia[data-media]"));
-        medias.forEach(m=>{
-          const img = m.querySelector("img");
-          if(!img) return;
-          img.addEventListener("error", ()=> m.setAttribute("data-broken","true"));
-        });
-      }
-      wireMediaFallback();
+      // Inline block media fallback (no text)
+      const medias = Array.from(document.querySelectorAll(".blkMedia[data-media]"));
+      medias.forEach(m=>{
+        const img = m.querySelector("img");
+        if(!img) return;
+        img.addEventListener("error", ()=> m.setAttribute("data-broken","true"));
+      });
 
-      // --- Reveal on scroll ---
+      // --- Reveal ---
       const revealEls = Array.from(document.querySelectorAll("[data-reveal]"));
       const revealIO = new IntersectionObserver((entries)=>{
         entries.forEach(e=>{
           if(e.isIntersecting){
-            e.target.classList.add("is-revealed");
+            e.target.classList.add("revealed");
             revealIO.unobserve(e.target);
           }
         });
       },{ threshold: 0.12 });
       revealEls.forEach(el=> revealIO.observe(el));
 
-      // --- 1-column layout "random" micro offsets (stable, subtle) ---
-      function stableHash(str){
-        let h = 2166136261;
-        for(let i=0;i<str.length;i++){
-          h ^= str.charCodeAt(i);
-          h = Math.imul(h, 16777619);
-        }
-        return h >>> 0;
-      }
-      const storyBlocks = Array.from(document.querySelectorAll(".storyBlock"));
-      storyBlocks.forEach((b, idx)=>{
-        const seed = stableHash((b.textContent || "") + "|" + idx);
-        const r = (seed % 9) - 4; // -4..+4
-        const y = Math.max(-3, Math.min(3, r)); // clamp
-        b.style.setProperty("--y", reduceMotion ? "0px" : (y + "px"));
-      });
-
       // --- Mini nav ---
-      const navBtns = Array.from(document.querySelectorAll(".navBtn[data-target]"));
+      const navBtns = Array.from(document.querySelectorAll(".nbtn[data-target]"));
       function setActiveNav(hash){
-        navBtns.forEach(btn=>{
-          btn.classList.toggle("is-active", btn.getAttribute("data-target") === hash);
-        });
+        navBtns.forEach(b=> b.classList.toggle("active", b.getAttribute("data-target") === hash));
       }
-      navBtns.forEach(btn=>{
-        btn.addEventListener("click", ()=>{
-          const target = btn.getAttribute("data-target");
-          const el = document.querySelector(target);
+      navBtns.forEach(b=>{
+        b.addEventListener("click", ()=>{
+          const sel = b.getAttribute("data-target");
+          const el = document.querySelector(sel);
           if(!el) return;
-          el.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
+          el.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block:"start" });
         });
       });
 
-      // --- Smooth scroll button(s) ---
-      btnScrollOpening && btnScrollOpening.addEventListener("click", ()=>{
+      // --- Gate open ---
+      const gate = document.getElementById("gate");
+      const btnOpen = document.getElementById("btnOpen");
+      const btnToOpening = document.getElementById("btnToOpening");
+
+      function warmImages(keys){
+        keys.forEach(k=>{
+          const src = photos[k];
+          if(!src) return;
+          const im = new Image();
+          im.decoding = "async";
+          im.src = src;
+        });
+      }
+
+      function openInvitation(){
+        audioUnlocked = true;
+        document.body.classList.remove("locked");
+        if(gate) gate.setAttribute("aria-hidden","true");
+
+        // ensure stage mounted to current section
+        const sec = document.getElementById(currentSectionId) || document.getElementById("home");
+        const slot = sec ? sec.querySelector("[data-slot]") : slots[0];
+        if(slot) mountStage(slot);
+        applyPhotoDecision();
+
+        // warm remaining assets after gesture
+        warmImages(["opening","couple","akad","resepsi","venue","groom","bride","rsvp"]);
+
+        // try autoplay (user gesture)
+        if(bgm){
+          // set src explicitly to improve compatibility in some cases
+          if(!bgm.src || !bgm.src.includes("/assets/audio/wedding.mp3")){
+            bgm.src = "/assets/audio/wedding.mp3";
+          }
+          bgm.loop = true;
+          bgm.muted = false;
+          bgm.load();
+          safePlay();
+        }
+      }
+
+      btnOpen && btnOpen.addEventListener("click", openInvitation, { once:true });
+
+      btnToOpening && btnToOpening.addEventListener("click", ()=>{
         const el = document.querySelector("#opening");
-        if(el) el.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
+        if(el) el.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block:"start" });
       });
 
       // --- Copy address ---
-      const btnCopyAddr = document.getElementById("btnCopyAddr");
-      btnCopyAddr && btnCopyAddr.addEventListener("click", async ()=>{
+      const btnCopy = document.getElementById("btnCopy");
+      btnCopy && btnCopy.addEventListener("click", async ()=>{
         try{
           if(navigator.clipboard && navigator.clipboard.writeText){
-            await navigator.clipboard.writeText(ADDRESS_TEXT);
+            await navigator.clipboard.writeText(CONFIG.venue);
           }else{
-            // fallback
             const ta = document.createElement("textarea");
-            ta.value = ADDRESS_TEXT;
+            ta.value = CONFIG.venue;
             ta.setAttribute("readonly","");
             ta.style.position = "fixed";
             ta.style.left = "-9999px";
@@ -1584,48 +1643,45 @@ QUALITY CHECKLIST (PASS):
             document.execCommand("copy");
             ta.remove();
           }
-          showToast("Alamat tersalin.");
-        }catch(e){
-          showToast("Tidak bisa menyalin alamat.");
+          toast("Alamat tersalin.");
+        }catch(_){
+          toast("Tidak bisa menyalin alamat.");
         }
       });
 
-      // --- Countdown (to Akad: 2026-01-17 08:00 WIB) ---
-      const cdDays = document.getElementById("cdDays");
-      const cdHours = document.getElementById("cdHours");
-      const cdMins = document.getElementById("cdMins");
-      const cdSecs = document.getElementById("cdSecs");
-
-      const targetAkad = new Date("2026-01-17T08:00:00+07:00").getTime();
+      // --- Countdown ---
+      const cdD = document.getElementById("cdD");
+      const cdH = document.getElementById("cdH");
+      const cdM = document.getElementById("cdM");
+      const cdS = document.getElementById("cdS");
+      const targetAkad = new Date(CONFIG.akadStart).getTime();
 
       function pad2(n){ return String(n).padStart(2,"0"); }
-
-      function tickCountdown(){
+      function tick(){
         const now = Date.now();
         let diff = targetAkad - now;
         if(diff < 0) diff = 0;
+        const s = Math.floor(diff/1000);
+        const d = Math.floor(s/86400);
+        const h = Math.floor((s%86400)/3600);
+        const m = Math.floor((s%3600)/60);
+        const sc = Math.floor(s%60);
 
-        const s = Math.floor(diff / 1000);
-        const d = Math.floor(s / 86400);
-        const h = Math.floor((s % 86400) / 3600);
-        const m = Math.floor((s % 3600) / 60);
-        const sc = Math.floor(s % 60);
-
-        if(cdDays) cdDays.textContent = String(d);
-        if(cdHours) cdHours.textContent = pad2(h);
-        if(cdMins) cdMins.textContent = pad2(m);
-        if(cdSecs) cdSecs.textContent = pad2(sc);
+        if(cdD) cdD.textContent = String(d);
+        if(cdH) cdH.textContent = pad2(h);
+        if(cdM) cdM.textContent = pad2(m);
+        if(cdS) cdS.textContent = pad2(sc);
       }
-      tickCountdown();
-      window.setInterval(tickCountdown, 1000);
+      tick();
+      window.setInterval(tick, 1000);
 
       // --- Guestbook ---
       const guestbookEl = document.getElementById("guestbook");
       const rsvpForm = document.getElementById("rsvpForm");
       const btnReset = document.getElementById("btnReset");
 
-      const STORAGE_KEY = "reza_alya_guestbook_v1";
-      const STORAGE_FORM_KEY = "reza_alya_rsvp_form_v1";
+      const STORAGE_KEY = "reza_alya_guestbook_v2";
+      const FORM_KEY = "reza_alya_form_v2";
 
       const seedBase = [
         { name:"Dimas Budi Ramadhan", hadir:true, tamu:2, ucapan:"Selamat menempuh hidup baru Reza & Alya. Semoga jadi keluarga sakinah, mawaddah, warahmah. Lancar sampai hari H." },
@@ -1650,57 +1706,69 @@ QUALITY CHECKLIST (PASS):
         { name:"Tania Aprillia", hadir:true, tamu:2, ucapan:"Selamat menempuh hidup baru. Semoga kalian selalu diberikan kesabaran, kelapangan hati, dan kebahagiaan." }
       ];
 
-      function makeSeedWithLiveTimestamps(){
+      function hash(s){
+        let h = 2166136261;
+        for(let i=0;i<s.length;i++){
+          h ^= s.charCodeAt(i);
+          h = Math.imul(h, 16777619);
+        }
+        return h >>> 0;
+      }
+
+      function makeSeed(){
         const now = Date.now();
-        // offsets spread: minutes to days
         const offsets = [
-          8*60*1000, 18*60*1000, 34*60*1000, 55*60*1000,
+          7*60*1000, 14*60*1000, 27*60*1000, 49*60*1000,
           2*3600*1000, 3*3600*1000, 5*3600*1000, 7*3600*1000,
           10*3600*1000, 14*3600*1000,
-          1*86400*1000 + 2*3600*1000, 1*86400*1000 + 6*3600*1000,
+          1*86400*1000 + 2*3600*1000, 1*86400*1000 + 7*3600*1000,
           2*86400*1000 + 1*3600*1000, 2*86400*1000 + 9*3600*1000,
-          3*86400*1000 + 2*3600*1000, 3*86400*1000 + 8*3600*1000,
-          4*86400*1000 + 1*3600*1000, 4*86400*1000 + 10*3600*1000,
-          5*86400*1000 + 3*3600*1000, 6*86400*1000 + 4*3600*1000
+          3*86400*1000 + 3*3600*1000, 3*86400*1000 + 8*3600*1000,
+          4*86400*1000 + 2*3600*1000, 4*86400*1000 + 10*3600*1000,
+          5*86400*1000 + 4*3600*1000, 6*86400*1000 + 5*3600*1000
         ];
-
-        // deterministic shuffle based on current date (keeps "alive" but stable per day)
         const dayKey = new Date().toISOString().slice(0,10);
-        const seed = stableHash(dayKey);
-        const idxs = Array.from({length: offsets.length}, (_,i)=>i);
-        idxs.sort((a,b)=> ((seed + a*2654435761) >>> 0) - ((seed + b*2654435761) >>> 0));
+        const seed = hash(dayKey);
+        const idx = Array.from({length: offsets.length}, (_,i)=>i);
+        idx.sort((a,b)=> ((seed + a*2654435761)>>>0) - ((seed + b*2654435761)>>>0));
 
         return seedBase.map((it, i)=>{
-          const off = offsets[idxs[i] % offsets.length];
-          const createdAt = new Date(now - off).toISOString();
-          return { ...it, createdAt };
+          const off = offsets[idx[i] % offsets.length];
+          return { ...it, createdAt: new Date(now - off).toISOString() };
         });
       }
 
-      function loadGuestbook(){
+      function loadBook(){
         try{
           const raw = localStorage.getItem(STORAGE_KEY);
           if(raw){
             const arr = JSON.parse(raw);
-            if(Array.isArray(arr) && arr.length){
-              return arr;
-            }
+            if(Array.isArray(arr) && arr.length) return arr;
           }
-        }catch(e){}
-        const seeded = makeSeedWithLiveTimestamps();
-        try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(seeded)); }catch(e){}
+        }catch(_){}
+        const seeded = makeSeed();
+        try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(seeded)); }catch(_){}
         return seeded;
       }
 
-      function saveGuestbook(list){
-        try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(list)); }catch(e){}
+      function saveBook(arr){
+        try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(arr)); }catch(_){}
+      }
+
+      function esc(s){
+        return String(s)
+          .replaceAll("&","&amp;")
+          .replaceAll("<","&lt;")
+          .replaceAll(">","&gt;")
+          .replaceAll('"',"&quot;")
+          .replaceAll("'","&#039;");
       }
 
       function relTime(iso){
         const t = new Date(iso).getTime();
         if(!Number.isFinite(t)) return "";
         const now = Date.now();
-        let diff = Math.max(0, now - t);
+        const diff = Math.max(0, now - t);
 
         const m = Math.floor(diff / 60000);
         if(m < 1) return "baru saja";
@@ -1713,58 +1781,42 @@ QUALITY CHECKLIST (PASS):
         if(d < 7) return d + " hari lalu";
 
         const dt = new Date(t);
-        const opts = { day: "2-digit", month: "short", year: "numeric" };
-        return dt.toLocaleDateString("id-ID", opts);
+        return dt.toLocaleDateString("id-ID", { day:"2-digit", month:"short", year:"numeric" });
       }
 
-      function renderGuestbook(list){
+      function renderBook(arr){
         if(!guestbookEl) return;
         guestbookEl.innerHTML = "";
 
-        const sorted = list.slice().sort((a,b)=>{
-          const ta = new Date(a.createdAt).getTime();
-          const tb = new Date(b.createdAt).getTime();
-          return (tb - ta);
-        });
-
+        const sorted = arr.slice().sort((a,b)=> new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
         sorted.forEach(it=>{
-          const entry = document.createElement("div");
-          entry.className = "entry";
+          const hadirChip = it.hadir ? '<span class="pchip ok">Hadir</span>' : '<span class="pchip">Tidak</span>';
+          const tamuChip = '<span class="pchip">' + esc(String(it.tamu)) + ' Tamu</span>';
 
-          const hadirChip = it.hadir ? '<span class="chip ok">Hadir</span>' : '<span class="chip">Tidak</span>';
-          const tamuChip = '<span class="chip">' + String(it.tamu) + ' Tamu</span>';
-
-          entry.innerHTML = `
-            <div class="entryTop">
-              <div class="entryName">
-                <span>${escapeHtml(it.name || "")}</span>
+          const div = document.createElement("div");
+          div.className = "entry";
+          div.innerHTML = `
+            <div class="etop">
+              <div class="ename">
+                <span>${esc(it.name || "")}</span>
                 ${hadirChip}
                 ${tamuChip}
               </div>
-              <div class="entryTime">${escapeHtml(relTime(it.createdAt))}</div>
+              <div class="etime">${esc(relTime(it.createdAt))}</div>
             </div>
-            <p class="entryMsg">${escapeHtml(it.ucapan || "")}</p>
+            <p class="emsg">${esc(it.ucapan || "")}</p>
           `;
-          guestbookEl.appendChild(entry);
+          guestbookEl.appendChild(div);
         });
       }
 
-      function escapeHtml(s){
-        return String(s)
-          .replaceAll("&","&amp;")
-          .replaceAll("<","&lt;")
-          .replaceAll(">","&gt;")
-          .replaceAll('"',"&quot;")
-          .replaceAll("'","&#039;");
-      }
+      let book = loadBook();
+      renderBook(book);
 
-      let guestbook = loadGuestbook();
-      renderGuestbook(guestbook);
-
-      // Persist form (optional nice touch)
+      // Persist form (quality)
       function loadForm(){
         try{
-          const raw = localStorage.getItem(STORAGE_FORM_KEY);
+          const raw = localStorage.getItem(FORM_KEY);
           if(!raw) return;
           const v = JSON.parse(raw);
           if(!v || typeof v !== "object") return;
@@ -1776,7 +1828,7 @@ QUALITY CHECKLIST (PASS):
           if(hadir && v.hadir) hadir.value = v.hadir;
           if(tamu && v.tamu) tamu.value = String(v.tamu);
           if(ucapan && v.ucapan) ucapan.value = v.ucapan;
-        }catch(e){}
+        }catch(_){}
       }
       function saveForm(){
         try{
@@ -1784,11 +1836,10 @@ QUALITY CHECKLIST (PASS):
           const hadir = document.getElementById("hadir")?.value || "hadir";
           const tamu = Number(document.getElementById("tamu")?.value || 1);
           const ucapan = document.getElementById("ucapan")?.value || "";
-          localStorage.setItem(STORAGE_FORM_KEY, JSON.stringify({name, hadir, tamu, ucapan}));
-        }catch(e){}
+          localStorage.setItem(FORM_KEY, JSON.stringify({name, hadir, tamu, ucapan}));
+        }catch(_){}
       }
       loadForm();
-
       rsvpForm && rsvpForm.addEventListener("input", saveForm);
 
       rsvpForm && rsvpForm.addEventListener("submit", (e)=>{
@@ -1799,7 +1850,7 @@ QUALITY CHECKLIST (PASS):
         const ucapan = (document.getElementById("ucapan")?.value || "").trim();
 
         if(!name || !ucapan){
-          showToast("Mohon isi nama dan ucapan.");
+          toast("Mohon isi nama dan ucapan.");
           return;
         }
 
@@ -1811,31 +1862,29 @@ QUALITY CHECKLIST (PASS):
           createdAt: new Date().toISOString()
         };
 
-        guestbook = [entry, ...guestbook];
-        saveGuestbook(guestbook);
-        renderGuestbook(guestbook);
+        book = [entry, ...book];
+        saveBook(book);
+        renderBook(book);
 
-        // soft reset message only
-        showToast("Terima kasih. Ucapannya sudah tersimpan.");
-        // keep name to reduce friction; clear message only
+        toast("Terima kasih. Ucapannya sudah tersimpan.");
+
         const uc = document.getElementById("ucapan");
         if(uc) uc.value = "";
         saveForm();
       });
 
       btnReset && btnReset.addEventListener("click", async ()=>{
-        const ok = await openConfirm("Reset data", "Reset akan menghapus data RSVP dan buku tamu di perangkat ini. Lanjutkan?");
+        const ok = await confirmUI("Reset data", "Reset akan menghapus data RSVP dan buku tamu di perangkat ini. Lanjutkan?");
         if(!ok) return;
 
         try{
           localStorage.removeItem(STORAGE_KEY);
-          localStorage.removeItem(STORAGE_FORM_KEY);
-        }catch(e){}
+          localStorage.removeItem(FORM_KEY);
+        }catch(_){}
 
-        guestbook = loadGuestbook();
-        renderGuestbook(guestbook);
+        book = loadBook();
+        renderBook(book);
 
-        // clear fields
         const name = document.getElementById("name");
         const hadir = document.getElementById("hadir");
         const tamu = document.getElementById("tamu");
@@ -1844,16 +1893,16 @@ QUALITY CHECKLIST (PASS):
         if(hadir) hadir.value = "hadir";
         if(tamu) tamu.value = "1";
         if(ucapan) ucapan.value = "";
-        showToast("Data berhasil direset.");
+
+        toast("Data berhasil direset.");
         closeConfirm(false);
       });
 
       // --- ICS ---
-      const btnICS_Akad = document.getElementById("btnICS_Akad");
-      const btnICS_Resepsi = document.getElementById("btnICS_Resepsi");
+      const btnICS_A = document.getElementById("btnICS_A");
+      const btnICS_R = document.getElementById("btnICS_R");
 
-      function toICSDateUTC(dt){
-        // dt: Date
+      function icsUTC(dt){
         const y = dt.getUTCFullYear();
         const mo = String(dt.getUTCMonth()+1).padStart(2,"0");
         const da = String(dt.getUTCDate()).padStart(2,"0");
@@ -1863,14 +1912,22 @@ QUALITY CHECKLIST (PASS):
         return `${y}${mo}${da}T${h}${mi}${s}Z`;
       }
 
+      function escICS(s){
+        return String(s)
+          .replaceAll("\\","\\\\")
+          .replaceAll("\n","\\n")
+          .replaceAll(",","\\,")
+          .replaceAll(";","\\;");
+      }
+
       function downloadICS({summary, location, startISO, endISO, filename}){
         try{
           const start = new Date(startISO);
           const end = new Date(endISO);
-          const uid = "reza-alya-" + Math.random().toString(16).slice(2) + "@local";
-          const dtstamp = toICSDateUTC(new Date());
+          const uid = "reza-alya-" + Math.random().toString(16).slice(2) + "@invite";
+          const dtstamp = icsUTC(new Date());
 
-          const ics =
+          const body =
 `BEGIN:VCALENDAR
 VERSION:2.0
 PRODID:-//RezaAlya//Invitation//ID
@@ -1879,14 +1936,14 @@ METHOD:PUBLISH
 BEGIN:VEVENT
 UID:${uid}
 DTSTAMP:${dtstamp}
-SUMMARY:${escapeICS(summary)}
-LOCATION:${escapeICS(location)}
-DTSTART:${toICSDateUTC(start)}
-DTEND:${toICSDateUTC(end)}
+SUMMARY:${escICS(summary)}
+LOCATION:${escICS(location)}
+DTSTART:${icsUTC(start)}
+DTEND:${icsUTC(end)}
 END:VEVENT
 END:VCALENDAR`;
 
-          const blob = new Blob([ics], {type:"text/calendar;charset=utf-8"});
+          const blob = new Blob([body], {type:"text/calendar;charset=utf-8"});
           const url = URL.createObjectURL(blob);
           const a = document.createElement("a");
           a.href = url;
@@ -1895,36 +1952,28 @@ END:VCALENDAR`;
           a.click();
           a.remove();
           setTimeout(()=> URL.revokeObjectURL(url), 1500);
-          showToast("File kalender siap diunduh.");
-        }catch(e){
-          showToast("Gagal membuat file kalender.");
+          toast("File kalender siap diunduh.");
+        }catch(_){
+          toast("Gagal membuat file kalender.");
         }
       }
 
-      function escapeICS(s){
-        return String(s)
-          .replaceAll("\\","\\\\")
-          .replaceAll("\n","\\n")
-          .replaceAll(",","\\,")
-          .replaceAll(";","\\;");
-      }
-
-      btnICS_Akad && btnICS_Akad.addEventListener("click", ()=>{
+      btnICS_A && btnICS_A.addEventListener("click", ()=>{
         downloadICS({
           summary: "Akad Nikah Reza & Alya",
-          location: ADDRESS_TEXT,
-          startISO: "2026-01-17T08:00:00+07:00",
-          endISO: "2026-01-17T09:00:00+07:00",
+          location: CONFIG.venue,
+          startISO: CONFIG.akadStart,
+          endISO: CONFIG.akadEnd,
           filename: "Akad-Reza-Alya.ics"
         });
       });
 
-      btnICS_Resepsi && btnICS_Resepsi.addEventListener("click", ()=>{
+      btnICS_R && btnICS_R.addEventListener("click", ()=>{
         downloadICS({
           summary: "Resepsi Reza & Alya",
-          location: ADDRESS_TEXT,
-          startISO: "2026-01-17T10:00:00+07:00",
-          endISO: "2026-01-17T15:00:00+07:00",
+          location: CONFIG.venue,
+          startISO: CONFIG.resStart,
+          endISO: CONFIG.resEnd,
           filename: "Resepsi-Reza-Alya.ics"
         });
       });
@@ -1933,69 +1982,16 @@ END:VCALENDAR`;
       const btnTop = document.getElementById("btnTop");
       btnTop && btnTop.addEventListener("click", ()=>{
         const el = document.querySelector("#home");
-        if(el) el.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
+        if(el) el.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block:"start" });
       });
 
-      // --- Gate open action (unlock audio) ---
-      async function openInvitation(){
-        if(!gate) return;
-
-        audioUnlocked = true;
-        document.body.classList.remove("locked");
-        gate.setAttribute("aria-hidden","true");
-
-        // Move stage to home slot again if needed and ensure first visible state
-        const homeSlot = document.querySelector('#home [data-photo-slot]');
-        if(homeSlot) mountStageToSlot(homeSlot);
-        setPhoto("hero");
-
-        // Attempt autoplay after explicit user gesture
-        if(bgm){
-          bgm.muted = false;
-          await tryPlay();
-        }
-      }
-
-      btnOpen && btnOpen.addEventListener("click", openInvitation);
-
-      // --- Key handling ---
-      document.addEventListener("keydown", (e)=>{
-        if(e.key === "Escape"){
-          // close modal if open
-          if(modal && modal.getAttribute("aria-hidden") === "false"){
-            closeConfirm(false);
-          }
-        }
-      });
-
-      // --- Fast warm-up after gate open (only when user taps, avoids autoplay policy issues) ---
-      function warmImages(keys){
-        keys.forEach(k=>{
-          const src = photos[k];
-          if(!src) return;
-          const img = new Image();
-          img.decoding = "async";
-          img.src = src;
-        });
-      }
-
-      // Hook warm-up to open button (same tap)
-      btnOpen && btnOpen.addEventListener("click", ()=>{
-        warmImages(["opening","couple","akad","resepsi","venue","groom","bride","rsvp"]);
-      }, { once: true });
-
-      // --- Ensure stage is mounted when layout changes (rare) ---
+      // --- Resize safety: keep stage inside active section slot ---
       window.addEventListener("resize", ()=>{
-        const activeSection = document.getElementById(lastActiveSectionId);
-        const slot = activeSection ? activeSection.querySelector("[data-photo-slot]") : slots[0];
-        if(slot) mountStageToSlot(slot);
+        const sec = document.getElementById(currentSectionId) || document.getElementById("home");
+        const slot = sec ? sec.querySelector("[data-slot]") : slots[0];
+        if(slot) mountStage(slot);
       });
 
-      // Init UI
-      setAudioUI();
-
-      // Set anchors safe (no URL displayed anyway)
-      // (maps buttons already have rel noopener)
     })();
   </script>
 </body>
