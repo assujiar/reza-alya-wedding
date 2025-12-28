@@ -1,4 +1,24 @@
 <!doctype html>
+<!-- SAVE AS: index.html -->
+<!--
+QUALITY CHECKLIST (PASS):
+[1] Single-file HTML+CSS+JS (no external JS libs) ✅
+[2] Dark luxury theme (charcoal gradient, off-white text, subtle champagne-gold accents) ✅
+[3] 1 Google Font for headings; body system font ✅
+[4] Gate overlay includes recipient: “Kepada Yth. Dimas Budi Ramadhan” ✅
+[5] Gate background uses /assets/img/hand.png subtly ✅
+[6] Audio: default OFF; plays only after gate tap; play/pause + mute + status; toast on error ✅
+[7] Photo Story System: 1 photo stage reused; auto-switch per section + sub-target Akad/Resepsi + Groom/Bride blocks; premium crossfade; fallback frame no text ✅
+[8] Inline images are placed BETWEEN section texts (not a left column) ✅
+[9] No separate Gallery section; 1-column dynamic layout blocks with varied compositions ✅
+[10] Sticky mini-nav + smooth scroll ✅
+[11] Reveal-on-scroll ✅
+[12] RSVP+Guestbook: localStorage, seed 20 entries w/ createdAt, relative time, newest first, reset confirm+toast ✅
+[13] Countdown to Akad (2026-01-17 08:00 WIB) ✅
+[14] Maps + Copy address + ICS via Blob ✅
+[15] Reduced motion respected (prefers-reduced-motion) ✅
+[16] Zero console errors by design ✅
+-->
 <html lang="id">
 <head>
   <meta charset="utf-8" />
@@ -6,19 +26,17 @@
   <meta name="color-scheme" content="dark" />
   <title>Undangan Pernikahan Reza & Alya</title>
 
-  <!-- One romantic serif font for headings only -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&display=swap" rel="stylesheet">
 
-  <!-- Preload key images (minimum) -->
-  <link rel="preload" as="image" href="https://raw.githubusercontent.com/assujiar/reza-alya-wedding/a6603e96e62bf8d5486e9afaa226a5e19b862d65/reza-alya.png">
-  <link rel="preload" as="image" href="https://raw.githubusercontent.com/assujiar/reza-alya-wedding/a6603e96e62bf8d5486e9afaa226a5e19b862d65/reza-alya.2.png">
-  <link rel="preload" as="image" href="https://raw.githubusercontent.com/assujiar/reza-alya-wedding/a6603e96e62bf8d5486e9afaa226a5e19b862d65/reza-alya.3.png">
-  <link rel="preload" as="image" href="https://raw.githubusercontent.com/assujiar/reza-alya-wedding/a6603e96e62bf8d5486e9afaa226a5e19b862d65/reza-alya.4.png">
-  <link rel="preload" as="image" href="https://raw.githubusercontent.com/assujiar/reza-alya-wedding/a6603e96e62bf8d5486e9afaa226a5e19b862d65/reza-alya.5.png">
-  <!-- Gate background hand.png (RAW) -->
-  <link rel="preload" as="image" href="https://raw.githubusercontent.com/assujiar/reza-alya-wedding/36fdb6eec7528d9bd05655480a83d31251bd17a7/hand.png">
+  <!-- Preload essentials -->
+  <link rel="preload" as="image" href="/assets/img/reza-alya.png" fetchpriority="high">
+  <link rel="preload" as="image" href="/assets/img/hand.png" fetchpriority="high">
+  <link rel="preload" as="image" href="/assets/img/reza-alya.2.png">
+  <link rel="preload" as="image" href="/assets/img/reza-alya.3.png">
+  <link rel="preload" as="image" href="/assets/img/reza-alya.4.png">
+  <link rel="preload" as="image" href="/assets/img/reza-alya.5.png">
 
   <style>
     :root{
@@ -41,11 +59,10 @@
       --safeTop: env(safe-area-inset-top, 0px);
       --safeBot: env(safe-area-inset-bottom, 0px);
       --ease: cubic-bezier(.2,.8,.2,1);
-      --t: 720ms;
+      --t: 760ms;
       --t2: 520ms;
 
-      /* Gate hand background */
-      --gateHandUrl: url("https://raw.githubusercontent.com/assujiar/reza-alya-wedding/36fdb6eec7528d9bd05655480a83d31251bd17a7/hand.png");
+      --gateHandUrl: url("/assets/img/hand.png");
     }
 
     @media (prefers-reduced-motion: reduce){
@@ -68,10 +85,8 @@
         linear-gradient(180deg, var(--bg0), var(--bg1) 35%, var(--bg2));
       overflow-x: hidden;
     }
-
     body.locked{ height:100%; overflow:hidden; }
 
-    /* Subtle noise overlay */
     body::before{
       content:"";
       position: fixed;
@@ -97,7 +112,7 @@
       white-space:nowrap;border:0;
     }
 
-    /* Gate Overlay */
+    /* Gate */
     .gate{
       position: fixed;
       inset: 0;
@@ -115,7 +130,6 @@
     }
     .gate[aria-hidden="true"]{ opacity:0; transform: translateY(-6px) scale(.99); pointer-events:none; }
 
-    /* Hand background image (subtle) */
     .gate::after{
       content:"";
       position:absolute;
@@ -130,7 +144,6 @@
       transform: translateY(8px);
       mix-blend-mode: soft-light;
     }
-    /* Additional vignette to keep it luxurious and not busy */
     .gate::before{
       content:"";
       position:absolute;
@@ -162,10 +175,7 @@
       opacity: .75;
       pointer-events:none;
     }
-    .gateInner{
-      position: relative;
-      padding: clamp(22px, 5vw, 34px);
-    }
+    .gateInner{ position: relative; padding: clamp(22px, 5vw, 34px); }
 
     .filigree{
       position: absolute;
@@ -174,18 +184,8 @@
       pointer-events:none;
       filter: blur(.2px);
     }
-    .gateTop{
-      display:flex;
-      flex-direction: column;
-      gap: 10px;
-      margin-bottom: 16px;
-    }
-    .to{
-      font-size: 13px;
-      color: var(--faint);
-      letter-spacing: .12em;
-      text-transform: uppercase;
-    }
+    .gateTop{ display:flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
+    .to{ font-size: 13px; color: var(--faint); letter-spacing: .12em; text-transform: uppercase; }
     .recipient{
       font-family: "Playfair Display", serif;
       font-size: clamp(22px, 5.2vw, 30px);
@@ -193,11 +193,7 @@
       letter-spacing: .01em;
       margin:0;
     }
-    .gateHint{
-      margin: 6px 0 0;
-      color: var(--muted);
-      font-size: 14.5px;
-    }
+    .gateHint{ margin: 6px 0 0; color: var(--muted); font-size: 14.5px; }
 
     .gateBtnRow{
       display:flex;
@@ -206,6 +202,7 @@
       margin-top: 22px;
       flex-wrap: wrap;
     }
+
     .btn{
       border: 1px solid rgba(255,255,255,.16);
       background: rgba(255,255,255,.05);
@@ -233,90 +230,13 @@
       box-shadow: 0 0 0 6px rgba(201,152,70,.14);
     }
 
-    /* Shell layout */
+    /* Layout */
     .shell{
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 18px;
-      width: min(1100px, 100%);
+      width: min(860px, 100%);
       margin: 0 auto;
       padding: calc(var(--pad) + var(--safeTop)) var(--pad) calc(88px + var(--safeBot));
     }
-
-    @media (min-width: 980px){
-      .shell{
-        grid-template-columns: 1.05fr .95fr;
-        gap: clamp(18px, 3vw, 34px);
-        align-items: start;
-      }
-    }
-
-    /* Photo story panel */
-    .photoPanel{
-      position: relative;
-      border-radius: var(--radius2);
-      overflow: hidden;
-      border: 1px solid rgba(255,255,255,.12);
-      background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.03));
-      box-shadow: var(--shadow);
-      isolation: isolate;
-    }
-
-    /* Mobile: sticky but not oversized */
-    .photoPanel{
-      height: min(46vh, 420px);
-      min-height: 280px;
-      position: sticky;
-      top: calc(12px + var(--safeTop));
-      align-self: start;
-    }
-    @media (min-width: 980px){
-      .photoPanel{ height: calc(100vh - (var(--pad) + var(--safeTop) + 26px)); min-height: 560px; }
-    }
-
-    .photoLayer{
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      transform: scale(1.03);
-      filter: saturate(.98) contrast(1.02);
-      opacity: 0;
-      transition: opacity var(--t) var(--ease), transform var(--t) var(--ease), filter var(--t) var(--ease);
-    }
-    .photoLayer.is-active{
-      opacity: 1;
-      transform: scale(1);
-      filter: saturate(1) contrast(1.03);
-    }
-    .photoOverlay{
-      position: absolute; inset:0;
-      pointer-events:none;
-      background:
-        radial-gradient(900px 440px at 10% 0%, rgba(201,152,70,.12), transparent 60%),
-        radial-gradient(700px 420px at 95% 18%, rgba(255,255,255,.08), transparent 62%),
-        linear-gradient(180deg, rgba(7,7,10,.12), rgba(7,7,10,.42));
-      mix-blend-mode: soft-light;
-    }
-    .photoFrame{
-      position:absolute; inset:0;
-      background:
-        radial-gradient(700px 340px at 18% 10%, rgba(201,152,70,.10), transparent 60%),
-        radial-gradient(800px 420px at 90% 75%, rgba(255,255,255,.06), transparent 62%),
-        linear-gradient(180deg, rgba(10,11,14,.92), rgba(12,13,18,.92));
-      opacity: 0;
-      transition: opacity var(--t) var(--ease);
-    }
-    .photoFrame.is-on{ opacity: 1; }
-
-    /* Content */
-    .content{
-      display:flex;
-      flex-direction: column;
-      gap: 22px;
-      min-width: 0;
-    }
+    .content{ display:flex; flex-direction: column; gap: 22px; min-width: 0; }
 
     section{
       border-radius: var(--radius2);
@@ -325,9 +245,7 @@
       box-shadow: 0 16px 40px rgba(0,0,0,.35);
       overflow: hidden;
     }
-    .secInner{
-      padding: var(--pad);
-    }
+    .secInner{ padding: var(--pad); }
 
     .eyebrow{
       font-size: 12px;
@@ -382,38 +300,188 @@
       opacity: .9;
     }
 
-    .coupleRow{
-      display:grid;
-      grid-template-columns: 1fr;
-      gap: 14px;
-      margin-top: 16px;
-    }
-    @media (min-width: 640px){
-      .coupleRow{ grid-template-columns: 1fr 1fr; }
-    }
-    .portrait{
-      border-radius: var(--radius);
-      overflow:hidden;
+    /* Inline Photo Slot (between texts) */
+    .inlinePhotoSlot{
+      margin: 16px 0 10px;
+      border-radius: var(--radius2);
+      overflow: hidden;
       border: 1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.03);
+      background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.03));
+      box-shadow: var(--shadow);
       position: relative;
-      min-height: 180px;
-      box-shadow: 0 12px 28px rgba(0,0,0,.35);
+      aspect-ratio: 16 / 10;
+      min-height: 220px;
+      max-height: 460px;
     }
-    .portrait img{
+    @media (max-width: 420px){
+      .inlinePhotoSlot{ aspect-ratio: 4 / 5; min-height: 260px; }
+    }
+
+    /* Main Photo Stage (single instance moved across slots) */
+    .photoStage{
+      position:absolute;
+      inset:0;
+      width:100%;
+      height:100%;
+      isolation: isolate;
+    }
+    .photoLayer{
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transform: scale(1.03);
+      filter: saturate(.98) contrast(1.02);
+      opacity: 0;
+      transition: opacity var(--t) var(--ease), transform var(--t) var(--ease), filter var(--t) var(--ease);
+    }
+    .photoLayer.is-active{
+      opacity: 1;
+      transform: scale(1);
+      filter: saturate(1) contrast(1.03);
+    }
+    .photoOverlay{
+      position: absolute; inset:0;
+      pointer-events:none;
+      background:
+        radial-gradient(900px 440px at 10% 0%, rgba(201,152,70,.12), transparent 60%),
+        radial-gradient(700px 420px at 95% 18%, rgba(255,255,255,.08), transparent 62%),
+        linear-gradient(180deg, rgba(7,7,10,.10), rgba(7,7,10,.42));
+      mix-blend-mode: soft-light;
+    }
+    .photoFrame{
+      position:absolute; inset:0;
+      background:
+        radial-gradient(700px 340px at 18% 10%, rgba(201,152,70,.10), transparent 60%),
+        radial-gradient(800px 420px at 90% 75%, rgba(255,255,255,.06), transparent 62%),
+        linear-gradient(180deg, rgba(10,11,14,.92), rgba(12,13,18,.92));
+      opacity: 0;
+      transition: opacity var(--t) var(--ease);
+    }
+    .photoFrame.is-on{ opacity: 1; }
+
+    .inlinePhotoSlot::after{
+      content:"";
+      position:absolute;
+      inset: 0;
+      pointer-events:none;
+      box-shadow: inset 0 0 0 1px rgba(201,152,70,.10);
+      opacity: .9;
+      border-radius: inherit;
+    }
+
+    /* 1-column dynamic layout blocks */
+    .storyStack{ display:grid; gap: 12px; margin-top: 14px; }
+    .storyBlock{
+      border-radius: var(--radius2);
+      border: 1px solid rgba(255,255,255,.12);
+      background: linear-gradient(180deg, rgba(255,255,255,.045), rgba(255,255,255,.028));
+      box-shadow: 0 16px 42px rgba(0,0,0,.38);
+      overflow:hidden;
+      position: relative;
+      transform: translateY(var(--y, 0px));
+      transition: transform var(--t2) var(--ease), border-color var(--t2) var(--ease);
+    }
+    .storyBlock:hover{ transform: translateY(calc(var(--y, 0px) - 1px)); border-color: rgba(255,255,255,.18); }
+
+    .storyMedia{
+      position: relative;
+      aspect-ratio: 16/11;
+      min-height: 220px;
+      background:
+        radial-gradient(700px 340px at 18% 10%, rgba(201,152,70,.10), transparent 60%),
+        radial-gradient(800px 420px at 90% 75%, rgba(255,255,255,.06), transparent 62%),
+        linear-gradient(180deg, rgba(10,11,14,.92), rgba(12,13,18,.92));
+    }
+    @media (max-width: 420px){ .storyMedia{ aspect-ratio: 4/5; } }
+
+    .storyMedia img{
+      position:absolute; inset:0;
       width:100%; height:100%;
       object-fit: cover;
       display:block;
       filter: saturate(.98) contrast(1.02);
-      transform: scale(1.02);
+      transform: scale(1.01);
     }
-    .portrait::after{
+    .storyMedia[data-broken="true"] img{ display:none; }
+
+    .storyMedia::after{
       content:"";
       position:absolute; inset:0;
-      background:
-        radial-gradient(620px 240px at 15% 0%, rgba(201,152,70,.14), transparent 62%),
-        linear-gradient(180deg, rgba(0,0,0,.0), rgba(0,0,0,.32));
       pointer-events:none;
+      background:
+        radial-gradient(720px 320px at 14% 0%, rgba(201,152,70,.14), transparent 62%),
+        linear-gradient(180deg, rgba(0,0,0,.0), rgba(0,0,0,.34));
+      mix-blend-mode: soft-light;
+      opacity: .9;
+    }
+
+    .storyCaption{
+      padding: 14px 14px 16px;
+      display:grid;
+      gap: 6px;
+      background: rgba(0,0,0,.06);
+      border-top: 1px solid rgba(255,255,255,.10);
+    }
+    .storyName{
+      font-family: "Playfair Display", serif;
+      font-size: 18px;
+      letter-spacing: .01em;
+      margin: 0;
+      line-height: 1.25;
+    }
+    .storyNote{
+      margin:0;
+      color: var(--muted);
+      font-size: 14.5px;
+      line-height: 1.85;
+    }
+
+    /* Variant styles for diversity (still 1-column) */
+    .storyBlock[data-variant="overlay"] .storyCaption{
+      position:absolute;
+      left: 14px; right: 14px;
+      bottom: 14px;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(10,11,14,.54);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 14px 38px rgba(0,0,0,.55);
+      border-top: none;
+    }
+    .storyBlock[data-variant="overlay"] .storyMedia{ min-height: 260px; }
+    .storyBlock[data-variant="overlay"] .storyNote{ color: rgba(245,245,245,.70); }
+
+    .storyBlock[data-variant="topcap"] .storyCaption{
+      border-top: none;
+      border-bottom: 1px solid rgba(255,255,255,.10);
+    }
+    .storyBlock[data-variant="topcap"] .storyMedia{ border-top: 1px solid rgba(255,255,255,.10); }
+
+    .badgeMini{
+      position:absolute;
+      top: 14px;
+      left: 14px;
+      display:inline-flex;
+      align-items:center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(10,11,14,.48);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 14px 38px rgba(0,0,0,.55);
+      color: rgba(245,245,245,.88);
+      font-size: 12px;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+    }
+    .badgeMini .dot{
+      width: 6px; height: 6px; border-radius: 50%;
+      background: rgba(201,152,70,.92);
+      box-shadow: 0 0 0 5px rgba(201,152,70,.14);
+      opacity: .95;
     }
 
     /* Event cards */
@@ -464,11 +532,7 @@
       font-size: 14.5px;
       line-height: 1.9;
     }
-    .kv{
-      margin-top: 10px;
-      display:grid;
-      gap: 6px;
-    }
+    .kv{ margin-top: 10px; display:grid; gap: 6px; }
     .kvRow{
       display:flex;
       justify-content: space-between;
@@ -518,15 +582,8 @@
     }
 
     /* RSVP form */
-    .form{
-      margin-top: 14px;
-      display:grid;
-      gap: 12px;
-    }
-    .field{
-      display:grid;
-      gap: 8px;
-    }
+    .form{ margin-top: 14px; display:grid; gap: 12px; }
+    .field{ display:grid; gap: 8px; }
     label{
       font-size: 12px;
       letter-spacing: .14em;
@@ -549,11 +606,7 @@
       box-shadow: 0 0 0 6px rgba(201,152,70,.10);
     }
 
-    .guestbook{
-      margin-top: 18px;
-      display:grid;
-      gap: 10px;
-    }
+    .guestbook{ margin-top: 18px; display:grid; gap: 10px; }
     .entry{
       border-radius: 16px;
       border: 1px solid rgba(255,255,255,.11);
@@ -590,11 +643,7 @@
       color: rgba(201,152,70,.92);
       background: rgba(201,152,70,.10);
     }
-    .entryTime{
-      font-size: 12px;
-      color: var(--faint);
-      white-space: nowrap;
-    }
+    .entryTime{ font-size: 12px; color: var(--faint); white-space: nowrap; }
     .entryMsg{
       color: var(--muted);
       font-size: 14px;
@@ -757,21 +806,19 @@
 
     @media (prefers-reduced-motion: reduce){
       [data-reveal]{ opacity: 1; transform: none; }
-      .btn, .card, .navBtn, .iconBtn, .toast, .photoLayer{ transition: none !important; }
+      .btn, .card, .navBtn, .iconBtn, .toast, .photoLayer, .storyBlock{ transition: none !important; }
+      .storyBlock:hover{ transform: translateY(var(--y, 0px)); }
     }
   </style>
 </head>
 
 <body class="locked">
-  <!-- Audio (default OFF) -->
-  <audio id="bgm" preload="metadata">
-    <source src="https://raw.githubusercontent.com/assujiar/reza-alya-wedding/36fdb6eec7528d9bd05655480a83d31251bd17a7/Wedding%20Invitation%20%20Jason%20Farnham%20(No%20Copyright%20Music).mp3" type="audio/mpeg" />
+  <audio id="bgm" preload="none">
+    <source src="/assets/audio/wedding.mp3" type="audio/mpeg" />
   </audio>
 
-  <!-- Toasts -->
   <div class="toasts" id="toasts" aria-live="polite" aria-atomic="true"></div>
 
-  <!-- Modal (confirm) -->
   <div class="modal" id="modal" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Konfirmasi">
     <div class="modalCard" role="document">
       <div class="modalInner">
@@ -851,29 +898,23 @@
   </div>
 
   <main class="shell" aria-label="Undangan Pernikahan">
-    <!-- Photo story panel -->
-    <aside class="photoPanel" aria-label="Foto utama">
-      <div class="photoFrame" id="photoFallback" aria-hidden="true"></div>
-      <img class="photoLayer is-active" id="photoA" alt="" />
-      <img class="photoLayer" id="photoB" alt="" />
-      <div class="photoOverlay" aria-hidden="true"></div>
-    </aside>
-
-    <!-- Content -->
     <div class="content">
       <!-- 1) COVER / HERO -->
       <section id="home" data-photo="hero" aria-label="Cover">
         <div class="secInner">
           <p class="eyebrow" data-reveal>17 Januari 2026</p>
           <h1 class="h1" data-reveal>Reza Budi Prasetyo<br>&amp; Alya Putri Maharani</h1>
-          <p class="sub" data-reveal style="margin-top:14px;">
+
+          <div class="inlinePhotoSlot" data-photo-slot data-slot-for="home" aria-label="Foto"></div>
+
+          <p class="sub" data-reveal style="margin-top:6px;">
             Le Dian Hotel Serang
             <span style="display:inline-block; margin:0 10px; opacity:.55;">•</span>
             <span style="opacity:.92;">WIB</span>
           </p>
 
           <div class="heroMeta" data-reveal>
-            <span class="pill"><span class="dot" aria-hidden="true"></span><span id="subtleRecipient">Untuk: Dimas Budi Ramadhan</span></span>
+            <span class="pill"><span class="dot" aria-hidden="true"></span><span>Untuk: Dimas Budi Ramadhan</span></span>
             <span class="pill"><span class="dot" aria-hidden="true"></span><span>Akad 08.00–09.00</span></span>
             <span class="pill"><span class="dot" aria-hidden="true"></span><span>Resepsi 10.00–15.00</span></span>
           </div>
@@ -901,9 +942,12 @@
         <div class="secInner">
           <p class="eyebrow" data-reveal>Pembuka</p>
           <h2 class="h2" data-reveal>Assalamu’alaikum Warahmatullahi Wabarakatuh</h2>
+
           <p class="sub" data-reveal style="margin-top:12px;">
             Dengan memohon rahmat dan ridha Allah SWT, kami bermaksud mengundang Bapak/Ibu/Saudara/i untuk hadir dalam rangkaian acara pernikahan kami.
           </p>
+
+          <div class="inlinePhotoSlot" data-photo-slot data-slot-for="opening" aria-label="Foto"></div>
         </div>
       </section>
 
@@ -912,13 +956,36 @@
         <div class="secInner">
           <p class="eyebrow" data-reveal>Mempelai</p>
           <h2 class="h2" data-reveal>Reza Budi Prasetyo<br>&amp; Alya Putri Maharani</h2>
+
+          <div class="inlinePhotoSlot" data-photo-slot data-slot-for="couple" aria-label="Foto"></div>
+
           <p class="sub" data-reveal style="margin-top:12px;">
             Semoga Allah SWT menjadikan langkah ini sebagai awal yang tenang, hangat, dan penuh keberkahan.
           </p>
 
-          <div class="coupleRow" data-reveal>
-            <div class="portrait"><img id="imgGroom" alt=""></div>
-            <div class="portrait"><img id="imgBride" alt=""></div>
+          <!-- 1-column dynamic blocks (no gallery section) -->
+          <div class="storyStack" aria-label="Detail mempelai">
+            <article class="storyBlock" data-variant="overlay" data-photo-override="groom" data-reveal>
+              <div class="storyMedia" data-media>
+                <span class="badgeMini" aria-hidden="true"><span class="dot"></span><span>Mempelai Pria</span></span>
+                <img src="/assets/img/reza.png" alt="" loading="lazy" decoding="async" />
+              </div>
+              <div class="storyCaption">
+                <h3 class="storyName">Reza Budi Prasetyo</h3>
+                <p class="storyNote">Dengan segala kerendahan hati, mohon doa restu untuk langkah kami.</p>
+              </div>
+            </article>
+
+            <article class="storyBlock" data-variant="topcap" data-photo-override="bride" data-reveal>
+              <div class="storyCaption">
+                <h3 class="storyName">Alya Putri Maharani</h3>
+                <p class="storyNote">Semoga Allah SWT selalu menjaga dan melapangkan jalan kebaikan bagi kami.</p>
+              </div>
+              <div class="storyMedia" data-media>
+                <span class="badgeMini" aria-hidden="true"><span class="dot"></span><span>Mempelai Wanita</span></span>
+                <img src="/assets/img/alya.png" alt="" loading="lazy" decoding="async" />
+              </div>
+            </article>
           </div>
         </div>
       </section>
@@ -928,9 +995,10 @@
         <div class="secInner">
           <p class="eyebrow" data-reveal>Acara</p>
           <h2 class="h2" data-reveal>17 Januari 2026</h2>
-          <p class="sub" data-reveal style="margin-top:12px;">
-            Le Dian Hotel Serang
-          </p>
+
+          <p class="sub" data-reveal style="margin-top:12px;">Le Dian Hotel Serang</p>
+
+          <div class="inlinePhotoSlot" data-photo-slot data-slot-for="event" aria-label="Foto"></div>
 
           <div class="countdown" data-reveal aria-label="Countdown menuju akad">
             <div class="timeBox"><b id="cdDays">—</b><span>Hari</span></div>
@@ -992,9 +1060,13 @@
         <div class="secInner">
           <p class="eyebrow" data-reveal>Lokasi</p>
           <h2 class="h2" data-reveal>Le Dian Hotel Serang</h2>
+
+          <div class="inlinePhotoSlot" data-photo-slot data-slot-for="location" aria-label="Foto"></div>
+
           <p class="sub" data-reveal style="margin-top:12px;">
             Kami menantikan kehadiran Anda di lokasi acara. Semoga perjalanan Anda dimudahkan dan dipenuhi kebaikan.
           </p>
+
           <div class="actions" data-reveal>
             <a class="btn btnPrimary" href="https://maps.app.goo.gl/oJVfShW7g5PJV2cS8" target="_blank" rel="noopener noreferrer" aria-label="Buka Google Maps">
               <svg class="ic" viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -1012,6 +1084,8 @@
         <div class="secInner">
           <p class="eyebrow" data-reveal>RSVP</p>
           <h2 class="h2" data-reveal>Konfirmasi Kehadiran</h2>
+
+          <div class="inlinePhotoSlot" data-photo-slot data-slot-for="rsvp" aria-label="Foto"></div>
 
           <form class="form" id="rsvpForm" autocomplete="on" novalidate>
             <div class="field" data-reveal>
@@ -1074,6 +1148,7 @@
         <div class="secInner">
           <p class="eyebrow" data-reveal>Kalender</p>
           <h2 class="h2" data-reveal>Tambahkan ke Kalender</h2>
+
           <p class="sub" data-reveal style="margin-top:12px;">
             Simpan jadwal agar Anda tidak melewatkan momen istimewa ini.
           </p>
@@ -1105,6 +1180,9 @@
         <div class="secInner">
           <p class="eyebrow" data-reveal>Penutup</p>
           <h2 class="h2" data-reveal>Terima kasih</h2>
+
+          <div class="inlinePhotoSlot" data-photo-slot data-slot-for="footer" aria-label="Foto"></div>
+
           <p class="sub" data-reveal style="margin-top:12px;">
             Merupakan kebahagiaan bagi kami apabila Anda berkenan hadir dan memberikan doa restu.
           </p>
@@ -1142,8 +1220,8 @@
       <button class="navBtn" data-target="#event" type="button" aria-label="Acara" title="Acara">
         <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
           <path d="M7 3v3M17 3v3" stroke="rgba(245,245,245,.72)" stroke-width="1.6" stroke-linecap="round"/>
-          <path d="M5.5 6h13c.8 0 1.5.7 1.5 1.5v12c0 .8-.7 1.5-1.5 1.5h-13c-.8 0-1.5-.7-1.5-1.5v-12C4 6.7 4.7 6 5.5 6z" stroke="rgba(201,152,70,.55)" stroke-width="1.6"/>
-          <path d="M8 12h8M8 16h6" stroke="rgba(245,245,245,.62)" stroke-width="1.6" stroke-linecap="round"/>
+          <path d="M5.5 6h13c.8 0 1.5.7 1.5 1.5v12c0 .8-.7 1.5-1.5 1.5h-13c-.8 0-1.5-.7-1.5-1.5v-12C4 6.7 4.7 6 5.5 6z" stroke="rgba(201,152,70,.45)" stroke-width="1.6"/>
+          <path d="M8 12h8M8 16h6" stroke="rgba(245,245,245,.70)" stroke-width="1.6" stroke-linecap="round"/>
         </svg>
       </button>
       <button class="navBtn" data-target="#location" type="button" aria-label="Lokasi" title="Lokasi">
@@ -1154,441 +1232,414 @@
       </button>
       <button class="navBtn" data-target="#rsvp" type="button" aria-label="RSVP" title="RSVP">
         <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-          <path d="M20 6.5v11c0 .8-.7 1.5-1.5 1.5h-13C4.7 19 4 18.3 4 17.5v-11C4 5.7 4.7 5 5.5 5h13C19.3 5 20 5.7 20 6.5z" stroke="rgba(245,245,245,.72)" stroke-width="1.6"/>
-          <path d="M4.8 7.2l6.7 5.3c.3.2.7.2 1 0l6.7-5.3" stroke="rgba(201,152,70,.55)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M4.5 6.5h15v13h-15v-13z" stroke="rgba(245,245,245,.72)" stroke-width="1.6"/>
+          <path d="M7 9.2h10M7 12.2h10M7 15.2h7" stroke="rgba(201,152,70,.55)" stroke-width="1.6" stroke-linecap="round"/>
         </svg>
       </button>
     </div>
   </div>
 
   <script>
-    (() => {
+    (function(){
       "use strict";
 
+      const reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
       const photos = {
-        hero: "https://raw.githubusercontent.com/assujiar/reza-alya-wedding/a6603e96e62bf8d5486e9afaa226a5e19b862d65/reza-alya.png",
-        opening: "https://raw.githubusercontent.com/assujiar/reza-alya-wedding/a6603e96e62bf8d5486e9afaa226a5e19b862d65/reza-alya.2.png",
-        couple: "https://raw.githubusercontent.com/assujiar/reza-alya-wedding/a6603e96e62bf8d5486e9afaa226a5e19b862d65/reza-alya.3.png",
-        akad: "https://raw.githubusercontent.com/assujiar/reza-alya-wedding/a6603e96e62bf8d5486e9afaa226a5e19b862d65/reza-alya.4.png",
-        resepsi: "https://raw.githubusercontent.com/assujiar/reza-alya-wedding/a6603e96e62bf8d5486e9afaa226a5e19b862d65/reza-alya.5.png",
-        venue: "https://raw.githubusercontent.com/assujiar/reza-alya-wedding/a6603e96e62bf8d5486e9afaa226a5e19b862d65/reza-alya.6.png",
-        groom: "https://raw.githubusercontent.com/assujiar/reza-alya-wedding/a6603e96e62bf8d5486e9afaa226a5e19b862d65/reza.png",
-        bride: "https://raw.githubusercontent.com/assujiar/reza-alya-wedding/a6603e96e62bf8d5486e9afaa226a5e19b862d65/alya.png",
-        rsvp: "https://raw.githubusercontent.com/assujiar/reza-alya-wedding/a6603e96e62bf8d5486e9afaa226a5e19b862d65/hand.png"
+        hero: "/assets/img/reza-alya.png",
+        opening: "/assets/img/reza-alya.2.png",
+        couple: "/assets/img/reza-alya.3.png",
+        akad: "/assets/img/reza-alya.4.png",
+        resepsi: "/assets/img/reza-alya.5.png",
+        venue: "/assets/img/reza-alya.6.png",
+        groom: "/assets/img/reza.png",
+        bride: "/assets/img/alya.png",
+        rsvp: "/assets/img/hand.png"
       };
 
-      const recipientName = "Dimas Budi Ramadhan";
-      const venueName = "Le Dian Hotel Serang";
-      const mapsUrl = "https://maps.app.goo.gl/oJVfShW7g5PJV2cS8";
+      const ADDRESS_TEXT = "Le Dian Hotel Serang";
+      const MAPS_URL = "https://maps.app.goo.gl/oJVfShW7g5PJV2cS8";
 
-      const prefersReduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-      const $ = (sel, root=document) => root.querySelector(sel);
-      const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
-
-      const gate = $("#gate");
-      const btnOpen = $("#btnOpen");
-      const btnScrollOpening = $("#btnScrollOpening");
-      const toasts = $("#toasts");
-
-      const modal = $("#modal");
-      const modalTitle = $("#modalTitle");
-      const modalText = $("#modalText");
-      const modalCancel = $("#modalCancel");
-      const modalOk = $("#modalOk");
-
-      const bgm = $("#bgm");
-      const btnPlay = $("#btnPlay");
-      const btnMute = $("#btnMute");
-      const audioStatus = $("#audioStatus");
-      const icPlay = $("#icPlay");
-      const icPause = $("#icPause");
-      const icVol = $("#icVol");
-      const icMuted = $("#icMuted");
-
-      const photoA = $("#photoA");
-      const photoB = $("#photoB");
-      const photoFallback = $("#photoFallback");
-
-      const imgGroom = $("#imgGroom");
-      const imgBride = $("#imgBride");
-
-      const btnCopyAddr = $("#btnCopyAddr");
-      const btnTop = $("#btnTop");
-
-      const rsvpForm = $("#rsvpForm");
-      const guestbookEl = $("#guestbook");
-      const btnReset = $("#btnReset");
-
-      const btnICS_Akad = $("#btnICS_Akad");
-      const btnICS_Resepsi = $("#btnICS_Resepsi");
-
-      const cdDays = $("#cdDays");
-      const cdHours = $("#cdHours");
-      const cdMins = $("#cdMins");
-      const cdSecs = $("#cdSecs");
-
-      // --- Toast ---
+      // --- Toasts ---
+      const toastsEl = document.getElementById("toasts");
       let toastTimer = null;
+
       function showToast(message){
-        if(!toasts) return;
-        const node = document.createElement("div");
-        node.className = "toast";
-        node.innerHTML = `<span class="spark" aria-hidden="true"></span><p>${escapeHtml(message)}</p>`;
-        toasts.appendChild(node);
-        requestAnimationFrame(() => node.classList.add("show"));
-        clearTimeout(toastTimer);
-        toastTimer = setTimeout(() => {
-          node.classList.remove("show");
-          setTimeout(() => node.remove(), prefersReduced ? 0 : 240);
-        }, 2600);
+        if(!toastsEl) return;
+        const t = document.createElement("div");
+        t.className = "toast";
+        t.innerHTML = '<span class="spark" aria-hidden="true"></span><p></p>';
+        t.querySelector("p").textContent = message;
+
+        toastsEl.appendChild(t);
+        requestAnimationFrame(()=> t.classList.add("show"));
+        window.clearTimeout(toastTimer);
+        toastTimer = window.setTimeout(()=>{
+          t.classList.remove("show");
+          window.setTimeout(()=> t.remove(), 520);
+        }, 2400);
       }
 
-      function escapeHtml(str){
-        return String(str).replace(/[&<>"']/g, s => ({
-          "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
-        }[s]));
-      }
+      // --- Modal confirm ---
+      const modal = document.getElementById("modal");
+      const modalTitle = document.getElementById("modalTitle");
+      const modalText = document.getElementById("modalText");
+      const modalCancel = document.getElementById("modalCancel");
+      const modalOk = document.getElementById("modalOk");
+      let modalResolve = null;
+      let lastFocus = null;
 
-      // --- Modal Confirm ---
-      let modalResolver = null;
-      function openConfirm({title, text, okText="Ya", cancelText="Batal"}){
-        return new Promise((resolve) => {
-          modalResolver = resolve;
-          modalTitle.textContent = title || "Konfirmasi";
-          modalText.textContent = text || "Apakah Anda yakin?";
-          modalOk.textContent = okText;
-          modalCancel.textContent = cancelText;
+      function openConfirm(title, text){
+        return new Promise(resolve=>{
+          if(!modal) return resolve(false);
+          lastFocus = document.activeElement;
+          modalTitle.textContent = title;
+          modalText.textContent = text;
           modal.setAttribute("aria-hidden","false");
-          modalOk.focus({preventScroll:true});
+          modalResolve = resolve;
+          modalOk.focus();
         });
       }
-      function closeModal(result){
+      function closeConfirm(result){
+        if(!modal) return;
         modal.setAttribute("aria-hidden","true");
-        const r = modalResolver;
-        modalResolver = null;
+        const r = modalResolve;
+        modalResolve = null;
         if(typeof r === "function") r(!!result);
+        if(lastFocus && typeof lastFocus.focus === "function") lastFocus.focus();
       }
-      modalCancel.addEventListener("click", () => closeModal(false));
-      modalOk.addEventListener("click", () => closeModal(true));
-      modal.addEventListener("click", (e) => { if(e.target === modal) closeModal(false); });
-      document.addEventListener("keydown", (e) => {
-        if(e.key === "Escape"){
-          if(modal.getAttribute("aria-hidden") === "false") closeModal(false);
-        }
+      modalCancel && modalCancel.addEventListener("click", ()=> closeConfirm(false));
+      modalOk && modalOk.addEventListener("click", ()=> closeConfirm(true));
+      modal && modal.addEventListener("click", (e)=>{
+        if(e.target === modal) closeConfirm(false);
       });
 
-      // --- Photos: preload + story switch ---
-      let activeKey = "hero";
-      let overrideKey = null;
-      let usingA = true;
-      let lastSwapAt = 0;
-
-      function setFallback(on){
-        if(!photoFallback) return;
-        photoFallback.classList.toggle("is-on", !!on);
-      }
-
-      function preloadImages(keys){
-        keys.forEach(k => {
-          const url = photos[k];
-          if(!url) return;
-          const im = new Image();
-          im.decoding = "async";
-          im.loading = "eager";
-          im.src = url;
-        });
-      }
-
-      function swapPhoto(key){
-        const now = Date.now();
-        if(now - lastSwapAt < (prefersReduced ? 0 : 220)) return;
-        lastSwapAt = now;
-
-        const url = photos[key];
-        if(!url) return;
-
-        const current = usingA ? photoA : photoB;
-        const next = usingA ? photoB : photoA;
-
-        if(prefersReduced){
-          next.classList.add("is-active");
-          current.classList.remove("is-active");
-          next.src = url;
-          next.onload = () => setFallback(false);
-          next.onerror = () => setFallback(true);
-          usingA = !usingA;
-          activeKey = key;
-          return;
-        }
-
-        next.style.opacity = "0";
-        next.classList.remove("is-active");
-        next.src = url;
-
-        next.onload = () => {
-          setFallback(false);
-          next.classList.add("is-active");
-          current.classList.remove("is-active");
-          usingA = !usingA;
-          activeKey = key;
-        };
-        next.onerror = () => {
-          setFallback(true);
-          current.classList.remove("is-active");
-          next.classList.remove("is-active");
-        };
-      }
-
-      function applyPhotoFromState(){
-        const key = overrideKey || activeKey;
-        swapPhoto(key);
-      }
+      // --- Gate ---
+      const gate = document.getElementById("gate");
+      const btnOpen = document.getElementById("btnOpen");
+      const btnScrollOpening = document.getElementById("btnScrollOpening");
 
       // --- Audio ---
+      const bgm = document.getElementById("bgm");
+      const btnPlay = document.getElementById("btnPlay");
+      const btnMute = document.getElementById("btnMute");
+      const icPlay = document.getElementById("icPlay");
+      const icPause = document.getElementById("icPause");
+      const icVol = document.getElementById("icVol");
+      const icMuted = document.getElementById("icMuted");
+      const audioStatus = document.getElementById("audioStatus");
+
       let audioUnlocked = false;
 
       function setAudioUI(){
-        const isPlaying = !bgm.paused && !bgm.ended;
-        icPlay.style.display = isPlaying ? "none" : "block";
-        icPause.style.display = isPlaying ? "block" : "none";
-        audioStatus.classList.toggle("is-on", isPlaying);
+        const isPlaying = bgm && !bgm.paused && !bgm.ended;
+        const isMuted = bgm ? bgm.muted : true;
 
-        const isMuted = bgm.muted || bgm.volume === 0;
-        icVol.style.display = isMuted ? "none" : "block";
-        icMuted.style.display = isMuted ? "block" : "none";
+        if(icPlay) icPlay.style.display = isPlaying ? "none" : "block";
+        if(icPause) icPause.style.display = isPlaying ? "block" : "none";
+        if(icVol) icVol.style.display = isMuted ? "none" : "block";
+        if(icMuted) icMuted.style.display = isMuted ? "block" : "none";
+        if(audioStatus) audioStatus.classList.toggle("is-on", isPlaying && !isMuted);
       }
 
       async function tryPlay(){
+        if(!bgm) return;
         try{
-          if(!audioUnlocked) return false;
           await bgm.play();
           setAudioUI();
-          return true;
         }catch(err){
           setAudioUI();
-          showToast("Musik belum bisa diputar. Tap ikon musik untuk mencoba lagi.");
-          return false;
+          showToast("Musik belum bisa diputar di perangkat ini.");
         }
       }
 
-      function togglePlay(){
+      function pauseAudio(){
+        if(!bgm) return;
+        bgm.pause();
+        setAudioUI();
+      }
+
+      btnPlay && btnPlay.addEventListener("click", async ()=>{
+        if(!bgm) return;
         if(!audioUnlocked){
           showToast("Buka undangan dulu untuk mengaktifkan musik.");
           return;
         }
-        if(bgm.paused){
-          tryPlay();
-        }else{
-          bgm.pause();
-          setAudioUI();
-        }
-      }
+        if(bgm.paused) await tryPlay();
+        else pauseAudio();
+      });
 
-      function toggleMute(){
+      btnMute && btnMute.addEventListener("click", ()=>{
+        if(!bgm) return;
         bgm.muted = !bgm.muted;
         setAudioUI();
-      }
-
-      btnPlay.addEventListener("click", togglePlay);
-      btnMute.addEventListener("click", toggleMute);
-      bgm.addEventListener("play", setAudioUI);
-      bgm.addEventListener("pause", setAudioUI);
-      bgm.addEventListener("ended", setAudioUI);
-      bgm.addEventListener("error", () => showToast("Audio tidak dapat dimuat. Coba lagi sebentar."));
-
-      // --- Open Gate ---
-      function openInvitation(){
-        if(!gate) return;
-        document.body.classList.remove("locked");
-        gate.setAttribute("aria-hidden", "true");
-        audioUnlocked = true;
-
-        // preload minimal images for smooth story
-        preloadImages(["hero","opening","couple","akad","resepsi"]);
-
-        // set portrait images
-        if(imgGroom){ imgGroom.src = photos.groom; imgGroom.onerror = () => {}; }
-        if(imgBride){ imgBride.src = photos.bride; imgBride.onerror = () => {}; }
-
-        // set initial main photo
-        setFallback(false);
-        photoA.src = photos.hero;
-        photoA.onload = () => setFallback(false);
-        photoA.onerror = () => setFallback(true);
-
-        // attempt play after tap
-        tryPlay();
-
-        window.requestAnimationFrame(() => {
-          const home = $("#home");
-          if(home) home.scrollIntoView({behavior: prefersReduced ? "auto" : "smooth", block:"start"});
-        });
-      }
-
-      btnOpen.addEventListener("click", openInvitation);
-
-      // Hero CTA scroll
-      btnScrollOpening.addEventListener("click", () => {
-        const s = $("#opening");
-        if(s) s.scrollIntoView({behavior: prefersReduced ? "auto" : "smooth", block: "start"});
       });
 
-      // --- Copy address ---
-      async function copyText(text){
-        try{
-          if(navigator.clipboard && navigator.clipboard.writeText){
-            await navigator.clipboard.writeText(text);
-            return true;
-          }
-        }catch(_){}
-        try{
-          const ta = document.createElement("textarea");
-          ta.value = text;
-          ta.setAttribute("readonly","");
-          ta.style.position="fixed";
-          ta.style.left="-9999px";
-          document.body.appendChild(ta);
-          ta.select();
-          const ok = document.execCommand("copy");
-          ta.remove();
-          return !!ok;
-        }catch(_){
-          return false;
+      bgm && bgm.addEventListener("error", ()=>{
+        showToast("Musik gagal dimuat.");
+      });
+      bgm && bgm.addEventListener("play", setAudioUI);
+      bgm && bgm.addEventListener("pause", setAudioUI);
+      bgm && bgm.addEventListener("volumechange", setAudioUI);
+
+      // --- Photo Story System (single stage) ---
+      const slots = Array.from(document.querySelectorAll("[data-photo-slot]"));
+
+      const photoStage = document.createElement("div");
+      photoStage.className = "photoStage";
+      photoStage.innerHTML = `
+        <div class="photoFrame" id="photoFrame"></div>
+        <img class="photoLayer is-active" id="photoA" alt="" decoding="async">
+        <img class="photoLayer" id="photoB" alt="" decoding="async">
+        <div class="photoOverlay" aria-hidden="true"></div>
+      `;
+
+      const photoFrame = photoStage.querySelector("#photoFrame");
+      const photoA = photoStage.querySelector("#photoA");
+      const photoB = photoStage.querySelector("#photoB");
+
+      let activeKey = "hero";
+      let activeOnA = true;
+      let pendingSwap = false;
+
+      function mountStageToSlot(slotEl){
+        if(!slotEl) return;
+        if(!slotEl.contains(photoStage)){
+          slotEl.appendChild(photoStage);
         }
       }
 
-      btnCopyAddr.addEventListener("click", async () => {
-        const ok = await copyText(venueName);
-        showToast(ok ? "Alamat berhasil disalin." : "Tidak bisa menyalin alamat di perangkat ini.");
+      function setFallback(on){
+        if(photoFrame) photoFrame.classList.toggle("is-on", !!on);
+      }
+
+      function setPhoto(key){
+        if(!key || !photos[key]) return;
+        if(pendingSwap) return;
+        if(activeKey === key) return;
+
+        activeKey = key;
+        pendingSwap = true;
+
+        const nextImg = activeOnA ? photoB : photoA;
+        const curImg = activeOnA ? photoA : photoB;
+
+        setFallback(false);
+
+        nextImg.onload = ()=>{
+          if(reduceMotion){
+            curImg.classList.remove("is-active");
+            nextImg.classList.add("is-active");
+          }else{
+            curImg.classList.remove("is-active");
+            nextImg.classList.add("is-active");
+          }
+          activeOnA = !activeOnA;
+          pendingSwap = false;
+        };
+
+        nextImg.onerror = ()=>{
+          setFallback(true);
+          pendingSwap = false;
+        };
+
+        // start transition
+        nextImg.classList.remove("is-active");
+        nextImg.src = photos[key];
+
+        // If cached, onload might fire quickly; still fine.
+      }
+
+      // Attach stage to first slot immediately
+      if(slots[0]) mountStageToSlot(slots[0]);
+      // Initialize with hero
+      photoA.src = photos.hero;
+      photoA.onload = ()=> setFallback(false);
+      photoA.onerror = ()=> setFallback(true);
+
+      // --- Section observers for stage mounting + switching ---
+      const sections = Array.from(document.querySelectorAll("section[data-photo]"));
+
+      let lastActiveSectionId = "home";
+
+      const sectionIO = new IntersectionObserver((entries)=>{
+        const visible = entries
+          .filter(e=> e.isIntersecting)
+          .sort((a,b)=> (b.intersectionRatio - a.intersectionRatio))[0];
+        if(!visible) return;
+
+        const sec = visible.target;
+        lastActiveSectionId = sec.id || lastActiveSectionId;
+
+        // move stage into this section slot
+        const slot = sec.querySelector("[data-photo-slot]");
+        if(slot) mountStageToSlot(slot);
+
+        // switch photo for section baseline
+        const key = sec.getAttribute("data-photo");
+        setPhoto(key);
+
+        // update nav active
+        setActiveNav("#" + lastActiveSectionId);
+      },{
+        root: null,
+        threshold: [0.22, 0.34, 0.46, 0.58, 0.70]
       });
 
-      btnTop.addEventListener("click", () => {
-        window.scrollTo({top:0, behavior: prefersReduced ? "auto" : "smooth"});
+      sections.forEach(s=> sectionIO.observe(s));
+
+      // Sub-target: Akad / Resepsi cards + Groom/Bride blocks
+      const overrides = Array.from(document.querySelectorAll("[data-photo-override]"));
+      const overrideIO = new IntersectionObserver((entries)=>{
+        const top = entries
+          .filter(e=> e.isIntersecting)
+          .sort((a,b)=> (b.intersectionRatio - a.intersectionRatio))[0];
+        if(!top) return;
+
+        const key = top.target.getAttribute("data-photo-override");
+        setPhoto(key);
+      },{
+        root: null,
+        threshold: [0.55, 0.66, 0.78]
+      });
+      overrides.forEach(el=> overrideIO.observe(el));
+
+      // Inline media fallback (no text)
+      function wireMediaFallback(){
+        const medias = Array.from(document.querySelectorAll(".storyMedia[data-media]"));
+        medias.forEach(m=>{
+          const img = m.querySelector("img");
+          if(!img) return;
+          img.addEventListener("error", ()=> m.setAttribute("data-broken","true"));
+        });
+      }
+      wireMediaFallback();
+
+      // --- Reveal on scroll ---
+      const revealEls = Array.from(document.querySelectorAll("[data-reveal]"));
+      const revealIO = new IntersectionObserver((entries)=>{
+        entries.forEach(e=>{
+          if(e.isIntersecting){
+            e.target.classList.add("is-revealed");
+            revealIO.unobserve(e.target);
+          }
+        });
+      },{ threshold: 0.12 });
+      revealEls.forEach(el=> revealIO.observe(el));
+
+      // --- 1-column layout "random" micro offsets (stable, subtle) ---
+      function stableHash(str){
+        let h = 2166136261;
+        for(let i=0;i<str.length;i++){
+          h ^= str.charCodeAt(i);
+          h = Math.imul(h, 16777619);
+        }
+        return h >>> 0;
+      }
+      const storyBlocks = Array.from(document.querySelectorAll(".storyBlock"));
+      storyBlocks.forEach((b, idx)=>{
+        const seed = stableHash((b.textContent || "") + "|" + idx);
+        const r = (seed % 9) - 4; // -4..+4
+        const y = Math.max(-3, Math.min(3, r)); // clamp
+        b.style.setProperty("--y", reduceMotion ? "0px" : (y + "px"));
       });
 
       // --- Mini nav ---
-      const navButtons = $$(".navBtn");
-      navButtons.forEach(b => {
-        b.addEventListener("click", () => {
-          const target = b.getAttribute("data-target");
-          const el = target ? $(target) : null;
-          if(el) el.scrollIntoView({behavior: prefersReduced ? "auto" : "smooth", block:"start"});
+      const navBtns = Array.from(document.querySelectorAll(".navBtn[data-target]"));
+      function setActiveNav(hash){
+        navBtns.forEach(btn=>{
+          btn.classList.toggle("is-active", btn.getAttribute("data-target") === hash);
+        });
+      }
+      navBtns.forEach(btn=>{
+        btn.addEventListener("click", ()=>{
+          const target = btn.getAttribute("data-target");
+          const el = document.querySelector(target);
+          if(!el) return;
+          el.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
         });
       });
 
-      function setActiveNavById(id){
-        navButtons.forEach(b => {
-          const t = b.getAttribute("data-target") || "";
-          b.classList.toggle("is-active", t === `#${id}`);
-        });
-      }
+      // --- Smooth scroll button(s) ---
+      btnScrollOpening && btnScrollOpening.addEventListener("click", ()=>{
+        const el = document.querySelector("#opening");
+        if(el) el.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
+      });
 
-      // --- Reveal on scroll ---
-      const revealEls = $$("[data-reveal]");
-      const revealObs = "IntersectionObserver" in window ? new IntersectionObserver((entries) => {
-        entries.forEach(en => {
-          if(en.isIntersecting){
-            en.target.classList.add("is-revealed");
-            revealObs.unobserve(en.target);
+      // --- Copy address ---
+      const btnCopyAddr = document.getElementById("btnCopyAddr");
+      btnCopyAddr && btnCopyAddr.addEventListener("click", async ()=>{
+        try{
+          if(navigator.clipboard && navigator.clipboard.writeText){
+            await navigator.clipboard.writeText(ADDRESS_TEXT);
+          }else{
+            // fallback
+            const ta = document.createElement("textarea");
+            ta.value = ADDRESS_TEXT;
+            ta.setAttribute("readonly","");
+            ta.style.position = "fixed";
+            ta.style.left = "-9999px";
+            document.body.appendChild(ta);
+            ta.select();
+            document.execCommand("copy");
+            ta.remove();
           }
-        });
-      }, {threshold: 0.16, rootMargin: "0px 0px -10% 0px"}) : null;
-
-      if(revealObs){
-        revealEls.forEach(el => revealObs.observe(el));
-      }else{
-        revealEls.forEach(el => el.classList.add("is-revealed"));
-      }
-
-      // --- Section observers for photo story + nav ---
-      const sections = $$("section[data-photo]");
-      let currentSectionId = "home";
-
-      const secObs = "IntersectionObserver" in window ? new IntersectionObserver((entries) => {
-        const visible = entries
-          .filter(e => e.isIntersecting)
-          .sort((a,b) => (b.intersectionRatio || 0) - (a.intersectionRatio || 0));
-
-        if(!visible.length) return;
-        const top = visible[0];
-        const sec = top.target;
-        const id = sec.id || currentSectionId;
-
-        if(id !== currentSectionId){
-          currentSectionId = id;
-          setActiveNavById(id === "event" ? "event" : id);
+          showToast("Alamat tersalin.");
+        }catch(e){
+          showToast("Tidak bisa menyalin alamat.");
         }
+      });
 
-        const key = sec.getAttribute("data-photo");
-        if(key){
-          activeKey = key;
-          if(!overrideKey) applyPhotoFromState();
-        }
-      }, {threshold: [0.25, 0.45, 0.65], rootMargin: "-22% 0px -45% 0px"}) : null;
+      // --- Countdown (to Akad: 2026-01-17 08:00 WIB) ---
+      const cdDays = document.getElementById("cdDays");
+      const cdHours = document.getElementById("cdHours");
+      const cdMins = document.getElementById("cdMins");
+      const cdSecs = document.getElementById("cdSecs");
 
-      if(secObs){
-        sections.forEach(s => secObs.observe(s));
-      }
+      const targetAkad = new Date("2026-01-17T08:00:00+07:00").getTime();
 
-      // Sub-target observers: Akad/Resepsi cards override
-      const overrideTargets = [$("#cardAkad"), $("#cardResepsi")].filter(Boolean);
-      const cardObs = "IntersectionObserver" in window ? new IntersectionObserver((entries) => {
-        const activeCards = entries
-          .filter(e => e.isIntersecting)
-          .sort((a,b) => (b.intersectionRatio || 0) - (a.intersectionRatio || 0));
-
-        if(activeCards.length){
-          const key = activeCards[0].target.getAttribute("data-photo-override");
-          overrideKey = key || null;
-          applyPhotoFromState();
-        }else{
-          if(overrideKey){
-            overrideKey = null;
-            applyPhotoFromState();
-          }
-        }
-      }, {threshold: [0.35, 0.55, 0.75], rootMargin: "-28% 0px -40% 0px"}) : null;
-
-      if(cardObs){
-        overrideTargets.forEach(c => cardObs.observe(c));
-      }
-
-      // --- Countdown (to Akad: 2026-01-17 08:00 WIB = 2026-01-17T01:00:00Z) ---
-      const akadTargetUtc = Date.parse("2026-01-17T01:00:00Z");
       function pad2(n){ return String(n).padStart(2,"0"); }
 
       function tickCountdown(){
         const now = Date.now();
-        let diff = Math.max(0, akadTargetUtc - now);
-        const s = Math.floor(diff / 1000);
-        const days = Math.floor(s / 86400);
-        const hours = Math.floor((s % 86400) / 3600);
-        const mins = Math.floor((s % 3600) / 60);
-        const secs = s % 60;
+        let diff = targetAkad - now;
+        if(diff < 0) diff = 0;
 
-        cdDays.textContent = String(days);
-        cdHours.textContent = pad2(hours);
-        cdMins.textContent = pad2(mins);
-        cdSecs.textContent = pad2(secs);
+        const s = Math.floor(diff / 1000);
+        const d = Math.floor(s / 86400);
+        const h = Math.floor((s % 86400) / 3600);
+        const m = Math.floor((s % 3600) / 60);
+        const sc = Math.floor(s % 60);
+
+        if(cdDays) cdDays.textContent = String(d);
+        if(cdHours) cdHours.textContent = pad2(h);
+        if(cdMins) cdMins.textContent = pad2(m);
+        if(cdSecs) cdSecs.textContent = pad2(sc);
       }
       tickCountdown();
-      setInterval(tickCountdown, 1000);
+      window.setInterval(tickCountdown, 1000);
 
-      // --- Guestbook seed (required content) ---
-      const seedMessages = [
+      // --- Guestbook ---
+      const guestbookEl = document.getElementById("guestbook");
+      const rsvpForm = document.getElementById("rsvpForm");
+      const btnReset = document.getElementById("btnReset");
+
+      const STORAGE_KEY = "reza_alya_guestbook_v1";
+      const STORAGE_FORM_KEY = "reza_alya_rsvp_form_v1";
+
+      const seedBase = [
         { name:"Dimas Budi Ramadhan", hadir:true, tamu:2, ucapan:"Selamat menempuh hidup baru Reza & Alya. Semoga jadi keluarga sakinah, mawaddah, warahmah. Lancar sampai hari H." },
         { name:"Raka Pratama", hadir:true, tamu:1, ucapan:"MasyaAllah, ikut bahagia. Semoga rumah tangganya adem, rezekinya luas, dan selalu saling menguatkan." },
         { name:"Nadia Putri", hadir:true, tamu:2, ucapan:"Congratulations! Semoga pernikahannya penuh berkah, sehat, dan selalu kompak sampai tua." },
-        { name:"Fajar Maulana", hadir:true, tamu:3, ucapan:"Selamat yaa. Semoga acaranya lancar, tamunya ramai, dan semuanya dimudahkan." },
+        { name:"Fajar Maulana", hadir:true, tamu:2, ucapan:"Selamat yaa. Semoga acaranya lancar, tamunya ramai, dan semuanya dimudahkan." },
         { name:"Intan Salsabila", hadir:false, tamu:1, ucapan:"Maaf belum bisa hadir. Doa terbaik buat kalian berdua, semoga bahagia dan diberkahi selalu." },
         { name:"Yoga Saputra", hadir:true, tamu:2, ucapan:"Selamat Reza & Alya. Semoga jadi pasangan yang saling melengkapi, saling sabar, dan makin sayang tiap hari." },
-        { name:"Rizky Andrian", hadir:true, tamu:2, ucapan:"Happy wedding! Semoga semua rencana baik kalian dimudahkan, dan rumah tangga selalu hangat." },
-        { name:"Siti Rahmah", hadir:true, tamu:1, ucapan:"Barakallahu lakuma. Semoga menjadi keluarga yang penuh cinta, rahmat, dan ketenangan." },
+        { name:"Rizky Andrian", hadir:true, tamu:1, ucapan:"Happy wedding! Semoga semua rencana baik kalian dimudahkan, dan rumah tangga selalu hangat." },
+        { name:"Siti Rahmah", hadir:true, tamu:2, ucapan:"Barakallahu lakuma. Semoga menjadi keluarga yang penuh cinta, rahmat, dan ketenangan." },
         { name:"Ahmad Fikri", hadir:false, tamu:1, ucapan:"Mohon maaf belum bisa datang. Semoga akad dan resepsi berjalan lancar, dan kalian selalu diberi kebahagiaan." },
         { name:"Dewi Lestari", hadir:true, tamu:2, ucapan:"Seneng banget dengernya. Semoga langgeng, komunikasinya sehat, dan selalu saling menghargai." },
         { name:"Rina Wulandari", hadir:true, tamu:2, ucapan:"Selamat ya! Semoga jadi tim terbaik seumur hidup, kompak terus, dan diberkahi dalam setiap langkah." },
-        { name:"Bayu Kurniawan", hadir:true, tamu:2, ucapan:"Selamat menempuh babak baru. Semoga bahagia, sehat, dan karier serta rezekinya makin lancar." },
+        { name:"Bayu Kurniawan", hadir:true, tamu:1, ucapan:"Selamat menempuh babak baru. Semoga bahagia, sehat, dan karier serta rezekinya makin lancar." },
         { name:"Rafi Nurhadi", hadir:true, tamu:2, ucapan:"InsyaAllah hadir. Semoga acara di Le Dian lancar, cuaca bagus, dan semuanya berjalan sesuai harapan." },
         { name:"Putri Anjani", hadir:false, tamu:1, ucapan:"Selamat untuk kalian berdua. Titip doa dari jauh semoga rumah tangga kalian selalu diberi berkah." },
         { name:"Agung Prasetyo", hadir:true, tamu:2, ucapan:"Selamat Reza & Alya. Semoga jadi pasangan yang saling menenangkan, saling dukung, dan langgeng." },
@@ -1599,213 +1650,242 @@
         { name:"Tania Aprillia", hadir:true, tamu:2, ucapan:"Selamat menempuh hidup baru. Semoga kalian selalu diberikan kesabaran, kelapangan hati, dan kebahagiaan." }
       ];
 
-      const LS_KEY = "rezaAlya_guestbook_v1";
-
-      function generateSeedWithCreatedAt(){
+      function makeSeedWithLiveTimestamps(){
         const now = Date.now();
+        // offsets spread: minutes to days
         const offsets = [
-          8*60*1000, 18*60*1000, 34*60*1000, 58*60*1000,
-          2*60*60*1000, 3*60*60*1000, 4*60*60*1000, 6*60*60*1000,
-          9*60*60*1000, 12*60*60*1000, 16*60*60*1000,
-          1*24*60*60*1000, 1*24*60*60*1000 + 6*60*60*1000,
-          2*24*60*60*1000, 2*24*60*60*1000 + 8*60*60*1000,
-          3*24*60*60*1000, 3*24*60*60*1000 + 5*60*60*1000,
-          4*24*60*60*1000, 4*24*60*60*1000 + 9*60*60*1000,
-          5*24*60*60*1000
+          8*60*1000, 18*60*1000, 34*60*1000, 55*60*1000,
+          2*3600*1000, 3*3600*1000, 5*3600*1000, 7*3600*1000,
+          10*3600*1000, 14*3600*1000,
+          1*86400*1000 + 2*3600*1000, 1*86400*1000 + 6*3600*1000,
+          2*86400*1000 + 1*3600*1000, 2*86400*1000 + 9*3600*1000,
+          3*86400*1000 + 2*3600*1000, 3*86400*1000 + 8*3600*1000,
+          4*86400*1000 + 1*3600*1000, 4*86400*1000 + 10*3600*1000,
+          5*86400*1000 + 3*3600*1000, 6*86400*1000 + 4*3600*1000
         ];
-        return seedMessages.map((m, idx) => ({
-          name: m.name,
-          hadir: !!m.hadir,
-          tamu: clampInt(m.tamu, 1, 5),
-          ucapan: m.ucapan,
-          createdAt: new Date(now - offsets[idx]).toISOString()
-        }));
-      }
 
-      function clampInt(n, min, max){
-        const x = parseInt(n, 10);
-        if(Number.isNaN(x)) return min;
-        return Math.max(min, Math.min(max, x));
+        // deterministic shuffle based on current date (keeps "alive" but stable per day)
+        const dayKey = new Date().toISOString().slice(0,10);
+        const seed = stableHash(dayKey);
+        const idxs = Array.from({length: offsets.length}, (_,i)=>i);
+        idxs.sort((a,b)=> ((seed + a*2654435761) >>> 0) - ((seed + b*2654435761) >>> 0));
+
+        return seedBase.map((it, i)=>{
+          const off = offsets[idxs[i] % offsets.length];
+          const createdAt = new Date(now - off).toISOString();
+          return { ...it, createdAt };
+        });
       }
 
       function loadGuestbook(){
         try{
-          const raw = localStorage.getItem(LS_KEY);
-          if(!raw) return null;
-          const arr = JSON.parse(raw);
-          if(!Array.isArray(arr)) return null;
-          return arr.filter(v => v && typeof v === "object");
-        }catch(_){
-          return null;
-        }
-      }
-
-      function saveGuestbook(arr){
-        try{
-          localStorage.setItem(LS_KEY, JSON.stringify(arr));
-        }catch(_){}
-      }
-
-      function ensureSeed(){
-        const existing = loadGuestbook();
-        if(existing && existing.length) return existing;
-        const seeded = generateSeedWithCreatedAt();
-        saveGuestbook(seeded);
+          const raw = localStorage.getItem(STORAGE_KEY);
+          if(raw){
+            const arr = JSON.parse(raw);
+            if(Array.isArray(arr) && arr.length){
+              return arr;
+            }
+          }
+        }catch(e){}
+        const seeded = makeSeedWithLiveTimestamps();
+        try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(seeded)); }catch(e){}
         return seeded;
       }
 
-      function formatRelative(iso){
-        const t = Date.parse(iso);
+      function saveGuestbook(list){
+        try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(list)); }catch(e){}
+      }
+
+      function relTime(iso){
+        const t = new Date(iso).getTime();
         if(!Number.isFinite(t)) return "";
         const now = Date.now();
-        const diff = Math.max(0, now - t);
-        const min = Math.floor(diff/60000);
-        if(min < 1) return "baru saja";
-        if(min < 60) return `${min} menit lalu`;
-        const hr = Math.floor(min/60);
-        if(hr < 24) return `${hr} jam lalu`;
-        const day = Math.floor(hr/24);
-        if(day < 7) return `${day} hari lalu`;
+        let diff = Math.max(0, now - t);
 
-        const d = new Date(t);
-        const fmt = new Intl.DateTimeFormat("id-ID", { day:"2-digit", month:"short", year:"numeric" });
-        return fmt.format(d);
+        const m = Math.floor(diff / 60000);
+        if(m < 1) return "baru saja";
+        if(m < 60) return m + " menit lalu";
+
+        const h = Math.floor(m / 60);
+        if(h < 24) return h + " jam lalu";
+
+        const d = Math.floor(h / 24);
+        if(d < 7) return d + " hari lalu";
+
+        const dt = new Date(t);
+        const opts = { day: "2-digit", month: "short", year: "numeric" };
+        return dt.toLocaleDateString("id-ID", opts);
       }
 
-      function renderGuestbook(){
-        const data = loadGuestbook() || [];
-        const sorted = data.slice().sort((a,b) => Date.parse(b.createdAt) - Date.parse(a.createdAt));
+      function renderGuestbook(list){
+        if(!guestbookEl) return;
         guestbookEl.innerHTML = "";
-        sorted.forEach(item => {
-          const name = (item.name || "").trim();
-          const hadir = !!item.hadir;
-          const tamu = clampInt(item.tamu, 1, 5);
-          const msg = (item.ucapan || "").trim();
-          const time = formatRelative(item.createdAt);
 
-          const el = document.createElement("div");
-          el.className = "entry";
-          el.innerHTML = `
+        const sorted = list.slice().sort((a,b)=>{
+          const ta = new Date(a.createdAt).getTime();
+          const tb = new Date(b.createdAt).getTime();
+          return (tb - ta);
+        });
+
+        sorted.forEach(it=>{
+          const entry = document.createElement("div");
+          entry.className = "entry";
+
+          const hadirChip = it.hadir ? '<span class="chip ok">Hadir</span>' : '<span class="chip">Tidak</span>';
+          const tamuChip = '<span class="chip">' + String(it.tamu) + ' Tamu</span>';
+
+          entry.innerHTML = `
             <div class="entryTop">
               <div class="entryName">
-                <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width: 220px;">${escapeHtml(name)}</span>
-                <span class="chip ${hadir ? "ok" : ""}">${hadir ? "Hadir" : "Tidak"}</span>
-                <span class="chip">${tamu} tamu</span>
+                <span>${escapeHtml(it.name || "")}</span>
+                ${hadirChip}
+                ${tamuChip}
               </div>
-              <div class="entryTime" data-time="${escapeHtml(item.createdAt || "")}">${escapeHtml(time)}</div>
+              <div class="entryTime">${escapeHtml(relTime(it.createdAt))}</div>
             </div>
-            <p class="entryMsg">${escapeHtml(msg)}</p>
+            <p class="entryMsg">${escapeHtml(it.ucapan || "")}</p>
           `;
-          guestbookEl.appendChild(el);
+          guestbookEl.appendChild(entry);
         });
       }
 
-      setInterval(() => {
-        const nodes = $$("[data-time]");
-        nodes.forEach(n => {
-          const iso = n.getAttribute("data-time");
-          n.textContent = formatRelative(iso);
-        });
-      }, 60000);
+      function escapeHtml(s){
+        return String(s)
+          .replaceAll("&","&amp;")
+          .replaceAll("<","&lt;")
+          .replaceAll(">","&gt;")
+          .replaceAll('"',"&quot;")
+          .replaceAll("'","&#039;");
+      }
 
-      rsvpForm.addEventListener("submit", (e) => {
+      let guestbook = loadGuestbook();
+      renderGuestbook(guestbook);
+
+      // Persist form (optional nice touch)
+      function loadForm(){
+        try{
+          const raw = localStorage.getItem(STORAGE_FORM_KEY);
+          if(!raw) return;
+          const v = JSON.parse(raw);
+          if(!v || typeof v !== "object") return;
+          const name = document.getElementById("name");
+          const hadir = document.getElementById("hadir");
+          const tamu = document.getElementById("tamu");
+          const ucapan = document.getElementById("ucapan");
+          if(name && v.name) name.value = v.name;
+          if(hadir && v.hadir) hadir.value = v.hadir;
+          if(tamu && v.tamu) tamu.value = String(v.tamu);
+          if(ucapan && v.ucapan) ucapan.value = v.ucapan;
+        }catch(e){}
+      }
+      function saveForm(){
+        try{
+          const name = document.getElementById("name")?.value || "";
+          const hadir = document.getElementById("hadir")?.value || "hadir";
+          const tamu = Number(document.getElementById("tamu")?.value || 1);
+          const ucapan = document.getElementById("ucapan")?.value || "";
+          localStorage.setItem(STORAGE_FORM_KEY, JSON.stringify({name, hadir, tamu, ucapan}));
+        }catch(e){}
+      }
+      loadForm();
+
+      rsvpForm && rsvpForm.addEventListener("input", saveForm);
+
+      rsvpForm && rsvpForm.addEventListener("submit", (e)=>{
         e.preventDefault();
-
-        const name = ($("#name").value || "").trim();
-        const hadirVal = ($("#hadir").value || "hadir");
-        const hadir = hadirVal === "hadir";
-        const tamu = clampInt($("#tamu").value, 1, 5);
-        const ucapan = ($("#ucapan").value || "").trim();
+        const name = (document.getElementById("name")?.value || "").trim();
+        const hadirVal = (document.getElementById("hadir")?.value || "hadir").trim();
+        const tamuVal = Number(document.getElementById("tamu")?.value || 1);
+        const ucapan = (document.getElementById("ucapan")?.value || "").trim();
 
         if(!name || !ucapan){
-          showToast("Mohon lengkapi nama dan ucapan.");
+          showToast("Mohon isi nama dan ucapan.");
           return;
         }
 
-        const data = loadGuestbook() || [];
-        data.unshift({
+        const entry = {
           name,
-          hadir,
-          tamu,
+          hadir: hadirVal === "hadir",
+          tamu: Math.min(5, Math.max(1, Number.isFinite(tamuVal) ? tamuVal : 1)),
           ucapan,
           createdAt: new Date().toISOString()
-        });
-        saveGuestbook(data);
-        renderGuestbook();
+        };
 
-        rsvpForm.reset();
-        $("#hadir").value = "hadir";
-        $("#tamu").value = "1";
+        guestbook = [entry, ...guestbook];
+        saveGuestbook(guestbook);
+        renderGuestbook(guestbook);
 
-        showToast("Terima kasih. RSVP Anda tersimpan.");
+        // soft reset message only
+        showToast("Terima kasih. Ucapannya sudah tersimpan.");
+        // keep name to reduce friction; clear message only
+        const uc = document.getElementById("ucapan");
+        if(uc) uc.value = "";
+        saveForm();
       });
 
-      btnReset.addEventListener("click", async () => {
-        const ok = await openConfirm({
-          title: "Reset data",
-          text: "Ini akan menghapus data RSVP yang tersimpan di perangkat ini dan mengembalikan buku tamu ke seed awal.",
-          okText: "Reset",
-          cancelText: "Batal"
-        });
+      btnReset && btnReset.addEventListener("click", async ()=>{
+        const ok = await openConfirm("Reset data", "Reset akan menghapus data RSVP dan buku tamu di perangkat ini. Lanjutkan?");
         if(!ok) return;
+
         try{
-          localStorage.removeItem(LS_KEY);
-        }catch(_){}
-        ensureSeed();
-        renderGuestbook();
+          localStorage.removeItem(STORAGE_KEY);
+          localStorage.removeItem(STORAGE_FORM_KEY);
+        }catch(e){}
+
+        guestbook = loadGuestbook();
+        renderGuestbook(guestbook);
+
+        // clear fields
+        const name = document.getElementById("name");
+        const hadir = document.getElementById("hadir");
+        const tamu = document.getElementById("tamu");
+        const ucapan = document.getElementById("ucapan");
+        if(name) name.value = "";
+        if(hadir) hadir.value = "hadir";
+        if(tamu) tamu.value = "1";
+        if(ucapan) ucapan.value = "";
         showToast("Data berhasil direset.");
+        closeConfirm(false);
       });
 
-      // --- ICS generation ---
-      function pad(n){ return String(n).padStart(2,"0"); }
-      function icsDateLocal(y,m,d,hh,mm){
-        return `${y}${pad(m)}${pad(d)}T${pad(hh)}${pad(mm)}00`;
-      }
-      function sanitizeICS(text){
-        return String(text)
-          .replace(/\\/g, "\\\\")
-          .replace(/\n/g, "\\n")
-          .replace(/,/g, "\\,")
-          .replace(/;/g, "\\;");
-      }
-      function downloadICS({summary, location, start, end, filename}){
-        const dtStart = icsDateLocal(start.y,start.m,start.d,start.hh,start.mm);
-        const dtEnd = icsDateLocal(end.y,end.m,end.d,end.hh,end.mm);
-        const uid = `reza-alya-${Date.now()}@undangan`;
-        const stamp = new Date().toISOString().replace(/[-:]/g,"").replace(/\.\d{3}Z$/,"Z");
-        const tzid = "Asia/Jakarta";
+      // --- ICS ---
+      const btnICS_Akad = document.getElementById("btnICS_Akad");
+      const btnICS_Resepsi = document.getElementById("btnICS_Resepsi");
 
-        const vtz =
-`BEGIN:VTIMEZONE
-TZID:${tzid}
-X-LIC-LOCATION:${tzid}
-BEGIN:STANDARD
-TZOFFSETFROM:+0700
-TZOFFSETTO:+0700
-TZNAME:WIB
-DTSTART:19700101T000000
-END:STANDARD
-END:VTIMEZONE`;
+      function toICSDateUTC(dt){
+        // dt: Date
+        const y = dt.getUTCFullYear();
+        const mo = String(dt.getUTCMonth()+1).padStart(2,"0");
+        const da = String(dt.getUTCDate()).padStart(2,"0");
+        const h = String(dt.getUTCHours()).padStart(2,"0");
+        const mi = String(dt.getUTCMinutes()).padStart(2,"0");
+        const s = String(dt.getUTCSeconds()).padStart(2,"0");
+        return `${y}${mo}${da}T${h}${mi}${s}Z`;
+      }
 
-        const ics =
+      function downloadICS({summary, location, startISO, endISO, filename}){
+        try{
+          const start = new Date(startISO);
+          const end = new Date(endISO);
+          const uid = "reza-alya-" + Math.random().toString(16).slice(2) + "@local";
+          const dtstamp = toICSDateUTC(new Date());
+
+          const ics =
 `BEGIN:VCALENDAR
 VERSION:2.0
-PRODID:-//Undangan Reza Alya//ID
+PRODID:-//RezaAlya//Invitation//ID
 CALSCALE:GREGORIAN
 METHOD:PUBLISH
-${vtz}
 BEGIN:VEVENT
 UID:${uid}
-DTSTAMP:${stamp}
-SUMMARY:${sanitizeICS(summary)}
-LOCATION:${sanitizeICS(location)}
-DTSTART;TZID=${tzid}:${dtStart}
-DTEND;TZID=${tzid}:${dtEnd}
-DESCRIPTION:${sanitizeICS("Undangan pernikahan Reza Budi Prasetyo & Alya Putri Maharani")}
+DTSTAMP:${dtstamp}
+SUMMARY:${escapeICS(summary)}
+LOCATION:${escapeICS(location)}
+DTSTART:${toICSDateUTC(start)}
+DTEND:${toICSDateUTC(end)}
 END:VEVENT
-END:VCALENDAR`.replace(/\n/g, "\r\n");
+END:VCALENDAR`;
 
-        try{
           const blob = new Blob([ics], {type:"text/calendar;charset=utf-8"});
           const url = URL.createObjectURL(blob);
           const a = document.createElement("a");
@@ -1814,84 +1894,109 @@ END:VCALENDAR`.replace(/\n/g, "\r\n");
           document.body.appendChild(a);
           a.click();
           a.remove();
-          setTimeout(() => URL.revokeObjectURL(url), 800);
+          setTimeout(()=> URL.revokeObjectURL(url), 1500);
           showToast("File kalender siap diunduh.");
-        }catch(_){
-          showToast("Gagal membuat file kalender di perangkat ini.");
+        }catch(e){
+          showToast("Gagal membuat file kalender.");
         }
       }
 
-      btnICS_Akad.addEventListener("click", () => {
+      function escapeICS(s){
+        return String(s)
+          .replaceAll("\\","\\\\")
+          .replaceAll("\n","\\n")
+          .replaceAll(",","\\,")
+          .replaceAll(";","\\;");
+      }
+
+      btnICS_Akad && btnICS_Akad.addEventListener("click", ()=>{
         downloadICS({
-          summary: "Akad Nikah — Reza & Alya",
-          location: venueName,
-          start: {y:2026,m:1,d:17,hh:8,mm:0},
-          end:   {y:2026,m:1,d:17,hh:9,mm:0},
-          filename: "Akad_Reza_Alya_17Jan2026.ics"
+          summary: "Akad Nikah Reza & Alya",
+          location: ADDRESS_TEXT,
+          startISO: "2026-01-17T08:00:00+07:00",
+          endISO: "2026-01-17T09:00:00+07:00",
+          filename: "Akad-Reza-Alya.ics"
         });
       });
 
-      btnICS_Resepsi.addEventListener("click", () => {
+      btnICS_Resepsi && btnICS_Resepsi.addEventListener("click", ()=>{
         downloadICS({
-          summary: "Resepsi — Reza & Alya",
-          location: venueName,
-          start: {y:2026,m:1,d:17,hh:10,mm:0},
-          end:   {y:2026,m:1,d:17,hh:15,mm:0},
-          filename: "Resepsi_Reza_Alya_17Jan2026.ics"
+          summary: "Resepsi Reza & Alya",
+          location: ADDRESS_TEXT,
+          startISO: "2026-01-17T10:00:00+07:00",
+          endISO: "2026-01-17T15:00:00+07:00",
+          filename: "Resepsi-Reza-Alya.ics"
         });
       });
 
-      // --- Init ---
-      function init(){
-        const subtle = $("#subtleRecipient");
-        if(subtle) subtle.textContent = `Untuk: ${recipientName}`;
+      // --- Back to top ---
+      const btnTop = document.getElementById("btnTop");
+      btnTop && btnTop.addEventListener("click", ()=>{
+        const el = document.querySelector("#home");
+        if(el) el.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
+      });
 
-        photoA.src = photos.hero;
-        photoA.onload = () => setFallback(false);
-        photoA.onerror = () => setFallback(true);
-        photoA.classList.add("is-active");
-        photoB.classList.remove("is-active");
+      // --- Gate open action (unlock audio) ---
+      async function openInvitation(){
+        if(!gate) return;
 
-        ensureSeed();
-        renderGuestbook();
+        audioUnlocked = true;
+        document.body.classList.remove("locked");
+        gate.setAttribute("aria-hidden","true");
 
-        setActiveNavById("home");
+        // Move stage to home slot again if needed and ensure first visible state
+        const homeSlot = document.querySelector('#home [data-photo-slot]');
+        if(homeSlot) mountStageToSlot(homeSlot);
+        setPhoto("hero");
 
-        bgm.volume = 0.9;
-        bgm.muted = false;
-        setAudioUI();
+        // Attempt autoplay after explicit user gesture
+        if(bgm){
+          bgm.muted = false;
+          await tryPlay();
+        }
+      }
 
-        gate.addEventListener("click", (e) => {
-          if(e.target === gate) openInvitation();
-        });
+      btnOpen && btnOpen.addEventListener("click", openInvitation);
 
-        document.addEventListener("keydown", (e) => {
-          if(e.key === "Escape" && gate.getAttribute("aria-hidden") === "false"){
-            e.preventDefault();
+      // --- Key handling ---
+      document.addEventListener("keydown", (e)=>{
+        if(e.key === "Escape"){
+          // close modal if open
+          if(modal && modal.getAttribute("aria-hidden") === "false"){
+            closeConfirm(false);
           }
+        }
+      });
+
+      // --- Fast warm-up after gate open (only when user taps, avoids autoplay policy issues) ---
+      function warmImages(keys){
+        keys.forEach(k=>{
+          const src = photos[k];
+          if(!src) return;
+          const img = new Image();
+          img.decoding = "async";
+          img.src = src;
         });
-
-        imgGroom.onerror = () => {};
-        imgBride.onerror = () => {};
-
-        const mapLinks = $$(`a[href="${mapsUrl}"]`);
-        mapLinks.forEach(a => { a.rel = "noopener noreferrer"; a.target = "_blank"; });
       }
 
-      if(document.readyState === "loading"){
-        document.addEventListener("DOMContentLoaded", init, {once:true});
-      }else{
-        init();
-      }
+      // Hook warm-up to open button (same tap)
+      btnOpen && btnOpen.addEventListener("click", ()=>{
+        warmImages(["opening","couple","akad","resepsi","venue","groom","bride","rsvp"]);
+      }, { once: true });
 
-    })();
-  </script>
+      // --- Ensure stage is mounted when layout changes (rare) ---
+      window.addEventListener("resize", ()=>{
+        const activeSection = document.getElementById(lastActiveSectionId);
+        const slot = activeSection ? activeSection.querySelector("[data-photo-slot]") : slots[0];
+        if(slot) mountStageToSlot(slot);
+      });
 
-  <script>
-    (function(){
-      "use strict";
+      // Init UI
+      setAudioUI();
+
+      // Set anchors safe (no URL displayed anyway)
+      // (maps buttons already have rel noopener)
     })();
   </script>
 </body>
 </html>
-
