@@ -1,23 +1,4 @@
 <!doctype html>
-<!-- SAVE AS: undangan-reza-alya.html -->
-<!--
-QUALITY CHECKLIST (PASS):
-[1] Single-file HTML+CSS+JS (no external JS libs) ✅
-[2] Dark luxury theme (charcoal gradient, off-white text, subtle champagne-gold accents) ✅
-[3] 1 Google Font for titles; body uses system font ✅
-[4] Opening gate overlay includes recipient: “Kepada Yth. Dimas Budi Ramadhan” ✅
-[5] Audio: default OFF; plays only after tap; play/pause + mute + status indicator; toast on error ✅
-[6] Photo Story System: 1 main photo panel; auto-switch per section; crossfade premium; fallback frame without text ✅
-[7] Sub-target photo switch: Akad/Resepsi cards via IntersectionObserver ✅
-[8] Sticky mini-nav with smooth scroll + active state ✅
-[9] Reveal-on-scroll via IntersectionObserver ✅
-[10] RSVP+Guestbook: localStorage, seed 20 entries, createdAt, relative time, newest first, reset confirm+toast ✅
-[11] Countdown to Akad (2026-01-17 08:00 WIB) ✅
-[12] Copy address + Maps button (exact link) + elegant toast ✅
-[13] ICS generation via Blob for Akad & Resepsi (WIB TZID) ✅
-[14] Reduced motion respected (prefers-reduced-motion) ✅
-[15] Gate background uses hand.png (RAW) subtly, before invitation opens ✅
--->
 <html lang="id">
 <head>
   <meta charset="utf-8" />
@@ -1913,3 +1894,4 @@ END:VCALENDAR`.replace(/\n/g, "\r\n");
   </script>
 </body>
 </html>
+
