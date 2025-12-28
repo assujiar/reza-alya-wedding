@@ -1,0 +1,12 @@
+{
+  "rewrites": [{ "source": "/", "destination": "/reza-alya_wedding_dimasbudiramadhan.html" }],
+  "headers": [
+    {
+      "source": "/(.*)\\.html",
+      "headers": [
+        { "key": "Content-Type", "value": "text/html; charset=utf-8" },
+        { "key": "Content-Disposition", "value": "inline" }
+      ]
+    }
+  ]
+}
