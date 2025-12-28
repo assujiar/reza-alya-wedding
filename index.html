@@ -9,14 +9,15 @@ CHECKLIST (QUALITY GATE)
 [✓] Gate overlay: “Kepada Yth. Dimas Budi Ramadhan” muncul sebelum undangan terbuka
 [✓] Musik default OFF; hanya bisa play setelah tap Gate atau tombol musik
 [✓] Photo system: per section pakai 1 photo panel (tanpa galeri), auto swap via IntersectionObserver
-[✓] Crossfade 2-layer (img A/B) + slight zoom + blur-to-sharp, 500–900ms
+[✓] Crossfade 2-layer stabil (anti-flicker) + blur-to-sharp halus, 500–900ms
+[✓] Tidak ada foto utama yang terpotong: foreground pakai object-fit: contain (full image visible)
 [✓] Section separator filigree (inline SVG) fade-in on viewport; reduced-motion dihormati
 [✓] Countdown Akad target 2026-01-17 08:00 WIB (UTC+7)
 [✓] Maps + Copy Address + Toast elegan (tanpa console error)
 [✓] RSVP + Guestbook localStorage, seed 20 entries + createdAt runtime, newest-first, relative time
-[✓] Add to Calendar: generate ICS via Blob download (WIB / Asia-Jakarta)
+[✓] Add to Calendar: generate ICS via Blob download (timezone WIB / Asia-Jakarta)
 [✓] Sticky bottom nav pill (Home/Mempelai/Acara/Lokasi/RSVP) smooth scroll, tidak makan tempat
-[✓] Zero console error (guarded APIs, safe fallbacks)
+[✓] Hilangkan keterangan “Cover / Pembuka / Mempelai / dll” dari UI (tidak tampil sebagai label)
 -->
 <html lang="id">
 <head>
@@ -261,7 +262,7 @@ CHECKLIST (QUALITY GATE)
       letter-spacing:.02em;
     }
 
-    /* Photo panel (moved into section slots) */
+    /* Photo panel (teleported into section slots) */
     .photo-slot{
       position:relative;
       margin: 0 0 22px;
@@ -277,11 +278,13 @@ CHECKLIST (QUALITY GATE)
       isolation:isolate;
     }
     .photo-panel.is-hero{border-radius: 26px}
+
     .photo-panel .layers{
       position:relative;
       width:100%;
       aspect-ratio: 16 / 10;
       min-height: 260px;
+      background: rgba(0,0,0,.20);
     }
     .photo-panel.is-hero .layers{
       aspect-ratio: 4 / 5;
@@ -290,25 +293,47 @@ CHECKLIST (QUALITY GATE)
     @media (max-width:520px){
       .photo-panel.is-hero .layers{min-height: 470px}
     }
-    .layer-img{
+
+    /* Each layer contains:
+       - bg (cover + blur) to fill edges
+       - fg (contain) to ensure full image visible (no cropping)
+    */
+    .layer{
+      position:absolute;
+      inset:0;
+      opacity:0;
+      transition: opacity .72s ease;
+      will-change: opacity;
+    }
+    .layer.is-live{opacity:1}
+
+    .layer .bg{
+      position:absolute;
+      inset:-12%;
+      width:124%;
+      height:124%;
+      object-fit: cover;
+      transform: scale(1.12);
+      filter: blur(22px) brightness(.52) saturate(.92);
+      opacity:.98;
+    }
+    .layer .fg{
       position:absolute;
       inset:0;
       width:100%;
       height:100%;
-      object-fit:cover;
-      transform: scale(1.03);
-      filter: blur(10px) saturate(.95) brightness(.85);
+      object-fit: contain;
+      padding: clamp(10px, 2.6vw, 18px);
+      transform: scale(1.02);
+      filter: blur(10px) brightness(.95) saturate(.98);
       opacity:0;
-      transition:
-        opacity .72s ease,
-        transform .90s ease,
-        filter .90s ease;
+      transition: opacity .90s ease, transform .90s ease, filter .90s ease;
       will-change: opacity, transform, filter;
     }
-    .layer-img.is-live{
+    .layer.is-live .fg{
       opacity:1;
-      transform: scale(1.01);
-      filter: blur(0px) saturate(1) brightness(.96);
+      transform: scale(1.0);
+      filter: blur(0px) brightness(1.0) saturate(1.0);
     }
 
     .photo-panel::before{
@@ -317,27 +342,19 @@ CHECKLIST (QUALITY GATE)
       inset:0;
       background:
         radial-gradient(900px 420px at 50% 10%, rgba(0,0,0,.06), transparent 55%),
-        linear-gradient(180deg, rgba(0,0,0,.18), rgba(0,0,0,.56) 62%, rgba(0,0,0,.76));
-      z-index:2;
+        linear-gradient(180deg, rgba(0,0,0,.10), rgba(0,0,0,.52) 62%, rgba(0,0,0,.74));
+      z-index:3;
       pointer-events:none;
     }
+
     .photo-caption{
       position:absolute;
       inset:auto 0 0 0;
-      z-index:3;
+      z-index:4;
       padding: 18px 18px 16px;
       display:flex;
       flex-direction:column;
       gap:6px;
-    }
-    .cap-eyebrow{
-      display:flex;
-      gap:10px;
-      align-items:center;
-      font-size:12px;
-      letter-spacing:.26em;
-      text-transform:uppercase;
-      color: rgba(240,238,232,.60);
     }
     .cap-title{
       font-family:"Cormorant Garamond", serif;
@@ -346,6 +363,7 @@ CHECKLIST (QUALITY GATE)
       letter-spacing:.02em;
       line-height:1.15;
       margin:0;
+      text-shadow: 0 10px 24px rgba(0,0,0,.45);
     }
     .cap-sub{
       margin:0;
@@ -359,30 +377,38 @@ CHECKLIST (QUALITY GATE)
       padding: var(--sectionPad) 0;
     }
     section:first-of-type{padding-top: 18px}
+
     .section-inner{
       background: linear-gradient(180deg, rgba(255,255,255,.035), rgba(255,255,255,.02));
       border:1px solid rgba(255,255,255,.09);
       border-radius: var(--radius2);
       padding: clamp(18px, 3.8vw, 28px);
       box-shadow: 0 18px 48px rgba(0,0,0,.28);
+      position:relative;
+      overflow:hidden;
     }
-    .section-title{
-      font-size:12px;
-      letter-spacing:.28em;
-      text-transform:uppercase;
-      color: rgba(240,238,232,.62);
-      margin: 0 0 10px;
-      display:flex;
-      align-items:center;
-      gap:12px;
+
+    /* Optional section background photo for variability */
+    .section-inner.section-bg{
+      background:
+        linear-gradient(180deg, rgba(7,8,11,.66), rgba(7,8,11,.90)),
+        var(--bgphoto);
+      background-repeat:no-repeat;
+      background-position:center;
+      background-size: contain; /* keep image intact (no hard crop) */
     }
-    .section-title::after{
+    .section-inner.section-bg::after{
       content:"";
-      height:1px;
-      flex:1;
-      background: linear-gradient(90deg, rgba(201,152,70,.35), rgba(255,255,255,.10), transparent);
-      opacity:.85;
+      position:absolute;
+      inset:0;
+      background:
+        radial-gradient(900px 420px at 50% 0%, rgba(201,152,70,.10), transparent 60%),
+        radial-gradient(800px 420px at 15% 80%, rgba(255,255,255,.06), transparent 62%);
+      opacity:.55;
+      pointer-events:none;
+      mix-blend-mode: screen;
     }
+    .section-inner > *{position:relative; z-index:1}
 
     .headline{
       font-family:"Cormorant Garamond", serif;
@@ -435,7 +461,6 @@ CHECKLIST (QUALITY GATE)
       width:100%;
       height:auto;
       display:block;
-      transform: scale(1.01);
     }
     .portrait .p-cap{
       padding: 14px 16px 16px;
@@ -771,7 +796,7 @@ CHECKLIST (QUALITY GATE)
         scroll-behavior: auto !important;
       }
       .filigree{opacity:1; transform:none; filter:none}
-      .layer-img{transition-duration: 0.001ms !important}
+      .layer, .layer .fg{transition-duration: 0.001ms !important}
     }
   </style>
 </head>
@@ -796,7 +821,7 @@ CHECKLIST (QUALITY GATE)
       </div>
     </div>
 
-    <!-- Subtle top badge (optional after open) -->
+    <!-- Subtle top badge (after open) -->
     <div class="top-badge" id="topBadge" aria-live="polite">
       <span id="guestNameSmall">Kepada Yth. Dimas Budi Ramadhan</span>
       <span class="dot" aria-hidden="true"></span>
@@ -818,11 +843,16 @@ CHECKLIST (QUALITY GATE)
       <!-- Global photo panel (teleported into slots) -->
       <div id="photoPanel" class="photo-panel is-hero" aria-hidden="true">
         <div class="layers">
-          <img id="imgA" class="layer-img" alt="" />
-          <img id="imgB" class="layer-img" alt="" />
+          <div class="layer is-live" id="layerA" aria-hidden="true">
+            <img class="bg" id="bgA" alt="" />
+            <img class="fg" id="fgA" alt="" />
+          </div>
+          <div class="layer" id="layerB" aria-hidden="true">
+            <img class="bg" id="bgB" alt="" />
+            <img class="fg" id="fgB" alt="" />
+          </div>
         </div>
         <div class="photo-caption">
-          <div class="cap-eyebrow"><span class="dot" aria-hidden="true"></span><span id="capEyebrow">Cover</span></div>
           <h2 class="cap-title" id="capTitle">Reza & Alya</h2>
           <p class="cap-sub" id="capSub">17 Januari 2026 • Le Dian Hotel Serang</p>
         </div>
@@ -830,10 +860,9 @@ CHECKLIST (QUALITY GATE)
 
       <!-- 1) COVER / HERO -->
       <section id="home" aria-label="Cover">
-        <div class="photo-slot" data-slot="mount" data-photo="hero" data-eyebrow="Cover" data-title="Reza &amp; Alya" data-sub="17 Januari 2026 • Le Dian Hotel Serang"></div>
+        <div class="photo-slot" data-slot="mount" data-photo="hero" data-title="Reza &amp; Alya" data-sub="17 Januari 2026 • Le Dian Hotel Serang"></div>
 
         <div class="section-inner">
-          <p class="section-title">Undangan</p>
           <h1 class="headline">Reza Budi Prasetyo<br/>Alya Putri Maharani</h1>
           <p class="subline">17 Januari 2026</p>
           <p class="lead center muted">
@@ -859,10 +888,9 @@ CHECKLIST (QUALITY GATE)
 
       <!-- 2) PEMBUKA -->
       <section id="pembuka" aria-label="Pembuka">
-        <div class="photo-slot" data-slot="mount" data-photo="opening" data-eyebrow="Pembuka" data-title="Assalamu’alaikum" data-sub="Warahmatullahi Wabarakatuh"></div>
+        <div class="photo-slot" data-slot="mount" data-photo="opening" data-title="Assalamu’alaikum" data-sub="Warahmatullahi Wabarakatuh"></div>
 
-        <div class="section-inner">
-          <p class="section-title">Pembuka</p>
+        <div class="section-inner section-bg" style="--bgphoto: url('assets/img/reza-alya.2.png');">
           <p class="lead" style="margin:0 0 10px">
             Assalamu’alaikum Warahmatullahi Wabarakatuh
           </p>
@@ -885,10 +913,9 @@ CHECKLIST (QUALITY GATE)
 
       <!-- 3) MEMPELAI -->
       <section id="mempelai" aria-label="Mempelai">
-        <div class="photo-slot" data-slot="mount" data-photo="couple" data-eyebrow="Mempelai" data-title="Reza &amp; Alya" data-sub="Dengan cinta, doa, dan harapan terbaik."></div>
+        <div class="photo-slot" data-slot="mount" data-photo="couple" data-title="Reza &amp; Alya" data-sub="Dengan cinta, doa, dan harapan terbaik."></div>
 
-        <div class="section-inner">
-          <p class="section-title">Mempelai</p>
+        <div class="section-inner section-bg" style="--bgphoto: url('assets/img/reza-alya.3.png');">
           <p class="muted" style="margin:0">
             Kami memulai babak baru dengan hati yang tenang dan niat yang baik.
             Semoga langkah ini menjadi jalan yang penuh berkah.
@@ -926,11 +953,9 @@ CHECKLIST (QUALITY GATE)
 
       <!-- 4) ACARA -->
       <section id="acara" aria-label="Acara">
-        <div class="photo-slot" data-slot="mount" data-photo="akad" data-eyebrow="Acara" data-title="17 Januari 2026" data-sub="Akad Nikah &amp; Resepsi"></div>
+        <div class="photo-slot" data-slot="mount" data-photo="akad" data-title="17 Januari 2026" data-sub="Akad Nikah &amp; Resepsi"></div>
 
         <div class="section-inner">
-          <p class="section-title">Acara</p>
-
           <div class="event-grid" aria-label="Rangkaian Acara">
             <div class="event" id="blokAkad">
               <h3>Akad Nikah</h3>
@@ -987,10 +1012,9 @@ CHECKLIST (QUALITY GATE)
 
       <!-- 5) LOKASI -->
       <section id="lokasi" aria-label="Lokasi">
-        <div class="photo-slot" data-slot="mount" data-photo="venue" data-eyebrow="Lokasi" data-title="Le Dian Hotel Serang" data-sub="Klik peta untuk rute terbaik."></div>
+        <div class="photo-slot" data-slot="mount" data-photo="venue" data-title="Le Dian Hotel Serang" data-sub="Klik peta untuk rute terbaik."></div>
 
-        <div class="section-inner">
-          <p class="section-title">Lokasi</p>
+        <div class="section-inner section-bg" style="--bgphoto: url('assets/img/reza-alya.6.png');">
           <p class="lead" style="margin:0 0 6px">Le Dian Hotel Serang</p>
           <p class="muted" style="margin:0 0 14px">
             Kami menantikan kehadiran Anda di lokasi acara.
@@ -1000,7 +1024,7 @@ CHECKLIST (QUALITY GATE)
             <a class="btn-inline gold" href="https://maps.app.goo.gl/oJVfShW7g5PJV2cS8" target="_blank" rel="noopener">Buka Google Maps</a>
             <button class="btn-inline" id="copyAddrBtn2" type="button">Salin Alamat</button>
           </div>
-          <p class="fine" style="margin:12px 0 0">Micro info: Le Dian Hotel Serang</p>
+          <p class="fine" style="margin:12px 0 0">Le Dian Hotel Serang</p>
         </div>
       </section>
 
@@ -1016,11 +1040,9 @@ CHECKLIST (QUALITY GATE)
 
       <!-- 6) RSVP + BUKU TAMU -->
       <section id="rsvp" aria-label="RSVP dan Buku Tamu">
-        <div class="photo-slot" data-slot="mount" data-photo="rsvp" data-eyebrow="RSVP" data-title="Konfirmasi Kehadiran" data-sub="Terima kasih atas doa dan perhatian Anda."></div>
+        <div class="photo-slot" data-slot="mount" data-photo="rsvp" data-title="Konfirmasi Kehadiran" data-sub="Terima kasih atas doa dan perhatian Anda."></div>
 
         <div class="section-inner">
-          <p class="section-title">RSVP &amp; Buku Tamu</p>
-
           <form id="rsvpForm" autocomplete="off" novalidate>
             <div class="field">
               <label for="nama">Nama</label>
@@ -1073,10 +1095,9 @@ CHECKLIST (QUALITY GATE)
 
       <!-- 7) ADD TO CALENDAR (ICS) -->
       <section id="calendar" aria-label="Add to Calendar">
-        <div class="photo-slot" data-slot="mount" data-photo="venue" data-eyebrow="Kalender" data-title="Tambahkan ke Kalender" data-sub="Agar tidak terlewat."></div>
+        <div class="photo-slot" data-slot="mount" data-photo="venue" data-title="Tambahkan ke Kalender" data-sub="Agar tidak terlewat."></div>
 
-        <div class="section-inner">
-          <p class="section-title">Add to Calendar</p>
+        <div class="section-inner section-bg" style="--bgphoto: url('assets/img/reza-alya.6.png');">
           <p class="muted" style="margin:0 0 14px">
             Simpan jadwal Akad dan Resepsi ke kalender Anda.
           </p>
@@ -1104,10 +1125,9 @@ CHECKLIST (QUALITY GATE)
 
       <!-- 8) FOOTER -->
       <section id="footer" aria-label="Penutup" style="padding-bottom: 120px;">
-        <div class="photo-slot" data-slot="mount" data-photo="hero" data-eyebrow="Penutup" data-title="Terima Kasih" data-sub="Sampai bertemu di hari bahagia."></div>
+        <div class="photo-slot" data-slot="mount" data-photo="hero" data-title="Terima Kasih" data-sub="Sampai bertemu di hari bahagia."></div>
 
         <div class="section-inner">
-          <p class="section-title">Penutup</p>
           <p class="muted" style="margin:0 0 12px">
             Terima kasih atas perhatian, doa, dan kehadiran Anda. Semoga kebaikan selalu menyertai kita semua.
           </p>
@@ -1171,9 +1191,13 @@ CHECKLIST (QUALITY GATE)
     const audioState = document.getElementById('audioState');
 
     const photoPanel = document.getElementById('photoPanel');
-    const imgA = document.getElementById('imgA');
-    const imgB = document.getElementById('imgB');
-    const capEyebrow = document.getElementById('capEyebrow');
+    const layerA = document.getElementById('layerA');
+    const layerB = document.getElementById('layerB');
+    const bgA = document.getElementById('bgA');
+    const fgA = document.getElementById('fgA');
+    const bgB = document.getElementById('bgB');
+    const fgB = document.getElementById('fgB');
+
     const capTitle = document.getElementById('capTitle');
     const capSub = document.getElementById('capSub');
 
@@ -1200,8 +1224,7 @@ CHECKLIST (QUALITY GATE)
     const backToTopBtn = document.getElementById('backToTopBtn');
     const nav = document.getElementById('nav');
 
-    // Safe helpers
-    function $(sel, root=document){ return root.querySelector(sel); }
+    // Helpers
     function $all(sel, root=document){ return Array.from(root.querySelectorAll(sel)); }
 
     function showToast(msg){
@@ -1216,7 +1239,7 @@ CHECKLIST (QUALITY GATE)
     if(guestNameGate) guestNameGate.textContent = guestName;
     if(guestNameSmall) guestNameSmall.textContent = "Kepada Yth. " + guestName;
 
-    // Set portrait sources
+    // Portrait sources (no crop, natural height)
     if(imgGroom) imgGroom.src = photos.groom;
     if(imgBride) imgBride.src = photos.bride;
 
@@ -1247,14 +1270,8 @@ CHECKLIST (QUALITY GATE)
       if(!bgm) return;
       const p = bgm.play();
       if(p && typeof p.then === 'function'){
-        p.then(()=> {
-          isPlaying = true;
-          setAudioUI();
-        }).catch(()=> {
-          isPlaying = false;
-          setAudioUI();
-          // keep silent; user can toggle again
-        });
+        p.then(()=> { isPlaying = true; setAudioUI(); })
+         .catch(()=> { isPlaying = false; setAudioUI(); });
       }else{
         isPlaying = true;
         setAudioUI();
@@ -1271,11 +1288,8 @@ CHECKLIST (QUALITY GATE)
     function toggleAudio(){
       if(!isOpen) return;
       if(!bgm) return;
-      if(isPlaying){
-        stopAudio();
-      }else{
-        tryPlay();
-      }
+      if(isPlaying) stopAudio();
+      else tryPlay();
     }
 
     if(bgm){
@@ -1287,57 +1301,36 @@ CHECKLIST (QUALITY GATE)
     setAudioUI();
 
     if(audioToggle){
-      audioToggle.addEventListener('click', function(){
-        toggleAudio();
-      });
+      audioToggle.addEventListener('click', function(){ toggleAudio(); });
     }
 
     function openInvite(withMusic){
       if(isOpen) return;
       isOpen = true;
 
-      // unlock scroll
       body.classList.remove('lock-scroll');
       body.classList.add('is-open');
 
-      // close gate
       if(gate){
         gate.style.display = 'none';
         gate.setAttribute('aria-hidden','true');
       }
 
-      // enable audio toggle
       if(audioToggle) audioToggle.disabled = false;
 
-      // Start music only after user interaction (this click)
-      if(withMusic){
-        tryPlay();
-      }else{
-        stopAudio();
-      }
-
-      // slight nudge to ensure layout settled
-      window.setTimeout(()=> {
-        // no-op; avoids some mobile glitches without logging
-      }, 0);
+      if(withMusic) tryPlay();
+      else stopAudio();
     }
 
     if(openInviteBtn){
-      openInviteBtn.addEventListener('click', function(){
-        openInvite(true);
-      });
+      openInviteBtn.addEventListener('click', function(){ openInvite(true); });
     }
     if(openNoMusicBtn){
-      openNoMusicBtn.addEventListener('click', function(){
-        openInvite(false);
-      });
+      openNoMusicBtn.addEventListener('click', function(){ openInvite(false); });
     }
     if(heroOpenBtn){
       heroOpenBtn.addEventListener('click', function(){
-        if(!isOpen){
-          // if gate still present, do nothing visible; gate already blocks.
-          return;
-        }
+        if(!isOpen) return;
         const target = document.getElementById('pembuka');
         if(target){
           target.scrollIntoView({behavior: prefersReducedMotion ? 'auto' : 'smooth', block:'start'});
@@ -1345,9 +1338,22 @@ CHECKLIST (QUALITY GATE)
       });
     }
 
-    // Photo panel crossfade (two layers)
-    let activeLayer = 'A';
-    let currentKey = null;
+    // Prevent accidental autoplay before open
+    if(bgm){
+      bgm.addEventListener('play', function(){
+        if(!isOpen){
+          try{ bgm.pause(); }catch(e){}
+          isPlaying = false;
+          setAudioUI();
+        }
+      });
+    }
+
+    // Photo panel crossfade (stable, anti-flicker)
+    let active = 'A';
+    let currentKey = 'hero';
+    let inFlight = false;
+    let pending = null;
 
     function setPanelHero(isHero){
       if(!photoPanel) return;
@@ -1355,58 +1361,29 @@ CHECKLIST (QUALITY GATE)
       else photoPanel.classList.remove('is-hero');
     }
 
-    function setCaption(eyebrow, title, sub){
-      if(capEyebrow) capEyebrow.textContent = eyebrow || '';
+    function setCaption(title, sub){
       if(capTitle) capTitle.textContent = title || '';
       if(capSub) capSub.textContent = sub || '';
     }
 
-    function swapPhoto(key, eyebrow, title, sub, isHero){
-      if(!photoPanel || !imgA || !imgB) return;
-      if(!photos[key]) return;
-
-      if(currentKey === key){
-        // still update caption/hero shape if needed
-        setCaption(eyebrow, title, sub);
-        setPanelHero(!!isHero);
-        return;
-      }
-
-      setCaption(eyebrow, title, sub);
-      setPanelHero(!!isHero);
-
-      const nextSrc = photos[key];
-      const nextImg = (activeLayer === 'A') ? imgB : imgA;
-      const liveImg = (activeLayer === 'A') ? imgA : imgB;
-
-      // Ensure transitions are subtle; if reduced motion, snap
-      nextImg.classList.remove('is-live');
-      nextImg.src = nextSrc;
-
-      const onReady = () => {
-        // crossfade
-        if(prefersReducedMotion){
-          liveImg.classList.remove('is-live');
-          nextImg.classList.add('is-live');
+    function waitImage(img){
+      return new Promise((resolve)=>{
+        if(!img) return resolve();
+        const done = () => resolve();
+        const decodeThen = () => {
+          if(img.decode){
+            img.decode().then(done).catch(done);
+          } else done();
+        };
+        if(img.complete && img.naturalWidth > 0){
+          decodeThen();
         }else{
-          // force style recalculation
-          void nextImg.offsetWidth;
-          liveImg.classList.remove('is-live');
-          nextImg.classList.add('is-live');
+          img.addEventListener('load', decodeThen, {once:true});
+          img.addEventListener('error', done, {once:true});
         }
-        activeLayer = (activeLayer === 'A') ? 'B' : 'A';
-        currentKey = key;
-        nextImg.removeEventListener('load', onReady);
-      };
-
-      if(nextImg.complete && nextImg.naturalWidth > 0){
-        onReady();
-      }else{
-        nextImg.addEventListener('load', onReady, {once:true});
-      }
+      });
     }
 
-    // Preload minimal set
     function preload(keys){
       keys.forEach(k=>{
         if(!photos[k]) return;
@@ -1415,88 +1392,81 @@ CHECKLIST (QUALITY GATE)
         im.src = photos[k];
       });
     }
-    preload(['hero','opening','couple','akad','resepsi']);
+    preload(['hero','opening','couple','akad','resepsi','venue','rsvp']);
 
-    // Initialize panel with hero to avoid empty flash
+    // Initialize panel with hero (no crop)
     (function initPanel(){
-      imgA.src = photos.hero;
-      imgA.classList.add('is-live');
+      const src = photos.hero;
+      if(bgA) bgA.src = src;
+      if(fgA) fgA.src = src;
+      if(layerA) layerA.classList.add('is-live');
+      if(layerB) layerB.classList.remove('is-live');
       currentKey = 'hero';
-      setCaption('Cover', 'Reza & Alya', '17 Januari 2026 • Le Dian Hotel Serang');
+      setCaption('Reza & Alya', '17 Januari 2026 • Le Dian Hotel Serang');
       setPanelHero(true);
     })();
+
+    function swapPhoto(key, title, sub, isHero){
+      if(!photos[key]) return;
+      if(key === currentKey){
+        setCaption(title, sub);
+        setPanelHero(!!isHero);
+        return;
+      }
+      if(inFlight){
+        pending = {key, title, sub, isHero};
+        return;
+      }
+      inFlight = true;
+
+      const nextSrc = photos[key];
+      const nextLayer = (active === 'A') ? layerB : layerA;
+      const liveLayer = (active === 'A') ? layerA : layerB;
+      const nextBg = (active === 'A') ? bgB : bgA;
+      const nextFg = (active === 'A') ? fgB : fgA;
+
+      setCaption(title, sub);
+      setPanelHero(!!isHero);
+
+      // Prepare next layer assets
+      if(nextBg) nextBg.src = nextSrc;
+      if(nextFg) nextFg.src = nextSrc;
+
+      Promise.all([waitImage(nextBg), waitImage(nextFg)]).then(()=>{
+        // Crossfade layer containers (stable)
+        if(nextLayer) nextLayer.classList.remove('is-live');
+        // rAF to ensure DOM commits
+        requestAnimationFrame(()=>{
+          if(prefersReducedMotion){
+            if(liveLayer) liveLayer.classList.remove('is-live');
+            if(nextLayer) nextLayer.classList.add('is-live');
+          }else{
+            if(liveLayer) liveLayer.classList.remove('is-live');
+            if(nextLayer) nextLayer.classList.add('is-live');
+          }
+          active = (active === 'A') ? 'B' : 'A';
+          currentKey = key;
+          inFlight = false;
+
+          if(pending && pending.key && pending.key !== currentKey){
+            const p = pending;
+            pending = null;
+            swapPhoto(p.key, p.title, p.sub, p.isHero);
+          }else{
+            pending = null;
+          }
+        });
+      });
+    }
 
     // Teleport photo panel into section slots + update on triggers
     const slots = $all('.photo-slot');
     const triggers = $all('[data-photo-trigger]');
+
     function mountPanelInto(el){
       if(!el || !photoPanel) return;
+      if(el.contains(photoPanel)) return;
       el.appendChild(photoPanel);
-    }
-
-    // observe slots
-    if('IntersectionObserver' in window){
-      const slotObs = new IntersectionObserver((entries)=>{
-        entries.forEach(entry=>{
-          if(!entry.isIntersecting) return;
-          const el = entry.target;
-          const key = el.getAttribute('data-photo');
-          const eyebrow = el.getAttribute('data-eyebrow') || '';
-          const title = el.getAttribute('data-title') || '';
-          const sub = el.getAttribute('data-sub') || '';
-          const isHero = key === 'hero' && (el.closest('#home') != null);
-
-          // mount panel into this slot
-          mountPanelInto(el);
-
-          // swap image
-          swapPhoto(key, eyebrow, title, sub, isHero);
-
-          // update nav active (rough sync)
-          const sec = el.closest('section');
-          if(sec && sec.id){
-            setActiveNav(sec.id);
-          }
-        });
-      }, {threshold: 0.62});
-
-      slots.forEach(s=> slotObs.observe(s));
-
-      // observe photo triggers (resepsi swap inside acara)
-      const trigObs = new IntersectionObserver((entries)=>{
-        entries.forEach(entry=>{
-          if(!entry.isIntersecting) return;
-          const t = entry.target;
-          const key = t.getAttribute('data-photo-trigger');
-          if(key === 'resepsi'){
-            // keep captions as Acara, swap to resepsi image
-            swapPhoto('resepsi', 'Acara', '17 Januari 2026', 'Akad Nikah & Resepsi', false);
-          }
-        });
-      }, {threshold: 0.6});
-
-      triggers.forEach(t=> trigObs.observe(t));
-    } else {
-      // fallback: mount to first slot only
-      if(slots[0]) mountPanelInto(slots[0]);
-    }
-
-    // Filigree separators animate on viewport
-    const filigrees = $all('.filigree');
-    if('IntersectionObserver' in window){
-      const fObs = new IntersectionObserver((entries)=>{
-        entries.forEach(entry=>{
-          if(entry.isIntersecting){
-            entry.target.classList.add('is-visible');
-          }
-        });
-      }, {threshold: 0.55});
-      filigrees.forEach(f=> fObs.observe(f));
-      if(prefersReducedMotion){
-        filigrees.forEach(f=> f.classList.add('is-visible'));
-      }
-    } else {
-      filigrees.forEach(f=> f.classList.add('is-visible'));
     }
 
     // Copy address
@@ -1507,7 +1477,6 @@ CHECKLIST (QUALITY GATE)
           await navigator.clipboard.writeText(addressText);
           showToast("Alamat disalin.");
         }else{
-          // fallback
           const ta = document.createElement('textarea');
           ta.value = addressText;
           ta.setAttribute('readonly','');
@@ -1527,13 +1496,11 @@ CHECKLIST (QUALITY GATE)
     if(copyAddrBtn2) copyAddrBtn2.addEventListener('click', copyAddress);
 
     // Countdown to Akad (WIB UTC+7) -> 2026-01-17 08:00 WIB == 2026-01-17 01:00 UTC
-    const targetUTC = Date.UTC(2026, 0, 17, 1, 0, 0); // Jan=0
+    const targetUTC = Date.UTC(2026, 0, 17, 1, 0, 0);
     function pad2(n){ return String(n).padStart(2,'0'); }
-
     function tickCountdown(){
       const now = Date.now();
       let diff = targetUTC - now;
-
       if(diff <= 0){
         cdDays.textContent = "0";
         cdHours.textContent = "0";
@@ -1583,7 +1550,6 @@ CHECKLIST (QUALITY GATE)
 
     function buildSeed(){
       const now = Date.now();
-      // offsets (ms) varied: minutes, hours, days
       const offsets = [
         5*60*1000,  28*60*1000,  55*60*1000,  2*60*60*1000,  4*60*60*1000,
         7*60*60*1000,  10*60*60*1000,  14*60*60*1000,  19*60*60*1000,  22*60*60*1000,
@@ -1616,17 +1582,12 @@ CHECKLIST (QUALITY GATE)
         }
         return parsed;
       }catch(e){
-        // fallback: seed in-memory
         return buildSeed();
       }
     }
 
     function saveGuestbook(items){
-      try{
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
-      }catch(e){
-        // ignore
-      }
+      try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(items)); }catch(e){}
     }
 
     function relativeTime(iso){
@@ -1689,10 +1650,15 @@ CHECKLIST (QUALITY GATE)
       rsvpForm.addEventListener('submit', function(e){
         e.preventDefault();
 
-        const nama = (document.getElementById('nama') || {}).value || '';
-        const hadir = (document.getElementById('hadir') || {}).value || 'Hadir';
-        const tamu = parseInt(((document.getElementById('tamu') || {}).value || '1'), 10);
-        const ucapan = (document.getElementById('ucapan') || {}).value || '';
+        const namaEl = document.getElementById('nama');
+        const hadirEl = document.getElementById('hadir');
+        const tamuEl = document.getElementById('tamu');
+        const ucapanEl = document.getElementById('ucapan');
+
+        const nama = (namaEl && namaEl.value) ? namaEl.value : '';
+        const hadir = (hadirEl && hadirEl.value) ? hadirEl.value : 'Hadir';
+        const tamu = parseInt((tamuEl && tamuEl.value) ? tamuEl.value : '1', 10);
+        const ucapan = (ucapanEl && ucapanEl.value) ? ucapanEl.value : '';
 
         const nameTrim = nama.trim();
         const msgTrim = ucapan.trim();
@@ -1730,19 +1696,17 @@ CHECKLIST (QUALITY GATE)
     }
 
     // ICS generator (WIB / Asia-Jakarta)
-    function uid(){
-      return 'ra-' + Math.random().toString(16).slice(2) + '-' + Date.now();
-    }
+    function uid(){ return 'ra-' + Math.random().toString(16).slice(2) + '-' + Date.now(); }
     function dtstampUTC(){
       const d = new Date();
-      const z = new Date(d.getTime() - d.getTimezoneOffset()*60000).toISOString().replace(/[-:]/g,'').replace(/\.\d{3}Z$/,'Z');
+      const z = new Date(d.getTime() - d.getTimezoneOffset()*60000)
+        .toISOString().replace(/[-:]/g,'').replace(/\.\d{3}Z$/,'Z');
       return z;
     }
     function icsEscape(s){
       return String(s).replace(/\\n/g,'\n').replace(/\n/g,'\\n').replace(/,/g,'\\,').replace(/;/g,'\\;');
     }
     function buildVTimezoneJakarta(){
-      // No DST
       return [
         "BEGIN:VTIMEZONE",
         "TZID:Asia/Jakarta",
@@ -1756,7 +1720,6 @@ CHECKLIST (QUALITY GATE)
       ].join("\r\n");
     }
     function buildEvent(opts){
-      // DTSTART/DTEND in local WIB as TZID:Asia/Jakarta
       return [
         "BEGIN:VEVENT",
         "UID:" + uid(),
@@ -1792,7 +1755,6 @@ CHECKLIST (QUALITY GATE)
         "METHOD:PUBLISH",
         buildVTimezoneJakarta()
       ];
-
       let event;
       if(eventType === 'akad'){
         event = buildEvent({
@@ -1813,23 +1775,18 @@ CHECKLIST (QUALITY GATE)
           description: "Resepsi Reza Budi Prasetyo & Alya Putri Maharani di Le Dian Hotel Serang."
         });
       }
-
-      const tail = ["END:VCALENDAR"];
-      const ics = base.concat([event]).concat(tail).join("\r\n");
-      return ics;
+      return base.concat([event, "END:VCALENDAR"]).join("\r\n");
     }
 
     if(icsAkadBtn){
       icsAkadBtn.addEventListener('click', function(){
-        const ics = makeCalendar('akad');
-        downloadICS('Reza-Alya_Akad.ics', ics);
+        downloadICS('Reza-Alya_Akad.ics', makeCalendar('akad'));
         showToast("ICS Akad diunduh.");
       });
     }
     if(icsResepsiBtn){
       icsResepsiBtn.addEventListener('click', function(){
-        const ics = makeCalendar('resepsi');
-        downloadICS('Reza-Alya_Resepsi.ics', ics);
+        downloadICS('Reza-Alya_Resepsi.ics', makeCalendar('resepsi'));
         showToast("ICS Resepsi diunduh.");
       });
     }
@@ -1851,7 +1808,6 @@ CHECKLIST (QUALITY GATE)
         a.classList.toggle('is-active', a.getAttribute('data-nav') === id);
       });
     }
-
     if(nav){
       nav.addEventListener('click', function(e){
         const a = e.target && e.target.closest && e.target.closest('a[data-nav]');
@@ -1871,7 +1827,6 @@ CHECKLIST (QUALITY GATE)
     const sections = $all('main section');
     if('IntersectionObserver' in window){
       const secObs = new IntersectionObserver((entries)=>{
-        // pick the most visible
         let best = null;
         entries.forEach(en=>{
           if(!en.isIntersecting) return;
@@ -1883,20 +1838,58 @@ CHECKLIST (QUALITY GATE)
       }, {threshold: [0.25, 0.4, 0.55, 0.7]});
       sections.forEach(s=> secObs.observe(s));
     }
-
-    // Ensure some defaults
     setActiveNav('home');
 
-    // Prevent accidental audio start before open (hard rule)
-    // If browser tries to autoplay for any reason, shut it down.
-    if(bgm){
-      bgm.addEventListener('play', function(){
-        if(!isOpen){
-          try{ bgm.pause(); }catch(e){}
-          isPlaying = false;
-          setAudioUI();
-        }
-      });
+    // Filigree separators animate on viewport
+    const filigrees = $all('.filigree');
+    if('IntersectionObserver' in window){
+      const fObs = new IntersectionObserver((entries)=>{
+        entries.forEach(entry=>{
+          if(entry.isIntersecting) entry.target.classList.add('is-visible');
+        });
+      }, {threshold: 0.55});
+      filigrees.forEach(f=> fObs.observe(f));
+      if(prefersReducedMotion) filigrees.forEach(f=> f.classList.add('is-visible'));
+    } else {
+      filigrees.forEach(f=> f.classList.add('is-visible'));
+    }
+
+    // Observe slots (swap photo + mount panel)
+    if('IntersectionObserver' in window){
+      const slotObs = new IntersectionObserver((entries)=>{
+        entries.forEach(entry=>{
+          if(!entry.isIntersecting) return;
+          const el = entry.target;
+
+          const key = el.getAttribute('data-photo');
+          const title = el.getAttribute('data-title') || '';
+          const sub = el.getAttribute('data-sub') || '';
+
+          const sec = el.closest('section');
+          const isHero = key === 'hero' && sec && sec.id === 'home';
+
+          mountPanelInto(el);
+          swapPhoto(key, title, sub, isHero);
+
+          if(sec && sec.id) setActiveNav(sec.id);
+        });
+      }, {threshold: 0.62});
+      slots.forEach(s=> slotObs.observe(s));
+
+      // Trigger photo swap within acara
+      const trigObs = new IntersectionObserver((entries)=>{
+        entries.forEach(entry=>{
+          if(!entry.isIntersecting) return;
+          const t = entry.target;
+          const key = t.getAttribute('data-photo-trigger');
+          if(key === 'resepsi'){
+            swapPhoto('resepsi', '17 Januari 2026', 'Akad Nikah & Resepsi', false);
+          }
+        });
+      }, {threshold: 0.6});
+      triggers.forEach(t=> trigObs.observe(t));
+    } else {
+      if(slots[0]) mountPanelInto(slots[0]);
     }
 
   })();
