@@ -5,12 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="color-scheme" content="dark" />
   <title>Reza & Alya | 17 Januari 2026</title>
+
   <style>
     :root{
       --bg0:#07070A;
-      --bg1:#0C0D12;
       --glass: rgba(255,255,255,.06);
-      --glass2: rgba(255,255,255,.08);
       --line: rgba(255,255,255,.12);
       --txt: rgba(245,245,245,.88);
       --muted: rgba(245,245,245,.68);
@@ -39,27 +38,21 @@
     }
     body.locked{ overflow:hidden; }
 
-    /* Deepest layer background */
     .bg{
-      position:fixed;
-      inset:0;
-      z-index:-3;
+      position:fixed; inset:0; z-index:-3;
       background-image:
         radial-gradient(1000px 600px at 20% 10%, rgba(201,152,70,.10), transparent 55%),
         radial-gradient(900px 520px at 85% 18%, rgba(201,152,70,.08), transparent 60%),
-        linear-gradient(180deg, rgba(0,0,0,.60), rgba(0,0,0,.78)),
+        linear-gradient(180deg, rgba(0,0,0,.60), rgba(0,0,0,.80)),
         url("assets/img/bernd-dittrich-HGyCrNIzO_M-unsplash.jpg");
       background-size:auto, auto, auto, cover;
       background-position:center;
       background-repeat:no-repeat;
-      filter:saturate(.95) contrast(1.02) brightness(.72);
+      filter:saturate(.95) contrast(1.02) brightness(.70);
       transform: translateZ(0);
     }
     .grain{
-      position:fixed;
-      inset:-30%;
-      z-index:-2;
-      pointer-events:none;
+      position:fixed; inset:-30%; z-index:-2; pointer-events:none;
       opacity:.12;
       background-image:
         radial-gradient(circle at 30% 40%, rgba(255,255,255,.12) 0 1px, transparent 2px),
@@ -75,29 +68,49 @@
       100%{ transform: translate3d(-2%, -3%, 0) rotate(0.001deg); }
     }
 
-    .wrap{
-      width:min(var(--maxw), 100%);
-      margin:0 auto;
-      padding: 0 var(--pad);
-    }
+    .wrap{ width:min(var(--maxw), 100%); margin:0 auto; padding: 0 var(--pad); }
     .topPad{ padding-top: clamp(14px, 2.4vw, 18px); }
+    main{ padding-bottom: 132px; }
+
+    .card{
+      border-radius: var(--radius2);
+      border: 1px solid rgba(255,255,255,.12);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.035));
+      box-shadow: var(--shadow2);
+      overflow:hidden;
+    }
+
+    .section{
+      margin: 18px 0;
+      padding: var(--pad2);
+      display:flex;
+      flex-direction:column;
+      gap: 16px;
+      align-items:center;
+    }
+
+    .flow{
+      width:100%;
+      max-width: min(680px, 100%);
+      display:flex;
+      flex-direction:column;
+      gap: 14px;
+      align-items:center;
+      margin-inline:auto;
+    }
 
     /* Gate overlay */
     .gate{
-      position:fixed;
-      inset:0;
-      z-index:50;
-      display:flex;
-      align-items:center;
-      justify-content:center;
+      position:fixed; inset:0; z-index:50;
+      display:flex; align-items:center; justify-content:center;
       padding: max(22px, env(safe-area-inset-top)) max(18px, env(safe-area-inset-right)) max(22px, env(safe-area-inset-bottom)) max(18px, env(safe-area-inset-left));
       background:
         radial-gradient(1200px 700px at 50% 20%, rgba(201,152,70,.14), transparent 55%),
-        linear-gradient(180deg, rgba(0,0,0,.70), rgba(0,0,0,.88));
+        linear-gradient(180deg, rgba(0,0,0,.72), rgba(0,0,0,.90));
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
       opacity:1;
-      transition: opacity 500ms ease, transform 500ms ease;
+      transition: opacity 520ms ease, transform 520ms ease;
     }
     .gate.is-hidden{
       opacity:0;
@@ -116,9 +129,7 @@
     }
     .gateCard:before{
       content:"";
-      position:absolute;
-      inset:-2px;
-      pointer-events:none;
+      position:absolute; inset:-2px; pointer-events:none;
       background:
         radial-gradient(700px 320px at 12% 10%, rgba(201,152,70,.18), transparent 60%),
         radial-gradient(620px 280px at 86% 12%, rgba(201,152,70,.12), transparent 62%);
@@ -127,7 +138,6 @@
     }
     .gateInner{ position:relative; z-index:1; text-align:center; }
     .eyebrow{
-      font-family: var(--sans);
       letter-spacing:.14em;
       text-transform:uppercase;
       font-size: 11px;
@@ -157,6 +167,7 @@
       gap: 12px;
       align-items:center;
     }
+
     .btn{
       appearance:none;
       border:0;
@@ -187,90 +198,35 @@
       background: rgba(255,255,255,.05);
       box-shadow: var(--shadow2);
     }
-    .toggleLabel{
-      text-align:left;
-      line-height:1.3;
-    }
-    .toggleLabel strong{
-      display:block;
-      font-size: 13px;
-      color: rgba(245,245,245,.88);
-      letter-spacing:.01em;
-    }
-    .toggleLabel span{
-      display:block;
-      font-size: 12px;
-      color: var(--dim);
-      margin-top: 2px;
-    }
-    .switch{
-      position:relative;
-      width: 52px;
-      height: 30px;
-      flex: 0 0 auto;
-    }
-    .switch input{
-      position:absolute;
-      inset:0;
-      opacity:0;
-      cursor:pointer;
-    }
+    .toggleLabel{ text-align:left; line-height:1.3; }
+    .toggleLabel strong{ display:block; font-size: 13px; color: rgba(245,245,245,.88); letter-spacing:.01em; }
+    .toggleLabel span{ display:block; font-size: 12px; color: var(--dim); margin-top: 2px; }
+    .switch{ position:relative; width: 52px; height: 30px; flex: 0 0 auto; }
+    .switch input{ position:absolute; inset:0; opacity:0; cursor:pointer; }
     .track{
-      position:absolute;
-      inset:0;
-      border-radius: 999px;
+      position:absolute; inset:0; border-radius: 999px;
       background: rgba(255,255,255,.10);
       border: 1px solid rgba(255,255,255,.14);
       transition: background 160ms ease, border-color 160ms ease;
     }
     .thumb{
-      position:absolute;
-      top: 50%;
-      left: 4px;
-      width: 22px;
-      height: 22px;
-      border-radius: 999px;
+      position:absolute; top: 50%; left: 4px;
+      width: 22px; height: 22px; border-radius: 999px;
       transform: translateY(-50%);
       background: rgba(245,245,245,.88);
       box-shadow: 0 8px 14px rgba(0,0,0,.45);
       transition: transform 160ms ease, background 160ms ease;
     }
-    .switch input:checked ~ .track{
-      background: rgba(201,152,70,.30);
-      border-color: rgba(201,152,70,.45);
-    }
-    .switch input:checked ~ .thumb{
-      transform: translate(22px, -50%);
-      background: rgba(245,245,245,.96);
-    }
+    .switch input:checked ~ .track{ background: rgba(201,152,70,.30); border-color: rgba(201,152,70,.45); }
+    .switch input:checked ~ .thumb{ transform: translate(22px, -50%); background: rgba(245,245,245,.96); }
 
-    /* Main content */
-    main{ padding-bottom: 120px; }
-    .card{
-      border-radius: var(--radius2);
-      border: 1px solid rgba(255,255,255,.12);
-      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.035));
-      box-shadow: var(--shadow2);
-      overflow:hidden;
-    }
-    .section{
-      margin: 18px 0;
-      padding: var(--pad2);
-    }
-
-    .hero{
-      margin-top: 18px;
-      padding: clamp(18px, 4.2vw, 30px);
-    }
-    .heroInner{
-      display:flex;
-      flex-direction:column;
-      gap: 18px;
-      align-items:stretch;
-    }
-
+    /* Photo frames (AUTO aspect ratio + balanced max-width per photo orientation) */
+    figure{ margin:0; }
     .photoFrame{
       width:100%;
+      margin-inline:auto;
+      max-width: min(var(--mw, 640px), 100%);
+      aspect-ratio: var(--ar, 4 / 5);
       border-radius: 26px;
       border: 1px solid rgba(255,255,255,.12);
       background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
@@ -278,23 +234,21 @@
       overflow:hidden;
       position:relative;
       isolation:isolate;
+      display:block;
     }
     .photoFrame:after{
       content:"";
-      position:absolute;
-      inset:0;
-      pointer-events:none;
+      position:absolute; inset:0; pointer-events:none;
       background:
         radial-gradient(900px 380px at 10% 10%, rgba(201,152,70,.16), transparent 55%),
-        linear-gradient(180deg, rgba(0,0,0,.10), rgba(0,0,0,.40));
-      mix-blend-mode: normal;
+        linear-gradient(180deg, rgba(0,0,0,.08), rgba(0,0,0,.42));
       opacity:.95;
     }
     .photoFrame img{
       width:100%;
       height:100%;
       display:block;
-      object-fit: contain; /* no-crop policy */
+      object-fit: contain; /* NO-CROP POLICY */
       object-position:center;
       background: rgba(0,0,0,.18);
       filter: contrast(1.02) saturate(.98);
@@ -302,16 +256,10 @@
     }
     .photoFrame.is-hidden{ display:none; }
 
-    .heroPhoto{ aspect-ratio: 4/5; }
-    .frameTall{ aspect-ratio: 3/4; }
-    .frameWide{ aspect-ratio: 16/9; }
-    .frameSoft{ aspect-ratio: 5/6; }
-    .frameSquare{ aspect-ratio: 1/1; }
-
-    .names{
-      text-align:center;
-      padding: 4px 0 2px;
-    }
+    /* Hero */
+    .hero{ margin-top: 18px; padding: clamp(18px, 4.2vw, 30px); }
+    .heroInner{ width:100%; display:flex; flex-direction:column; gap: 18px; align-items:center; }
+    .names{ text-align:center; width:100%; max-width: 720px; }
     .names h1{
       margin: 0;
       font-family: var(--serif);
@@ -350,7 +298,6 @@
       letter-spacing:.01em;
       font-family: var(--serif);
       font-size: 15px;
-      position:relative;
     }
     .quote small{
       display:block;
@@ -362,7 +309,7 @@
       color: rgba(245,245,245,.64);
     }
 
-    /* Filigree separator */
+    /* Filigree separator (fade on scroll) */
     .filigree{
       margin: 20px auto;
       display:flex;
@@ -378,11 +325,7 @@
       transform: translateY(0);
       filter: blur(0);
     }
-    .filigree svg{
-      width: min(520px, 84%);
-      height: 34px;
-      display:block;
-    }
+    .filigree svg{ width: min(520px, 84%); height: 34px; display:block; }
     .filigree path{
       stroke: rgba(201,152,70,.70);
       stroke-width: 1.2;
@@ -391,27 +334,9 @@
       stroke-linejoin: round;
       filter: drop-shadow(0 10px 20px rgba(0,0,0,.45));
     }
-    .filigree .ghost{
-      stroke: rgba(245,245,245,.12);
-      stroke-width: 1.0;
-    }
+    .filigree .ghost{ stroke: rgba(245,245,245,.12); stroke-width: 1.0; }
 
-    /* Typography blocks */
-    .lead{
-      font-family: var(--serif);
-      font-size: 17px;
-      line-height: 1.95;
-      letter-spacing: .01em;
-      color: rgba(245,245,245,.84);
-      margin: 0;
-    }
-    .sub{
-      margin: 12px 0 0;
-      color: var(--muted);
-      line-height: 1.9;
-      letter-spacing:.01em;
-      font-size: 14px;
-    }
+    /* Text blocks */
     .pill{
       display:inline-flex;
       align-items:center;
@@ -424,6 +349,7 @@
       font-size: 12px;
       letter-spacing:.12em;
       text-transform: uppercase;
+      align-self:center;
     }
     .pillDot{
       width: 7px; height: 7px; border-radius: 99px;
@@ -431,14 +357,37 @@
       box-shadow: 0 0 0 4px rgba(201,152,70,.12);
       flex:0 0 auto;
     }
-
-    /* Schedule cards */
-    .eventBox{
-      margin-top: 18px;
-      display:flex;
-      flex-direction:column;
-      gap: 12px;
+    .lead{
+      font-family: var(--serif);
+      font-size: 17px;
+      line-height: 1.95;
+      letter-spacing: .01em;
+      color: rgba(245,245,245,.84);
+      margin: 0;
+      text-align:center;
+      max-width: 70ch;
     }
+    .sub{
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.9;
+      letter-spacing:.01em;
+      font-size: 14px;
+      text-align:center;
+      max-width: 74ch;
+    }
+    .ayahTag{
+      display:block;
+      margin-top: 8px;
+      font-size: 12px;
+      letter-spacing:.14em;
+      text-transform: uppercase;
+      color: rgba(245,245,245,.62);
+      text-align:center;
+    }
+
+    /* Schedule */
+    .eventBox{ width:100%; max-width: 640px; display:flex; flex-direction:column; gap: 12px; margin-inline:auto; }
     .event{
       border-radius: 20px;
       border: 1px solid rgba(255,255,255,.12);
@@ -449,13 +398,12 @@
     }
     .event:before{
       content:"";
-      position:absolute;
-      inset:0;
+      position:absolute; inset:0;
       background: radial-gradient(700px 220px at 10% 20%, rgba(201,152,70,.16), transparent 60%);
       opacity:.9;
       pointer-events:none;
     }
-    .eventInner{ position:relative; z-index:1; }
+    .eventInner{ position:relative; z-index:1; text-align:left; }
     .eventTitle{
       margin: 0;
       font-family: var(--serif);
@@ -474,7 +422,8 @@
 
     /* Countdown */
     .countdownWrap{
-      margin-top: 16px;
+      width:100%;
+      max-width: 680px;
       padding: 14px;
       border-radius: 20px;
       border: 1px solid rgba(201,152,70,.26);
@@ -482,6 +431,7 @@
       display:flex;
       flex-direction:column;
       gap: 10px;
+      margin-inline:auto;
     }
     .countLabel{
       display:flex;
@@ -520,8 +470,9 @@
       color: var(--dim);
     }
 
-    /* Location section with background image (contain) */
+    /* Location background section (contain) */
     .bgSection{
+      margin: 18px 0;
       position:relative;
       overflow:hidden;
       border-radius: var(--radius2);
@@ -531,12 +482,11 @@
     }
     .bgSection:before{
       content:"";
-      position:absolute;
-      inset:0;
-      background-image: url("assets/img/reza-alya.6.png");
+      position:absolute; inset:0;
+      background-image: url("assets/img/reza-alya.4.png");
       background-repeat:no-repeat;
       background-position:center;
-      background-size: contain; /* no-crop */
+      background-size: contain; /* safer for NO-CROP */
       opacity:.32;
       filter: saturate(.92) contrast(1.04);
       transform: translateZ(0);
@@ -544,22 +494,15 @@
     }
     .bgSection:after{
       content:"";
-      position:absolute;
-      inset:0;
+      position:absolute; inset:0;
       background:
         radial-gradient(900px 420px at 20% 10%, rgba(201,152,70,.14), transparent 60%),
-        linear-gradient(180deg, rgba(0,0,0,.40), rgba(0,0,0,.68));
+        linear-gradient(180deg, rgba(0,0,0,.42), rgba(0,0,0,.72));
       pointer-events:none;
     }
-    .bgSection .section{ position:relative; z-index:1; }
+    .bgSection .section{ position:relative; z-index:1; margin:0; }
 
-    .btnRow{
-      margin-top: 14px;
-      display:flex;
-      flex-direction:column;
-      gap: 10px;
-      align-items:stretch;
-    }
+    .btnRow{ width:100%; max-width: 560px; display:flex; flex-direction:column; gap: 10px; align-items:stretch; margin: 0 auto; }
     .btnGhost{
       appearance:none;
       border-radius: 999px;
@@ -580,52 +523,27 @@
     .btnGhost:focus{ outline: 2px solid rgba(201,152,70,.45); outline-offset: 3px; }
 
     /* Guestbook */
-    .gbHeader{
-      display:flex;
-      align-items:flex-start;
-      justify-content:space-between;
-      gap: 12px;
-      flex-wrap:wrap;
-      margin-bottom: 14px;
-    }
+    .gbHeader{ width:100%; max-width: 720px; display:flex; flex-direction:column; gap: 10px; align-items:center; margin-inline:auto; }
     .gbTitle{
       margin: 0;
       font-family: var(--serif);
       font-size: 22px;
       letter-spacing:.02em;
       color: rgba(245,245,245,.90);
+      text-align:center;
     }
     .gbHint{
-      margin: 6px 0 0;
+      margin: 0;
       color: var(--muted);
       font-size: 13px;
       line-height: 1.8;
       max-width: 66ch;
       letter-spacing:.01em;
+      text-align:center;
     }
-    form.gbForm{
-      margin-top: 14px;
-      display:flex;
-      flex-direction:column;
-      gap: 10px;
-    }
-    .fieldRow{
-      display:flex;
-      flex-direction:column;
-      gap: 10px;
-    }
-    .field{
-      width:100%;
-      display:flex;
-      flex-direction:column;
-      gap: 7px;
-    }
-    label{
-      font-size: 12px;
-      letter-spacing:.14em;
-      text-transform: uppercase;
-      color: var(--dim);
-    }
+    form.gbForm{ width:100%; max-width: 720px; margin-top: 14px; display:flex; flex-direction:column; gap: 10px; margin-inline:auto; }
+    .field{ width:100%; display:flex; flex-direction:column; gap: 7px; }
+    label{ font-size: 12px; letter-spacing:.14em; text-transform: uppercase; color: var(--dim); }
     input, select, textarea{
       width:100%;
       border-radius: 16px;
@@ -639,34 +557,13 @@
       box-shadow: inset 0 0 0 1px rgba(0,0,0,.12);
     }
     textarea{ min-height: 96px; resize: vertical; }
-    input:focus, select:focus, textarea:focus{
-      border-color: rgba(201,152,70,.40);
-      box-shadow: 0 0 0 4px rgba(201,152,70,.12);
-    }
-    .formActions{
-      display:flex;
-      flex-direction:column;
-      gap: 10px;
-      margin-top: 6px;
-    }
-    .btnSmall{
-      min-width: unset;
-      width:100%;
-      padding: 12px 14px;
-    }
-    .btnDanger{
-      background: rgba(255,255,255,.06);
-      border: 1px solid rgba(255,255,255,.14);
-      color: rgba(245,245,245,.82);
-    }
+    input:focus, select:focus, textarea:focus{ border-color: rgba(201,152,70,.40); box-shadow: 0 0 0 4px rgba(201,152,70,.12); }
+    .formActions{ display:flex; flex-direction:column; gap: 10px; margin-top: 6px; width:100%; max-width: 720px; margin-inline:auto; }
+    .btnSmall{ min-width: unset; width:100%; padding: 12px 14px; }
+    .btnDanger{ background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.14); color: rgba(245,245,245,.82); }
     .btnDanger:hover{ border-color: rgba(255,120,120,.28); background: rgba(255,255,255,.075); }
 
-    .gbList{
-      margin-top: 16px;
-      display:flex;
-      flex-direction:column;
-      gap: 10px;
-    }
+    .gbList{ width:100%; max-width: 720px; margin-top: 16px; display:flex; flex-direction:column; gap: 10px; margin-inline:auto; }
     .gbItem{
       border-radius: 20px;
       border: 1px solid rgba(255,255,255,.12);
@@ -677,42 +574,18 @@
     }
     .gbItem:before{
       content:"";
-      position:absolute;
-      inset:0;
+      position:absolute; inset:0;
       background: radial-gradient(700px 240px at 10% 15%, rgba(201,152,70,.12), transparent 60%);
       opacity:.85;
       pointer-events:none;
     }
     .gbItemInner{ position:relative; z-index:1; }
-    .gbTop{
-      display:flex;
-      justify-content:space-between;
-      gap: 12px;
-      flex-wrap:wrap;
-      align-items:center;
-    }
-    .gbName{
-      font-weight: 750;
-      letter-spacing:.01em;
-      color: rgba(245,245,245,.88);
-      font-size: 14px;
-    }
-    .gbMeta{
-      color: var(--dim);
-      font-size: 12px;
-      letter-spacing:.01em;
-    }
-    .gbMsg{
-      margin: 10px 0 0;
-      color: rgba(245,245,245,.80);
-      line-height: 1.85;
-      font-size: 14px;
-      letter-spacing:.01em;
-    }
+    .gbTop{ display:flex; justify-content:space-between; gap: 12px; flex-wrap:wrap; align-items:center; }
+    .gbName{ font-weight: 750; letter-spacing:.01em; color: rgba(245,245,245,.88); font-size: 14px; }
+    .gbMeta{ color: var(--dim); font-size: 12px; letter-spacing:.01em; }
+    .gbMsg{ margin: 10px 0 0; color: rgba(245,245,245,.80); line-height: 1.85; font-size: 14px; letter-spacing:.01em; }
     .badge{
-      display:inline-flex;
-      align-items:center;
-      gap: 8px;
+      display:inline-flex; align-items:center; gap: 8px;
       padding: 6px 10px;
       border-radius: 999px;
       font-size: 11px;
@@ -722,12 +595,7 @@
       background: rgba(0,0,0,.18);
       color: rgba(245,245,245,.74);
     }
-    .badge i{
-      width: 6px; height: 6px; border-radius: 99px;
-      background: rgba(201,152,70,.90);
-      box-shadow: 0 0 0 4px rgba(201,152,70,.10);
-      display:inline-block;
-    }
+    .badge i{ width: 6px; height: 6px; border-radius: 99px; background: rgba(201,152,70,.90); box-shadow: 0 0 0 4px rgba(201,152,70,.10); display:inline-block; }
     .badge.off i{ background: rgba(245,245,245,.40); box-shadow: 0 0 0 4px rgba(245,245,245,.08); }
 
     /* Reveal */
@@ -738,11 +606,7 @@
       transition: opacity 700ms ease, transform 700ms ease, filter 700ms ease;
       will-change: opacity, transform, filter;
     }
-    .reveal.is-visible{
-      opacity:1;
-      transform: translateY(0);
-      filter: blur(0);
-    }
+    .reveal.is-visible{ opacity:1; transform: translateY(0); filter: blur(0); }
 
     /* Floating audio button */
     .audioFab{
@@ -756,7 +620,7 @@
       padding: 10px 12px;
       border-radius: 999px;
       border: 1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.40);
+      background: rgba(0,0,0,.42);
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
       box-shadow: var(--shadow2);
@@ -768,19 +632,13 @@
       transform: translateY(8px);
       transition: opacity 260ms ease, transform 260ms ease;
     }
-    .audioFab.is-on{
-      opacity:1;
-      pointer-events:auto;
-      transform: translateY(0);
-    }
+    .audioFab.is-on{ opacity:1; pointer-events:auto; transform: translateY(0); }
     .audioIcon{
       width: 30px; height: 30px;
       border-radius: 999px;
       border: 1px solid rgba(201,152,70,.36);
       background: rgba(201,152,70,.10);
-      display:grid;
-      place-items:center;
-      flex: 0 0 auto;
+      display:grid; place-items:center; flex: 0 0 auto;
     }
     .audioIcon svg{ width: 18px; height: 18px; }
     .audioFab span{
@@ -807,7 +665,7 @@
       pointer-events:auto;
       border-radius: 999px;
       border: 1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.42);
+      background: rgba(0,0,0,.44);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
       box-shadow: var(--shadow2);
@@ -838,7 +696,6 @@
     .dockBtn:active{ transform: translateY(1px) scale(.99); }
     .dockBtn:focus{ outline: 2px solid rgba(201,152,70,.42); outline-offset: 2px; }
 
-    /* Footer */
     .footer{
       text-align:center;
       padding: 18px 0 32px;
@@ -846,23 +703,18 @@
       font-size: 13px;
       line-height: 1.8;
       letter-spacing:.01em;
+      max-width: 72ch;
+      margin-inline:auto;
     }
     .footer strong{ color: rgba(245,245,245,.76); }
 
-    /* Responsive */
-    @media (min-width: 760px){
-      .fieldRow{
-        display:grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 12px;
-      }
-      .formActions{
-        flex-direction:row;
-      }
-      .btnSmall{ width:auto; }
+    @media (max-width: 420px){
+      .countNum{ font-size: 24px; }
+      .eventTitle{ font-size: 19px; }
+      .photoFrame{ border-radius: 24px; }
+      .card{ border-radius: 26px; }
     }
 
-    /* Reduce motion support */
     @media (prefers-reduced-motion: reduce){
       *{ scroll-behavior:auto !important; }
       .reveal, .filigree, .grain{ transition:none !important; animation:none !important; }
@@ -876,15 +728,12 @@
   <div class="bg" aria-hidden="true"></div>
   <div class="grain" aria-hidden="true"></div>
 
-  <!-- Gate -->
   <section class="gate" id="gate" aria-label="Pembuka undangan" role="dialog" aria-modal="true">
     <div class="gateCard">
       <div class="gateInner">
         <p class="eyebrow">Undangan Pernikahan</p>
         <h2 class="toName">Kepada Yth.<br/>Dimas Budi Ramadhan</h2>
-        <p class="subline">
-          Dengan segala hormat, kami mengundang Bapak/Saudara untuk hadir dan menjadi saksi hari bahagia kami.
-        </p>
+        <p class="subline">Dengan segala hormat, kami mengundang Bapak/Saudara untuk hadir dan menjadi saksi hari bahagia kami.</p>
 
         <div class="gateActions">
           <div class="toggleRow" role="group" aria-label="Kontrol musik">
@@ -905,7 +754,6 @@
     </div>
   </section>
 
-  <!-- Floating audio control -->
   <button class="audioFab" id="audioFab" aria-label="Kontrol musik">
     <span class="audioIcon" aria-hidden="true">
       <svg viewBox="0 0 24 24" fill="none">
@@ -917,7 +765,6 @@
     <span id="audioFabText">Musik: OFF</span>
   </button>
 
-  <!-- Dock -->
   <nav class="dock" aria-label="Navigasi cepat">
     <div class="dockInner">
       <button class="dockBtn" data-scroll="#top" aria-label="Ke atas">Atas</button>
@@ -928,10 +775,9 @@
   </nav>
 
   <main id="top" class="wrap topPad">
-    <!-- HERO -->
     <section class="card hero reveal" id="hero">
       <div class="heroInner">
-        <figure class="photoFrame heroPhoto" data-img="assets/img/reza-alya.png" aria-label="Foto Reza dan Alya">
+        <figure class="photoFrame js-photo" aria-label="Foto Reza dan Alya">
           <img src="assets/img/reza-alya.png" alt="Reza dan Alya" loading="eager" decoding="async" />
         </figure>
 
@@ -963,49 +809,23 @@
       </svg>
     </div>
 
-    <!-- NARASI / DOA -->
-    <section class="card section reveal" id="narasi">
-      <span class="pill"><span class="pillDot"></span> Dengan memohon rahmat Allah SWT</span>
-      <p class="lead" style="margin-top:14px">
-        Kami memohon doa agar langkah ini diberkahi, dilapangkan rezeki, dipelihara dalam sakinah,
-        dan dituntun untuk saling menjaga sampai akhir hayat.
-      </p>
-      <p class="sub">
-        “Ya Rabb kami, anugerahkanlah kepada kami pasangan dan keturunan sebagai penyejuk mata, dan jadikanlah kami pemimpin bagi orang-orang yang bertakwa.”
-        <span style="display:block; margin-top:8px; font-size:12px; letter-spacing:.14em; text-transform:uppercase; color: rgba(245,245,245,.62);">QS. Al-Furqan: 74</span>
-      </p>
-    </section>
+    <section class="card section reveal" id="doa">
+      <div class="flow">
+        <span class="pill"><span class="pillDot"></span> Dengan memohon rahmat Allah SWT</span>
 
-    <section class="card section reveal" id="couple">
-      <figure class="photoFrame frameSoft" data-img="assets/img/reza.png" aria-label="Foto Reza">
-        <img src="assets/img/reza.png" alt="Reza Budi Prasetyo" loading="lazy" decoding="async" />
-      </figure>
+        <figure class="photoFrame js-photo" aria-label="Foto suasana">
+          <img src="assets/img/reza-alya.2.png" alt="Momen Reza dan Alya" loading="lazy" decoding="async" />
+        </figure>
 
-      <p class="lead" style="margin-top:16px; text-align:center">
-        Reza Budi Prasetyo
-      </p>
-      <p class="sub" style="text-align:center; margin-top:8px">
-        Semoga Allah menjadikan langkah ini sebagai awal yang teduh, rumah yang hangat, dan perjalanan yang saling menguatkan.
-      </p>
-
-      <div class="filigree" data-filigree aria-hidden="true" style="margin-top:22px">
-        <svg viewBox="0 0 600 40" preserveAspectRatio="xMidYMid meet">
-          <path class="ghost" d="M18 20H210M390 20H582"/>
-          <path d="M210 20c28 0 38-10 52-10s24 10 38 10 24-10 38-10 24 10 52 10M210 20c28 0 38 10 52 10s24-10 38-10 24 10 38 10 24-10 52-10"/>
-          <path d="M300 9c7 3 12 7 12 11s-5 8-12 11c-7-3-12-7-12-11s5-8 12-11Z"/>
-        </svg>
+        <p class="lead">
+          Kami memohon doa agar langkah ini diberkahi, dilapangkan rezeki, dipelihara dalam sakinah,
+          dan dituntun untuk saling menjaga sampai akhir hayat.
+        </p>
+        <p class="sub">
+          “Ya Rabb kami, anugerahkanlah kepada kami pasangan dan keturunan sebagai penyejuk mata, dan jadikanlah kami pemimpin bagi orang-orang yang bertakwa.”
+          <span class="ayahTag">QS. Al-Furqan: 74</span>
+        </p>
       </div>
-
-      <figure class="photoFrame frameTall" data-img="assets/img/alya.png" aria-label="Foto Alya" style="margin-top:22px">
-        <img src="assets/img/alya.png" alt="Alya Putri Maharani" loading="lazy" decoding="async" />
-      </figure>
-
-      <p class="lead" style="margin-top:16px; text-align:center">
-        Alya Putri Maharani
-      </p>
-      <p class="sub" style="text-align:center; margin-top:8px">
-        Semoga hati kami selalu dijaga, diberi sabar dan syukur, serta dituntun untuk menjadi pasangan yang saling menenangkan.
-      </p>
     </section>
 
     <div class="filigree" data-filigree aria-hidden="true">
@@ -1017,138 +837,141 @@
       </svg>
     </div>
 
-    <!-- JADWAL -->
-    <section class="card section reveal" id="jadwal">
-      <figure class="photoFrame frameWide" data-img="assets/img/reza-alya.3.png" aria-label="Foto suasana">
-        <img src="assets/img/reza-alya.3.png" alt="Momen Reza dan Alya" loading="lazy" decoding="async" />
-      </figure>
-
-      <p class="lead" style="margin-top:18px; text-align:center">
-        Dengan segala hormat, kami mengundang kehadiran Bapak/Saudara pada:
-      </p>
-
-      <div class="eventBox" aria-label="Jadwal acara">
-        <div class="event">
-          <div class="eventInner">
-            <p class="eventTitle">Akad Nikah</p>
-            <p class="eventMeta">
-              <strong>17 Januari 2026</strong><br/>
-              08.00–09.00 WIB (Asia/Jakarta)
-            </p>
-          </div>
-        </div>
-
-        <div class="event">
-          <div class="eventInner">
-            <p class="eventTitle">Resepsi</p>
-            <p class="eventMeta">
-              <strong>17 Januari 2026</strong><br/>
-              10.00–15.00 WIB (Asia/Jakarta)
-            </p>
-          </div>
-        </div>
+    <section class="card section reveal" id="reza">
+      <div class="flow">
+        <figure class="photoFrame js-photo" aria-label="Foto Reza">
+          <img src="assets/img/reza.png" alt="Reza Budi Prasetyo" loading="lazy" decoding="async" />
+        </figure>
+        <p class="lead">Reza Budi Prasetyo</p>
+        <p class="sub">Semoga Allah menjadikan langkah ini sebagai awal yang teduh, rumah yang hangat, dan perjalanan yang saling menguatkan.</p>
       </div>
-
-      <div class="countdownWrap" aria-label="Hitung mundur akad">
-        <div class="countLabel">
-          <span>Hitung mundur menuju akad</span>
-          <span id="countStatus" style="color: rgba(245,245,245,.72)">WIB</span>
-        </div>
-        <div class="countGrid" role="group" aria-label="Countdown">
-          <div class="countCell"><div class="countNum" id="cdDays">—</div><div class="countUnit">Hari</div></div>
-          <div class="countCell"><div class="countNum" id="cdHours">—</div><div class="countUnit">Jam</div></div>
-          <div class="countCell"><div class="countNum" id="cdMins">—</div><div class="countUnit">Menit</div></div>
-          <div class="countCell"><div class="countNum" id="cdSecs">—</div><div class="countUnit">Detik</div></div>
-        </div>
-      </div>
-
-      <p class="sub" style="margin-top:16px">
-        “Baarakallahu laka wa baaraka ‘alaika wa jama‘a bainakumaa fii khair.”
-        <span style="display:block; margin-top:8px; color: rgba(245,245,245,.62)">Semoga Allah memberkahimu, memberkahi atasmu, dan mengumpulkan kalian berdua dalam kebaikan.</span>
-      </p>
     </section>
 
-    <!-- LOKASI (background contain) -->
+    <div class="filigree" data-filigree aria-hidden="true">
+      <svg viewBox="0 0 600 40" preserveAspectRatio="xMidYMid meet">
+        <path class="ghost" d="M18 20H210M390 20H582"/>
+        <path d="M210 20c28 0 38-10 52-10s24 10 38 10 24-10 38-10 24 10 52 10M210 20c28 0 38 10 52 10s24-10 38-10 24 10 38 10 24-10 52-10"/>
+        <path d="M300 9c7 3 12 7 12 11s-5 8-12 11c-7-3-12-7-12-11s5-8 12-11Z"/>
+      </svg>
+    </div>
+
+    <section class="card section reveal" id="alya">
+      <div class="flow">
+        <figure class="photoFrame js-photo" aria-label="Foto Alya">
+          <img src="assets/img/alya.png" alt="Alya Putri Maharani" loading="lazy" decoding="async" />
+        </figure>
+        <p class="lead">Alya Putri Maharani</p>
+        <p class="sub">Semoga hati kami selalu dijaga, diberi sabar dan syukur, serta dituntun untuk menjadi pasangan yang saling menenangkan.</p>
+      </div>
+    </section>
+
+    <div class="filigree" data-filigree aria-hidden="true">
+      <svg viewBox="0 0 600 40" preserveAspectRatio="xMidYMid meet">
+        <path class="ghost" d="M18 20H210M390 20H582"/>
+        <path d="M210 20c28 0 38-10 52-10s24 10 38 10 24-10 38-10 24 10 52 10M210 20c28 0 38 10 52 10s24-10 38-10 24 10 38 10 24-10 52-10"/>
+        <path d="M300 9c7 3 12 7 12 11s-5 8-12 11c-7-3-12-7-12-11s5-8 12-11Z"/>
+        <path d="M285 14c0 10 30 10 30 0" opacity=".9"/>
+      </svg>
+    </div>
+
+    <section class="card section reveal" id="jadwal">
+      <div class="flow">
+        <figure class="photoFrame js-photo" aria-label="Foto suasana">
+          <img src="assets/img/reza-alya.3.png" alt="Momen Reza dan Alya" loading="lazy" decoding="async" />
+        </figure>
+
+        <p class="lead">Dengan segala hormat, kami mengundang kehadiran Bapak/Saudara pada:</p>
+
+        <div class="eventBox" aria-label="Jadwal acara">
+          <div class="event">
+            <div class="eventInner">
+              <p class="eventTitle">Akad Nikah</p>
+              <p class="eventMeta"><strong>17 Januari 2026</strong><br/>08.00–09.00 WIB (Asia/Jakarta)</p>
+            </div>
+          </div>
+
+          <div class="event">
+            <div class="eventInner">
+              <p class="eventTitle">Resepsi</p>
+              <p class="eventMeta"><strong>17 Januari 2026</strong><br/>10.00–15.00 WIB (Asia/Jakarta)</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="countdownWrap" aria-label="Hitung mundur akad">
+          <div class="countLabel">
+            <span>Hitung mundur menuju akad</span>
+            <span id="countStatus" style="color: rgba(245,245,245,.72)">WIB</span>
+          </div>
+          <div class="countGrid" role="group" aria-label="Countdown">
+            <div class="countCell"><div class="countNum" id="cdDays">—</div><div class="countUnit">Hari</div></div>
+            <div class="countCell"><div class="countNum" id="cdHours">—</div><div class="countUnit">Jam</div></div>
+            <div class="countCell"><div class="countNum" id="cdMins">—</div><div class="countUnit">Menit</div></div>
+            <div class="countCell"><div class="countNum" id="cdSecs">—</div><div class="countUnit">Detik</div></div>
+          </div>
+        </div>
+
+        <p class="sub">
+          “Baarakallahu laka wa baaraka ‘alaika wa jama‘a bainakumaa fii khair.”
+          <span class="ayahTag" style="letter-spacing:.02em; text-transform:none;">Semoga Allah memberkahimu, memberkahi atasmu, dan mengumpulkan kalian berdua dalam kebaikan.</span>
+        </p>
+      </div>
+    </section>
+
     <section class="bgSection reveal" id="lokasi">
       <div class="section">
-        <p class="lead" style="text-align:center; margin:0">
-          Le Dian Hotel Serang
-        </p>
-        <p class="sub" style="text-align:center; margin-top:10px">
-          Mohon arahkan perjalanan ke lokasi berikut. Semoga Allah memudahkan langkah, menguatkan niat baik, dan menjaga perjalanan Bapak/Saudara.
-        </p>
+        <div class="flow">
+          <p class="lead">Le Dian Hotel Serang</p>
+          <p class="sub">Mohon arahkan perjalanan ke lokasi berikut. Semoga Allah memudahkan langkah, menguatkan niat baik, dan menjaga perjalanan Bapak/Saudara.</p>
 
-        <div class="btnRow" aria-label="Aksi lokasi">
-          <a class="btnGhost" href="https://maps.app.goo.gl/oJVfShW7g5PJV2cS8" target="_blank" rel="noopener" aria-label="Buka lokasi di Google Maps">
-            Buka Maps
-          </a>
-          <button class="btnGhost" id="copyLoc" type="button" aria-label="Salin nama lokasi">
-            Salin Nama Lokasi
-          </button>
+          <div class="btnRow" aria-label="Aksi lokasi">
+            <a class="btnGhost" href="https://maps.app.goo.gl/oJVfShW7g5PJV2cS8" target="_blank" rel="noopener" aria-label="Buka lokasi di Google Maps">Buka Maps</a>
+            <button class="btnGhost" id="copyLoc" type="button" aria-label="Salin nama lokasi">Salin Nama Lokasi</button>
+          </div>
         </div>
-
-        <div class="filigree" data-filigree aria-hidden="true" style="margin-top:22px">
-          <svg viewBox="0 0 600 40" preserveAspectRatio="xMidYMid meet">
-            <path class="ghost" d="M18 20H210M390 20H582"/>
-            <path d="M210 20c28 0 38-10 52-10s24 10 38 10 24-10 38-10 24 10 52 10M210 20c28 0 38 10 52 10s24-10 38-10 24 10 38 10 24-10 52-10"/>
-            <path d="M300 9c7 3 12 7 12 11s-5 8-12 11c-7-3-12-7-12-11s5-8 12-11Z"/>
-            <path d="M285 14c0 10 30 10 30 0" opacity=".9"/>
-          </svg>
-        </div>
-
-        <figure class="photoFrame frameSquare" data-img="assets/img/reza-alya.4.png" aria-label="Foto detail suasana" style="margin-top:8px">
-          <img src="assets/img/reza-alya.4.png" alt="Momen Reza dan Alya" loading="lazy" decoding="async" />
-        </figure>
       </div>
     </section>
 
-    <!-- RSVP / GUESTBOOK -->
     <section class="card section reveal" id="rsvp">
-      <figure class="photoFrame frameWide" data-img="assets/img/reza-alya.2.png" aria-label="Foto Reza dan Alya">
-        <img src="assets/img/reza-alya.2.png" alt="Reza dan Alya" loading="lazy" decoding="async" />
-      </figure>
+      <div class="flow">
+        <figure class="photoFrame js-photo" aria-label="Foto Reza dan Alya">
+          <img src="assets/img/reza-alya.6.png" alt="Reza dan Alya" loading="lazy" decoding="async" />
+        </figure>
 
-      <div style="margin-top:18px">
         <div class="gbHeader">
-          <div>
-            <p class="gbTitle">RSVP & Ucapan</p>
-            <p class="gbHint">
-              Tulis nama, konfirmasi kehadiran, dan ucapan terbaik. Pesan kamu akan tersimpan di perangkat ini (localStorage) dan tampil paling atas setelah dikirim.
-            </p>
-          </div>
+          <p class="gbTitle">RSVP & Ucapan</p>
+          <p class="gbHint">Tulis nama, konfirmasi kehadiran, dan ucapan terbaik. Pesan kamu tersimpan di perangkat ini (localStorage) dan tampil paling atas setelah dikirim.</p>
           <span class="pill"><span class="pillDot"></span> Terima kasih</span>
         </div>
 
         <form class="gbForm" id="gbForm" aria-label="Form RSVP dan ucapan">
-          <div class="fieldRow">
-            <div class="field">
-              <label for="gbName">Nama</label>
-              <input id="gbName" name="name" type="text" autocomplete="name" placeholder="Nama kamu" />
-            </div>
+          <div class="field">
+            <label for="gbName">Nama</label>
+            <input id="gbName" name="name" type="text" autocomplete="name" placeholder="Nama kamu" />
+          </div>
 
-            <div class="field">
-              <label for="gbAttend">Kehadiran</label>
-              <select id="gbAttend" name="attend" aria-label="Pilih kehadiran">
-                <option value="Hadir">Hadir</option>
-                <option value="Tidak">Tidak</option>
-              </select>
-            </div>
+          <div class="field">
+            <label for="gbAttend">Kehadiran</label>
+            <select id="gbAttend" name="attend" aria-label="Pilih kehadiran">
+              <option value="Hadir">Hadir</option>
+              <option value="Tidak">Tidak</option>
+            </select>
+          </div>
 
-            <div class="field">
-              <label for="gbGuests">Jumlah tamu</label>
-              <select id="gbGuests" name="guests" aria-label="Pilih jumlah tamu">
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-              </select>
-            </div>
+          <div class="field">
+            <label for="gbGuests">Jumlah tamu</label>
+            <select id="gbGuests" name="guests" aria-label="Pilih jumlah tamu">
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+            </select>
+          </div>
 
-            <div class="field">
-              <label for="gbMsg">Ucapan</label>
-              <textarea id="gbMsg" name="message" placeholder="Tulis ucapan singkat yang baik ya..."></textarea>
-            </div>
+          <div class="field">
+            <label for="gbMsg">Ucapan</label>
+            <textarea id="gbMsg" name="message" placeholder="Tulis ucapan singkat yang baik ya..."></textarea>
           </div>
 
           <div class="formActions">
@@ -1161,411 +984,435 @@
       </div>
     </section>
 
-    <!-- PENUTUP -->
     <section class="card section reveal" id="penutup">
-      <figure class="photoFrame frameSoft" data-img="assets/img/reza-alya.5.png" aria-label="Foto penutup">
-        <img src="assets/img/reza-alya.5.png" alt="Reza dan Alya" loading="lazy" decoding="async" />
-      </figure>
+      <div class="flow">
+        <figure class="photoFrame js-photo" aria-label="Foto penutup">
+          <img src="assets/img/reza-alya.5.png" alt="Reza dan Alya" loading="lazy" decoding="async" />
+        </figure>
 
-      <p class="lead" style="margin-top:18px; text-align:center">
-        Kehadiran dan doa Bapak/Saudara adalah kehormatan bagi kami.
-      </p>
-      <p class="sub" style="text-align:center; margin-top:10px">
-        “Rabbanaa hablanaa min azwaajinaa wa dzurriyaatinaa qurrata a'yun, waj‘alnaa lil-muttaqiina imaamaa.”
-        <span style="display:block; margin-top:8px; color: rgba(245,245,245,.62)">Semoga rumah tangga kami dijaga dalam kebaikan, dan hati kami tetap lembut dalam syukur.</span>
-      </p>
+        <p class="lead">Kehadiran dan doa Bapak/Saudara adalah kehormatan bagi kami.</p>
+        <p class="sub">
+          “Rabbanaa hablanaa min azwaajinaa wa dzurriyaatinaa qurrata a'yun, waj‘alnaa lil-muttaqiina imaamaa.”
+          <span class="ayahTag" style="letter-spacing:.02em; text-transform:none;">Semoga rumah tangga kami dijaga dalam kebaikan, dan hati kami tetap lembut dalam syukur.</span>
+        </p>
 
-      <div class="filigree" data-filigree aria-hidden="true" style="margin-top:22px">
-        <svg viewBox="0 0 600 40" preserveAspectRatio="xMidYMid meet">
-          <path class="ghost" d="M18 20H210M390 20H582"/>
-          <path d="M210 20c28 0 38-10 52-10s24 10 38 10 24-10 38-10 24 10 52 10M210 20c28 0 38 10 52 10s24-10 38-10 24 10 38 10 24-10 52-10"/>
-          <path d="M300 9c7 3 12 7 12 11s-5 8-12 11c-7-3-12-7-12-11s5-8 12-11Z"/>
-          <path d="M260 22c10 12 70 12 80 0" opacity=".9"/>
-        </svg>
+        <div class="filigree" data-filigree aria-hidden="true" style="margin-top:6px">
+          <svg viewBox="0 0 600 40" preserveAspectRatio="xMidYMid meet">
+            <path class="ghost" d="M18 20H210M390 20H582"/>
+            <path d="M210 20c28 0 38-10 52-10s24 10 38 10 24-10 38-10 24 10 52 10M210 20c28 0 38 10 52 10s24-10 38-10 24 10 38 10 24-10 52-10"/>
+            <path d="M300 9c7 3 12 7 12 11s-5 8-12 11c-7-3-12-7-12-11s5-8 12-11Z"/>
+            <path d="M260 22c10 12 70 12 80 0" opacity=".9"/>
+          </svg>
+        </div>
+
+        <p class="footer" style="margin:0">
+          Dengan kasih dan hormat,<br/>
+          <strong>Reza Budi Prasetyo</strong> &amp; <strong>Alya Putri Maharani</strong>
+        </p>
       </div>
-
-      <p class="footer" style="margin:18px 0 0">
-        Dengan kasih dan hormat,<br/>
-        <strong>Reza Budi Prasetyo</strong> &amp; <strong>Alya Putri Maharani</strong>
-      </p>
     </section>
   </main>
 
-  <audio id="bgm" preload="none"></audio>
+  <audio id="bgm" preload="metadata"></audio>
 
   <script>
-  (function(){
+  (() => {
     "use strict";
 
-    // Self-check (fail silently)
-    var $ = function(sel){ return document.querySelector(sel); };
-    var $$ = function(sel){ return Array.prototype.slice.call(document.querySelectorAll(sel)); };
+    const $ = (sel, root = document) => root.querySelector(sel);
+    const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
+    const reduceMotion = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
 
-    var gate = $("#gate");
-    var openBtn = $("#openBtn");
-    var musicToggle = $("#musicToggle");
-    var audio = $("#bgm");
-    var audioFab = $("#audioFab");
-    var audioFabText = $("#audioFabText");
-    var gbList = $("#gbList");
-    var gbForm = $("#gbForm");
-    var gbReset = $("#gbReset");
-    var copyLoc = $("#copyLoc");
+    const gate = $("#gate");
+    const openBtn = $("#openBtn");
+    const musicToggle = $("#musicToggle");
+    const audio = $("#bgm");
+    const audioFab = $("#audioFab");
+    const audioFabText = $("#audioFabText");
+    const gbList = $("#gbList");
+    const gbForm = $("#gbForm");
+    const gbReset = $("#gbReset");
+    const copyLoc = $("#copyLoc");
 
-    // Guard required nodes
-    if(!audio){ return; }
+    const state = { opened:false, playing:false };
 
-    // Audio src safe (space handling)
-    var audioPath = "assets/audio/Wedding Invitation Jason Farnham (No Copyright Music).mp3";
-    try{ audio.src = encodeURI(audioPath); }catch(e){ audio.src = audioPath; }
+    // ---- Photo frames: auto aspect ratio + max-width based on real orientation (portrait/landscape/square)
+    const clamp = (n, a, b) => Math.min(b, Math.max(a, n));
 
-    var state = {
-      opened:false,
-      audioReady:false,
-      playing:false
-    };
+    function applyFrame(fig, img){
+      if (!fig || !img) return;
+      const w = img.naturalWidth || 0;
+      const h = img.naturalHeight || 0;
+      if (w <= 0 || h <= 0) return;
 
-    function setAudioFab(on){
-      if(!audioFab) return;
-      if(on) audioFab.classList.add("is-on");
-      else audioFab.classList.remove("is-on");
+      const ratio = w / h;
+
+      // Clamp extremes for layout stability (still "no-crop", only container sizing)
+      const safeRatio = clamp(ratio, 0.58, 2.05);
+
+      // aspect-ratio accepts a number; keep it simple
+      try { fig.style.aspectRatio = String(safeRatio); } catch(_) {}
+
+      // Balanced widths per orientation
+      // portrait => narrower, landscape => wider, square => mid
+      let mw = 640;
+      if (safeRatio >= 1.22) mw = 720;           // landscape
+      else if (safeRatio <= 0.92) mw = 560;      // portrait
+      else mw = 620;                              // square-ish
+
+      // Hero gets a touch more presence but still respects real aspect ratio
+      if (fig.closest && fig.closest("#hero")) {
+        mw = (safeRatio >= 1.22) ? 760 : (safeRatio <= 0.92 ? 620 : 700);
+      }
+
+      fig.style.setProperty("--mw", mw + "px");
+
+      // Slight radius variance by orientation (subtle, not messy)
+      if (safeRatio >= 1.22) fig.style.borderRadius = "24px";
+      else if (safeRatio <= 0.92) fig.style.borderRadius = "28px";
+      else fig.style.borderRadius = "26px";
     }
-    function setAudioLabel(){
-      if(!audioFabText) return;
-      audioFabText.textContent = "Musik: " + (state.playing ? "ON" : "OFF");
-    }
 
-    function safePlay(){
-      if(!audio) return Promise.resolve(false);
-      return audio.play().then(function(){
-        state.playing = true;
-        setAudioFab(true);
-        setAudioLabel();
-        return true;
-      }).catch(function(){
-        state.playing = false;
-        setAudioFab(true);
-        setAudioLabel();
-        return false;
+    function setupPhotoFrames(){
+      const figs = $$(".js-photo");
+      figs.forEach((fig) => {
+        const img = $("img", fig);
+        if (!img) return;
+
+        const run = () => applyFrame(fig, img);
+
+        // Hide gracefully on error (no placeholder text)
+        img.addEventListener("error", () => { fig.classList.add("is-hidden"); }, { passive:true });
+
+        if (img.complete && (img.naturalWidth || 0) > 0) run();
+        else img.addEventListener("load", run, { passive:true, once:true });
       });
     }
+
+    // ---- Reveal (stable) + filigree
+    function setupReveal(){
+      const revealEls = $$(".reveal");
+      const filigrees = $$("[data-filigree]");
+      const show = (el) => el.classList.add("is-visible");
+
+      if (reduceMotion || !("IntersectionObserver" in window)) {
+        revealEls.forEach(show);
+        filigrees.forEach(show);
+        return;
+      }
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach((ent) => {
+          if (ent.isIntersecting) { ent.target.classList.add("is-visible"); io.unobserve(ent.target); }
+        });
+      }, { threshold: 0.14, rootMargin: "0px 0px -8% 0px" });
+      revealEls.forEach((el) => io.observe(el));
+
+      const fio = new IntersectionObserver((entries) => {
+        entries.forEach((ent) => {
+          if (ent.isIntersecting) { ent.target.classList.add("is-visible"); fio.unobserve(ent.target); }
+        });
+      }, { threshold: 0.25, rootMargin: "0px 0px -10% 0px" });
+      filigrees.forEach((el) => fio.observe(el));
+    }
+
+    // ---- Dock scroll
+    function setupDock(){
+      $$(".dockBtn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const target = btn.getAttribute("data-scroll");
+          const el = target ? $(target) : null;
+          if (!el) return;
+          try { el.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block:"start" }); }
+          catch (_) { el.scrollIntoView(true); }
+        });
+      });
+    }
+
+    // ---- Copy location
+    function setupCopy(){
+      if (!copyLoc) return;
+      copyLoc.addEventListener("click", () => {
+        const text = "Le Dian Hotel Serang";
+        const cb = navigator && navigator.clipboard && navigator.clipboard.writeText;
+        if (cb) cb.call(navigator.clipboard, text).catch(() => {});
+      }, { passive:true });
+    }
+
+    // ---- Countdown to Akad (17 Jan 2026 08:00 WIB = 01:00 UTC)
+    function setupCountdown(){
+      const targetUTC = Date.UTC(2026, 0, 17, 1, 0, 0);
+      const cdDays = $("#cdDays"), cdHours = $("#cdHours"), cdMins = $("#cdMins"), cdSecs = $("#cdSecs"), countStatus = $("#countStatus");
+      const pad2 = (n) => String(n).padStart(2, "0");
+      const setCd = (d, h, m, s) => {
+        if (cdDays) cdDays.textContent = String(d);
+        if (cdHours) cdHours.textContent = pad2(h);
+        if (cdMins) cdMins.textContent = pad2(m);
+        if (cdSecs) cdSecs.textContent = pad2(s);
+      };
+      const tick = () => {
+        const diff = targetUTC - Date.now();
+        if (!Number.isFinite(diff)) return;
+        if (diff <= 0) { setCd(0,0,0,0); if (countStatus) countStatus.textContent = "WIB"; return; }
+        let sec = Math.floor(diff / 1000);
+        const d = Math.floor(sec / 86400); sec -= d * 86400;
+        const h = Math.floor(sec / 3600); sec -= h * 3600;
+        const m = Math.floor(sec / 60); sec -= m * 60;
+        const s = sec;
+        setCd(d,h,m,s);
+        if (countStatus) countStatus.textContent = "WIB";
+      };
+      tick();
+      setInterval(tick, 1000);
+    }
+
+    // ---- Audio: robust src + play only after user action
+    function setFabVisible(on){
+      if (!audioFab) return;
+      audioFab.classList.toggle("is-on", !!on);
+    }
+    function setAudioLabel(){
+      if (audioFabText) audioFabText.textContent = "Musik: " + (state.playing ? "ON" : "OFF");
+      setFabVisible(state.opened);
+    }
+    function setAudioSrc(){
+      if (!audio) return;
+      const path = "assets/audio/Wedding Invitation Jason Farnham (No Copyright Music).mp3";
+      try { audio.src = new URL(path, document.baseURI).href; }
+      catch(_) { try { audio.src = encodeURI(path); } catch(__){ audio.src = path; } }
+      audio.loop = true;
+      audio.preload = "metadata";
+      audio.volume = 0.9;
+      try { audio.load(); } catch(_) {}
+    }
+    async function safePlay(){
+      if (!audio) return false;
+      try{
+        const p = audio.play();
+        if (p && typeof p.then === "function") await p;
+        state.playing = true;
+        setAudioLabel();
+        return true;
+      }catch(_){
+        state.playing = false;
+        setAudioLabel();
+        return false;
+      }
+    }
     function safePause(){
-      if(!audio) return;
-      try{ audio.pause(); }catch(e){}
+      if (!audio) return;
+      try{ audio.pause(); }catch(_){}
       state.playing = false;
-      setAudioFab(true);
       setAudioLabel();
+    }
+
+    function setupAudio(){
+      if (!audio) { setAudioLabel(); setFabVisible(false); return; }
+      setAudioSrc();
+      audio.addEventListener("play",  () => { state.playing = true;  setAudioLabel(); }, { passive:true });
+      audio.addEventListener("pause", () => { state.playing = false; setAudioLabel(); }, { passive:true });
+      audio.addEventListener("ended", () => { state.playing = false; setAudioLabel(); }, { passive:true });
+      audio.addEventListener("error", () => { state.playing = false; setAudioLabel(); }, { passive:true });
+
+      if (audioFab) {
+        audioFab.addEventListener("click", async (e) => {
+          e.preventDefault();
+          if (!state.opened) return;
+          if (state.playing) safePause();
+          else await safePlay();
+        }, { passive:false });
+      }
+      setAudioLabel();
+      setFabVisible(false);
     }
 
     function openGate(){
+      if (state.opened) return;
       state.opened = true;
       document.body.classList.remove("locked");
-      if(gate) gate.classList.add("is-hidden");
-      setAudioFab(true);
+      if (gate) { gate.classList.add("is-hidden"); gate.setAttribute("aria-hidden", "true"); }
       setAudioLabel();
 
-      // Optionally play music (only after user tap)
-      if(musicToggle && musicToggle.checked){
-        safePlay();
-      }
+      // Still within user gesture (button click) -> allowed to play
+      if (musicToggle && musicToggle.checked) safePlay();
     }
 
-    if(openBtn){
-      openBtn.addEventListener("click", function(){
-        openGate();
-      }, {passive:true});
-    } else {
-      // If missing, still unlock to avoid trapping user
-      document.body.classList.remove("locked");
-      if(gate) gate.classList.add("is-hidden");
-    }
-
-    if(audioFab){
-      audioFab.addEventListener("click", function(){
-        if(!audio) return;
-        if(state.playing) safePause();
-        else safePlay();
-      });
-    }
-
-    // Hide broken images gracefully
-    $$("figure.photoFrame img").forEach(function(img){
-      img.addEventListener("error", function(){
-        var fig = img && img.closest && img.closest("figure");
-        if(fig) fig.classList.add("is-hidden");
-      }, {passive:true});
-    });
-
-    // Reveal animations (IntersectionObserver)
-    var reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    var revealEls = $$(".reveal");
-    var filigrees = $$("[data-filigree]");
-    function markVisible(el){ el.classList.add("is-visible"); }
-
-    if(reduceMotion){
-      revealEls.forEach(markVisible);
-      filigrees.forEach(markVisible);
-    } else if("IntersectionObserver" in window){
-      var io = new IntersectionObserver(function(entries){
-        entries.forEach(function(ent){
-          if(ent.isIntersecting){
-            ent.target.classList.add("is-visible");
-            io.unobserve(ent.target);
-          }
-        });
-      }, { threshold: 0.14, rootMargin: "0px 0px -8% 0px" });
-
-      revealEls.forEach(function(el){ io.observe(el); });
-
-      var fio = new IntersectionObserver(function(entries){
-        entries.forEach(function(ent){
-          if(ent.isIntersecting){
-            ent.target.classList.add("is-visible");
-            fio.unobserve(ent.target);
-          }
-        });
-      }, { threshold: 0.25, rootMargin: "0px 0px -10% 0px" });
-
-      filigrees.forEach(function(el){ fio.observe(el); });
-    } else {
-      revealEls.forEach(markVisible);
-      filigrees.forEach(markVisible);
-    }
-
-    // Dock scrolling
-    $$(".dockBtn").forEach(function(btn){
-      btn.addEventListener("click", function(){
-        var target = btn.getAttribute("data-scroll");
-        if(!target) return;
-        var el = $(target);
-        if(!el) return;
-        try{
-          el.scrollIntoView({behavior: reduceMotion ? "auto" : "smooth", block: "start"});
-        }catch(e){
-          el.scrollIntoView(true);
-        }
-      });
-    });
-
-    // Copy location (no toast spam)
-    if(copyLoc){
-      copyLoc.addEventListener("click", function(){
-        var text = "Le Dian Hotel Serang";
-        if(navigator && navigator.clipboard && navigator.clipboard.writeText){
-          navigator.clipboard.writeText(text).catch(function(){});
-        }
-      }, {passive:true});
-    }
-
-    // Countdown to Akad (WIB = UTC+7). Akad: 17 Jan 2026 08:00 WIB => 01:00 UTC
-    var targetUTC = Date.UTC(2026, 0, 17, 1, 0, 0);
-    var cdDays = $("#cdDays"), cdHours = $("#cdHours"), cdMins = $("#cdMins"), cdSecs = $("#cdSecs"), countStatus = $("#countStatus");
-    function pad2(n){ return String(n).padStart(2,"0"); }
-    function setCd(d,h,m,s){
-      if(cdDays) cdDays.textContent = String(d);
-      if(cdHours) cdHours.textContent = pad2(h);
-      if(cdMins) cdMins.textContent = pad2(m);
-      if(cdSecs) cdSecs.textContent = pad2(s);
-    }
-    function tick(){
-      var now = Date.now();
-      var diff = targetUTC - now;
-      if(!isFinite(diff)) return;
-      if(diff <= 0){
-        setCd(0,0,0,0);
-        if(countStatus) countStatus.textContent = "WIB";
-        return;
-      }
-      var sec = Math.floor(diff/1000);
-      var d = Math.floor(sec/86400); sec -= d*86400;
-      var h = Math.floor(sec/3600); sec -= h*3600;
-      var m = Math.floor(sec/60); sec -= m*60;
-      var s = sec;
-      setCd(d,h,m,s);
-      if(countStatus) countStatus.textContent = "WIB";
-    }
-    tick();
-    setInterval(tick, 1000);
-
-    // Guestbook
-    var LS_KEY = "ra_guestbook_v1";
-    function nowMs(){ return Date.now(); }
-    function randomPastMs(maxMinutes){
-      var m = Math.max(1, Math.floor(Math.random()*maxMinutes));
-      return nowMs() - m*60*1000;
-    }
-    function relTime(ms){
-      var diff = nowMs() - ms;
-      if(diff < 15*1000) return "baru saja";
-      var min = Math.floor(diff/60000);
-      if(min < 1) return "baru saja";
-      if(min < 60) return min + " menit lalu";
-      var hr = Math.floor(min/60);
-      if(hr < 24) return hr + " jam lalu";
-      var day = Math.floor(hr/24);
-      if(day === 1) return "kemarin";
-      if(day < 7) return day + " hari lalu";
-      var wk = Math.floor(day/7);
-      if(wk < 5) return wk + " minggu lalu";
-      var mo = Math.floor(day/30);
-      if(mo < 12) return mo + " bulan lalu";
-      var yr = Math.floor(day/365);
-      return yr + " tahun lalu";
-    }
-    function sanitizeText(s){
-      return String(s||"").replace(/\s+/g," ").trim().slice(0, 420);
-    }
-    function loadGB(){
-      try{
-        var raw = localStorage.getItem(LS_KEY);
-        if(!raw) return null;
-        var parsed = JSON.parse(raw);
-        if(!Array.isArray(parsed)) return null;
-        return parsed;
-      }catch(e){ return null; }
-    }
-    function saveGB(list){
-      try{ localStorage.setItem(LS_KEY, JSON.stringify(list)); }catch(e){}
-    }
-    function seedGB(){
-      var seeds = [
-        {name:"Fajar", attend:"Hadir", guests:2, message:"Selamat ya Reza & Alya. Semoga lancar sampai hari H dan jadi keluarga sakinah mawaddah warahmah.", createdAt: randomPastMs(2400)},
-        {name:"Nabila", attend:"Hadir", guests:1, message:"MasyaAllah, turut bahagia. Semoga Allah berkahi setiap langkah kalian.", createdAt: randomPastMs(1800)},
-        {name:"Rizky", attend:"Hadir", guests:3, message:"Semoga acaranya lancar, rezekinya diluaskan, dan rumah tangganya adem terus.", createdAt: randomPastMs(1600)},
-        {name:"Dewi", attend:"Tidak", guests:1, message:"Maaf belum bisa hadir. Doa terbaik untuk kalian berdua, semoga bahagia dunia akhirat.", createdAt: randomPastMs(1200)},
-        {name:"Andi", attend:"Hadir", guests:2, message:"Selamat menempuh hidup baru. Semoga selalu kompak, saling menjaga, dan saling menguatkan.", createdAt: randomPastMs(900)},
-        {name:"Rina", attend:"Hadir", guests:1, message:"Semoga Allah jadikan cinta kalian tenang, hangat, dan penuh rahmat.", createdAt: randomPastMs(720)},
-        {name:"Bima", attend:"Hadir", guests:4, message:"Barakallahu laka wa baaraka ‘alaika. Sampai ketemu di hari bahagia kalian.", createdAt: randomPastMs(640)},
-        {name:"Salsa", attend:"Hadir", guests:2, message:"Cantik banget undangannya. Semoga akadnya dimudahkan, resepsinya meriah tapi tetap khidmat.", createdAt: randomPastMs(520)},
-        {name:"Hendra", attend:"Tidak", guests:1, message:"Doa terbaik selalu. Semoga jadi keluarga yang diberi ketenangan dan berkah.", createdAt: randomPastMs(480)},
-        {name:"Putri", attend:"Hadir", guests:1, message:"Selamat yaa! Semoga Allah jaga kalian dari awal sampai seterusnya.", createdAt: randomPastMs(360)},
-        {name:"Ilham", attend:"Hadir", guests:2, message:"Semoga jadi pasangan yang saling meneduhkan. Lancar semuanya.", createdAt: randomPastMs(300)},
-        {name:"Sinta", attend:"Hadir", guests:3, message:"Bahagia selalu, Reza & Alya. Semoga dipenuhi kasih sayang dan keberkahan.", createdAt: randomPastMs(220)},
-        {name:"Yoga", attend:"Tidak", guests:1, message:"Maaf belum bisa hadir. Semoga acara berjalan lancar dan penuh kebaikan.", createdAt: randomPastMs(200)},
-        {name:"Tania", attend:"Hadir", guests:2, message:"MasyaAllah tabarakallah. Semoga dilimpahi rahmat dan ketenangan.", createdAt: randomPastMs(160)},
-        {name:"Farhan", attend:"Hadir", guests:1, message:"Selamat menempuh perjalanan baru. Semoga selalu diberi sabar dan syukur.", createdAt: randomPastMs(120)},
-        {name:"Maya", attend:"Hadir", guests:2, message:"Semoga cinta kalian tumbuh dalam iman, dan rumahnya dipenuhi berkah.", createdAt: randomPastMs(95)},
-        {name:"Adit", attend:"Hadir", guests:1, message:"Lancar sampai hari H ya. Semoga semuanya dimudahkan.", createdAt: randomPastMs(70)},
-        {name:"Lia", attend:"Hadir", guests:2, message:"Ikut senang banget. Semoga jadi pasangan yang saling menjaga sampai tua.", createdAt: randomPastMs(45)}
-      ];
-      saveGB(seeds);
-      return seeds;
-    }
-    function renderGB(list){
-      if(!gbList) return;
-      gbList.innerHTML = "";
-      list.slice(0, 60).forEach(function(item){
-        var attend = item.attend === "Hadir" ? "Hadir" : "Tidak";
-        var guests = Math.min(5, Math.max(1, parseInt(item.guests,10)||1));
-        var createdAt = parseInt(item.createdAt,10) || nowMs();
-
-        var div = document.createElement("div");
-        div.className = "gbItem";
-        var badgeClass = attend === "Hadir" ? "badge" : "badge off";
-
-        div.innerHTML =
-          '<div class="gbItemInner">' +
-            '<div class="gbTop">' +
-              '<div class="gbName"></div>' +
-              '<div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">' +
-                '<span class="'+badgeClass+'"><i></i>' + attend + '</span>' +
-                '<span class="badge" style="border-color: rgba(255,255,255,.10); color: rgba(245,245,245,.70)"><i style="background: rgba(245,245,245,.42); box-shadow: 0 0 0 4px rgba(245,245,245,.08)"></i>' + guests + ' tamu</span>' +
-                '<span class="gbMeta" data-ts="'+createdAt+'"></span>' +
-              '</div>' +
-            '</div>' +
-            '<p class="gbMsg"></p>' +
-          '</div>';
-
-        var nameEl = div.querySelector(".gbName");
-        var msgEl = div.querySelector(".gbMsg");
-        var metaEl = div.querySelector(".gbMeta");
-
-        if(nameEl) nameEl.textContent = sanitizeText(item.name || "Tamu");
-        if(msgEl) msgEl.textContent = sanitizeText(item.message || "");
-        if(metaEl) metaEl.textContent = relTime(createdAt);
-
-        gbList.appendChild(div);
-      });
-    }
-
-    var gbData = loadGB();
-    if(!gbData) gbData = seedGB();
-    renderGB(gbData);
-
-    function updateRelativeTimes(){
-      if(!gbList) return;
-      var metas = gbList.querySelectorAll("[data-ts]");
-      for(var i=0;i<metas.length;i++){
-        var el = metas[i];
-        var ts = parseInt(el.getAttribute("data-ts"),10);
-        if(ts) el.textContent = relTime(ts);
-      }
-    }
-    setInterval(updateRelativeTimes, 60000);
-
-    if(gbForm){
-      gbForm.addEventListener("submit", function(ev){
-        ev.preventDefault();
-        var name = $("#gbName") ? $("#gbName").value : "";
-        var attend = $("#gbAttend") ? $("#gbAttend").value : "Hadir";
-        var guests = $("#gbGuests") ? $("#gbGuests").value : "1";
-        var msg = $("#gbMsg") ? $("#gbMsg").value : "";
-
-        name = sanitizeText(name) || "Tamu";
-        msg = sanitizeText(msg);
-        if(msg.length < 2) msg = "Doa terbaik untuk kalian berdua. Semoga dilimpahi berkah dan ketenangan.";
-
-        var entry = { name:name, attend: attend === "Tidak" ? "Tidak" : "Hadir", guests: guests, message: msg, createdAt: nowMs() };
-        var list = loadGB() || gbData || [];
-        list.unshift(entry);
-        gbData = list;
-        saveGB(list);
-        renderGB(list);
-
-        if($("#gbMsg")) $("#gbMsg").value = "";
-      });
-    }
-    if(gbReset){
-      gbReset.addEventListener("click", function(){
-        try{ localStorage.removeItem(LS_KEY); }catch(e){}
-        gbData = seedGB();
-        renderGB(gbData);
-      });
-    }
-
-    // Ensure audio state reflects actual events
-    audio.addEventListener("play", function(){ state.playing = true; setAudioFab(true); setAudioLabel(); }, {passive:true});
-    audio.addEventListener("pause", function(){ state.playing = false; setAudioFab(true); setAudioLabel(); }, {passive:true});
-    audio.addEventListener("ended", function(){ state.playing = false; setAudioFab(true); setAudioLabel(); }, {passive:true});
-
-    // If user toggles music ON while gate open, do not autoplay; only on explicit tap via Fab.
-    if(musicToggle){
-      musicToggle.addEventListener("change", function(){
-        // No autoplay. Label only.
-        setAudioFab(true);
+    function setupGate(){
+      if (openBtn) {
+        openBtn.addEventListener("click", (e) => { e.preventDefault(); openGate(); }, { passive:false });
+        openBtn.addEventListener("pointerup", (e) => { e.preventDefault(); openGate(); }, { passive:false });
+      } else if (gate) {
+        gate.addEventListener("click", (e) => {
+          const t = e.target;
+          if (t && t.closest && t.closest("button,a,input,select,textarea,label")) return;
+          openGate();
+        }, { passive:true });
+      } else {
+        document.body.classList.remove("locked");
+        state.opened = true;
         setAudioLabel();
-      }, {passive:true});
+      }
     }
 
-    // Graceful: if gate is absent, still show audio fab
-    if(!gate){
-      document.body.classList.remove("locked");
-      setAudioFab(true);
-      setAudioLabel();
+    // ---- Guestbook
+    function setupGuestbook(){
+      const LS_KEY = "ra_guestbook_v1";
+      const nowMs = () => Date.now();
+      const randomPastMs = (maxMinutes) => nowMs() - Math.max(1, Math.floor(Math.random() * maxMinutes)) * 60 * 1000;
+
+      const relTime = (ms) => {
+        const diff = nowMs() - ms;
+        if (diff < 15000) return "baru saja";
+        const min = Math.floor(diff / 60000);
+        if (min < 1) return "baru saja";
+        if (min < 60) return `${min} menit lalu`;
+        const hr = Math.floor(min / 60);
+        if (hr < 24) return `${hr} jam lalu`;
+        const day = Math.floor(hr / 24);
+        if (day === 1) return "kemarin";
+        if (day < 7) return `${day} hari lalu`;
+        const wk = Math.floor(day / 7);
+        if (wk < 5) return `${wk} minggu lalu`;
+        const mo = Math.floor(day / 30);
+        if (mo < 12) return `${mo} bulan lalu`;
+        const yr = Math.floor(day / 365);
+        return `${yr} tahun lalu`;
+      };
+
+      const sanitizeText = (s) => String(s || "").replace(/\s+/g, " ").trim().slice(0, 420);
+
+      const loadGB = () => {
+        try {
+          const raw = localStorage.getItem(LS_KEY);
+          if (!raw) return null;
+          const parsed = JSON.parse(raw);
+          return Array.isArray(parsed) ? parsed : null;
+        } catch (_) { return null; }
+      };
+      const saveGB = (list) => { try { localStorage.setItem(LS_KEY, JSON.stringify(list)); } catch (_) {} };
+
+      const seedGB = () => {
+        const seeds = [
+          { name:"Fajar", attend:"Hadir", guests:2, message:"Selamat ya Reza & Alya. Semoga lancar sampai hari H dan jadi keluarga sakinah mawaddah warahmah.", createdAt: randomPastMs(2400) },
+          { name:"Nabila", attend:"Hadir", guests:1, message:"MasyaAllah, turut bahagia. Semoga Allah berkahi setiap langkah kalian.", createdAt: randomPastMs(1800) },
+          { name:"Rizky", attend:"Hadir", guests:3, message:"Semoga acaranya lancar, rezekinya diluaskan, dan rumah tangganya adem terus.", createdAt: randomPastMs(1600) },
+          { name:"Dewi", attend:"Tidak", guests:1, message:"Maaf belum bisa hadir. Doa terbaik untuk kalian berdua, semoga bahagia dunia akhirat.", createdAt: randomPastMs(1200) },
+          { name:"Andi", attend:"Hadir", guests:2, message:"Selamat menempuh hidup baru. Semoga selalu kompak, saling menjaga, dan saling menguatkan.", createdAt: randomPastMs(900) },
+          { name:"Rina", attend:"Hadir", guests:1, message:"Semoga Allah jadikan cinta kalian tenang, hangat, dan penuh rahmat.", createdAt: randomPastMs(720) },
+          { name:"Bima", attend:"Hadir", guests:4, message:"Barakallahu laka wa baaraka ‘alaika. Sampai ketemu di hari bahagia kalian.", createdAt: randomPastMs(640) },
+          { name:"Salsa", attend:"Hadir", guests:2, message:"Cantik banget undangannya. Semoga akadnya dimudahkan, resepsinya meriah tapi tetap khidmat.", createdAt: randomPastMs(520) },
+          { name:"Hendra", attend:"Tidak", guests:1, message:"Doa terbaik selalu. Semoga jadi keluarga yang diberi ketenangan dan berkah.", createdAt: randomPastMs(480) },
+          { name:"Putri", attend:"Hadir", guests:1, message:"Selamat yaa! Semoga Allah jaga kalian dari awal sampai seterusnya.", createdAt: randomPastMs(360) },
+          { name:"Ilham", attend:"Hadir", guests:2, message:"Semoga jadi pasangan yang saling meneduhkan. Lancar semuanya.", createdAt: randomPastMs(300) },
+          { name:"Sinta", attend:"Hadir", guests:3, message:"Bahagia selalu, Reza & Alya. Semoga dipenuhi kasih sayang dan keberkahan.", createdAt: randomPastMs(220) },
+          { name:"Yoga", attend:"Tidak", guests:1, message:"Maaf belum bisa hadir. Semoga acara berjalan lancar dan penuh kebaikan.", createdAt: randomPastMs(200) },
+          { name:"Tania", attend:"Hadir", guests:2, message:"MasyaAllah tabarakallah. Semoga dilimpahi rahmat dan ketenangan.", createdAt: randomPastMs(160) },
+          { name:"Farhan", attend:"Hadir", guests:1, message:"Selamat menempuh perjalanan baru. Semoga selalu diberi sabar dan syukur.", createdAt: randomPastMs(120) },
+          { name:"Maya", attend:"Hadir", guests:2, message:"Semoga cinta kalian tumbuh dalam iman, dan rumahnya dipenuhi berkah.", createdAt: randomPastMs(95) },
+          { name:"Adit", attend:"Hadir", guests:1, message:"Lancar sampai hari H ya. Semoga semuanya dimudahkan.", createdAt: randomPastMs(70) },
+          { name:"Lia", attend:"Hadir", guests:2, message:"Ikut senang banget. Semoga jadi pasangan yang saling menjaga sampai tua.", createdAt: randomPastMs(45) }
+        ];
+        saveGB(seeds);
+        return seeds;
+      };
+
+      let gbData = loadGB();
+      if (!gbData) gbData = seedGB();
+
+      const renderGB = (list) => {
+        if (!gbList) return;
+        gbList.innerHTML = "";
+        list.slice(0, 60).forEach((item) => {
+          const attend = item.attend === "Tidak" ? "Tidak" : "Hadir";
+          const guests = Math.min(5, Math.max(1, parseInt(item.guests, 10) || 1));
+          const createdAt = parseInt(item.createdAt, 10) || nowMs();
+          const div = document.createElement("div");
+          div.className = "gbItem";
+          const badgeClass = attend === "Hadir" ? "badge" : "badge off";
+          div.innerHTML =
+            '<div class="gbItemInner">' +
+              '<div class="gbTop">' +
+                '<div class="gbName"></div>' +
+                '<div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">' +
+                  `<span class="${badgeClass}"><i></i>${attend}</span>` +
+                  `<span class="badge" style="border-color: rgba(255,255,255,.10); color: rgba(245,245,245,.70)"><i style="background: rgba(245,245,245,.42); box-shadow: 0 0 0 4px rgba(245,245,245,.08)"></i>${guests} tamu</span>` +
+                  `<span class="gbMeta" data-ts="${createdAt}"></span>` +
+                "</div>" +
+              "</div>" +
+              '<p class="gbMsg"></p>' +
+            "</div>";
+          const nameEl = div.querySelector(".gbName");
+          const msgEl = div.querySelector(".gbMsg");
+          const metaEl = div.querySelector(".gbMeta");
+          if (nameEl) nameEl.textContent = sanitizeText(item.name || "Tamu");
+          if (msgEl) msgEl.textContent = sanitizeText(item.message || "");
+          if (metaEl) metaEl.textContent = relTime(createdAt);
+          gbList.appendChild(div);
+        });
+      };
+
+      renderGB(gbData);
+
+      const updateRelativeTimes = () => {
+        if (!gbList) return;
+        gbList.querySelectorAll("[data-ts]").forEach((el) => {
+          const ts = parseInt(el.getAttribute("data-ts"), 10);
+          if (ts) el.textContent = relTime(ts);
+        });
+      };
+      setInterval(updateRelativeTimes, 60000);
+
+      if (gbForm) {
+        gbForm.addEventListener("submit", (ev) => {
+          ev.preventDefault();
+          const name = sanitizeText($("#gbName") && $("#gbName").value) || "Tamu";
+          const attend = ($("#gbAttend") && $("#gbAttend").value === "Tidak") ? "Tidak" : "Hadir";
+          const guests = ($("#gbGuests") && $("#gbGuests").value) || "1";
+          let msg = sanitizeText($("#gbMsg") && $("#gbMsg").value);
+          if (msg.length < 2) msg = "Doa terbaik untuk kalian berdua. Semoga dilimpahi berkah dan ketenangan.";
+          const entry = { name, attend, guests, message: msg, createdAt: nowMs() };
+          const list = loadGB() || gbData || [];
+          list.unshift(entry);
+          gbData = list;
+          saveGB(list);
+          renderGB(list);
+          const msgEl = $("#gbMsg");
+          if (msgEl) msgEl.value = "";
+        }, { passive:false });
+      }
+
+      if (gbReset) {
+        gbReset.addEventListener("click", () => {
+          try { localStorage.removeItem(LS_KEY); } catch (_) {}
+          gbData = seedGB();
+          renderGB(gbData);
+        }, { passive:true });
+      }
     }
 
-    // If user clicks anywhere in main content first time and toggle is ON, allow optional play (still user action)
-    document.addEventListener("click", function(ev){
-      if(!state.opened) return;
-      if(state.playing) return;
-      if(!musicToggle || !musicToggle.checked) return;
-      // Only allow when click is not on inputs to avoid surprises
-      var t = ev.target;
-      var tag = (t && t.tagName) ? t.tagName.toLowerCase() : "";
-      if(tag === "input" || tag === "textarea" || tag === "select" || tag === "button" || tag === "a") return;
-      safePlay();
-    }, {passive:true});
+    function init(){
+      setupPhotoFrames();
+      setupReveal();
+      setupDock();
+      setupCopy();
+      setupCountdown();
+      setupAudio();
+      setupGate();
+      setupGuestbook();
 
+      // Minimal self-check (silent): ensure core nodes exist; never crash UI.
+      // Gate open must remain functional regardless.
+      try {
+        if (!gate || !openBtn) {/* silent */}
+        if (!audioFab || !audioFabText) {/* silent */}
+        if (!gbList || !gbForm) {/* silent */}
+      } catch(_) {}
+    }
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", init, { once:true });
+    } else {
+      init();
+    }
   })();
   </script>
 </body>
